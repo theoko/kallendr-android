@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.register.RegisterActivity"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/emailAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/teamName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/team_name" />
+
+    <LinearLayout
+        android:id="@+id/inviteMembersForm"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/member_1_email" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/member_2_email" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/member_3_email" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_member"
+            android:textColor="@android:color/white"
+            android:background="#F79F04" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnInviteTeam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/invite_members"
+        android:background="#9E88C7"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="25dp"
+        android:onClick="btn_inviteMembers" />
+
+    <Button
+        android:id="@+id/btnCreateTeam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_team"
+        android:background="#F79F04"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="5dp"
+        android:onClick="btn_createTeam" />
+
+</LinearLayout>
