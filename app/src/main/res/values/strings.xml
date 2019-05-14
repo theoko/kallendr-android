@@ -11,4 +11,12 @@
     <string name="login_failed">"Login failed"</string>
     <string name="create_team">Create team</string>
     <string name="join_team">Join a team</string>
+    <string name="email">Email</string>
+    <string name="team_name">Team name</string>
+    <string name="invite_members">Invite members</string>
+    <string name="member_1_email">Member 1 Email</string>
+    <string name="member_2_email">Member 2 Email</string>
+    <string name="member_3_email">Member 3 Email</string>
+    <string name="add_member">Add member</string>
+    <string name="done">Done</string>
 </resources>

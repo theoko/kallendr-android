@@ -4,30 +4,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.MainActivity"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:src="@drawable/ic_kallendr" />
+        android:src="@drawable/ic_kallendr"
+    />
 
-    <Button
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:width="@dimen/activity_horizontal_margin"
-        android:background="#F79F04"
-        android:text="@string/create_team"
-        android:textColor="@android:color/white" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom|center">
 
-    <Button
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:width="@dimen/activity_horizontal_margin"
-        android:background="#9E88C7"
-        android:text="@string/join_team"
-        android:textColor="@android:color/white" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:width="@dimen/activity_horizontal_margin"
+            android:background="#F79F04"
+            android:text="@string/create_team"
+            android:textColor="@android:color/white"
+            android:onClick="btn_createTeam"
+        />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:width="@dimen/activity_horizontal_margin"
+            android:background="#9E88C7"
+            android:text="@string/join_team"
+            android:textColor="@android:color/white"
+            android:onClick="btn_joinTeam"
+        />
+
+    </LinearLayout>
 
 </LinearLayout>
