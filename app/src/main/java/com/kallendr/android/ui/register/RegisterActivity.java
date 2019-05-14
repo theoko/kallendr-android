@@ -11,6 +11,10 @@ import com.kallendr.android.R;
 public class RegisterActivity extends AppCompatActivity {
 
     LinearLayout inviteMembersForm;
+
+    Button btnAddMember;
+    Button btnDone;
+
     Button btnCreateTeam;
     Button btnInviteTeam;
 
@@ -20,8 +24,44 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         inviteMembersForm = findViewById(R.id.inviteMembersForm);
+
+        btnAddMember = findViewById(R.id.btnAddMember);
+        btnDone = findViewById(R.id.btnDone);
+
         btnInviteTeam = findViewById(R.id.btnInviteTeam);
         btnCreateTeam = findViewById(R.id.btnCreateTeam);
+
+        addOnClickListeners();
+    }
+
+    private void addOnClickListeners() {
+        btnAddMember.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnInviteTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnCreateTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     public void btn_inviteMembers(View view) {

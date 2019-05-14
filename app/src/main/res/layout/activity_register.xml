@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <EditText
             android:layout_width="match_parent"
@@ -42,12 +42,30 @@
             android:layout_height="wrap_content"
             android:hint="@string/member_3_email" />
 
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_member"
-            android:textColor="@android:color/white"
-            android:background="#F79F04" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnAddMember"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/add_member"
+                android:textColor="@android:color/white"
+                android:background="#F79F04"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnDone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/done"
+                android:textColor="@android:color/white"
+                android:background="#9E88C7"
+                android:layout_weight="1" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

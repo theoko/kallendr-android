@@ -18,4 +18,5 @@
     <string name="member_2_email">Member 2 Email</string>
     <string name="member_3_email">Member 3 Email</string>
     <string name="add_member">Add member</string>
+    <string name="done">Done</string>
 </resources>
