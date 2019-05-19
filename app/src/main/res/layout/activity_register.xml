@@ -25,22 +25,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <EditText
+            android:id="@+id/invMember1"
+            android:tag="invMember1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/member_1_email" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/member_2_email" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/member_3_email" />
 
         <LinearLayout
             android:layout_width="match_parent"

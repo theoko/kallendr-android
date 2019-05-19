@@ -19,8 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kallendr.android.R;
-import com.kallendr.android.ui.login.LoginViewModel;
-import com.kallendr.android.ui.login.LoginViewModelFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
