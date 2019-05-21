@@ -144,8 +144,16 @@ public class RegisterActivity extends AppCompatActivity {
                 // Display progress bar
                 ProgressBar progressBar = new ProgressBar(RegisterActivity.this,null, android.R.attr.progressBarStyleLarge);
                 progressBar.setIndeterminate(true);
+                registrationForm.addView(progressBar);
+
+                // Hide registration form at this point
+                emailAddress.setVisibility(View.GONE);
+                teamName.setVisibility(View.GONE);
+                inviteMembersForm.setVisibility(View.GONE);
+                btnInviteTeam.setVisibility(View.GONE);
+                btnCreateTeam.setVisibility(View.GONE);
+
                 progressBar.setVisibility(View.VISIBLE);
-                inviteMembersForm.addView(progressBar);
 
                 // Invite team members
                 for (int i=1; i<=numberOfLines; i++) {
@@ -162,21 +170,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                 // Invite members
                 inviteList = new TeamInvite(emails);
+                inviteList.sendEmails();
 
-                progressBar.setVisibility(View.GONE);
             }
         });
-    }
-
-    public void btn_inviteMembers(View view) {
-        inviteMembersForm.setVisibility(View.VISIBLE);
-        btnCreateTeam.setEnabled(false);
-        btnCreateTeam.setBackgroundColor(android.R.drawable.btn_default);
-        btnCreateTeam.setTextColor(getResources().getColor(android.R.color.black));
-    }
-
-    public void btn_createTeam(View view) {
-
     }
 
 }

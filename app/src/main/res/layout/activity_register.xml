@@ -70,8 +70,7 @@
         android:text="@string/invite_members"
         android:background="#9E88C7"
         android:textColor="@android:color/white"
-        android:layout_marginTop="25dp"
-        android:onClick="btn_inviteMembers" />
+        android:layout_marginTop="25dp" />
 
     <Button
         android:id="@+id/btnCreateTeam"
@@ -80,7 +79,6 @@
         android:text="@string/create_team"
         android:background="#F79F04"
         android:textColor="@android:color/white"
-        android:layout_marginTop="5dp"
-        android:onClick="btn_createTeam" />
+        android:layout_marginTop="5dp" />
 
 </LinearLayout>

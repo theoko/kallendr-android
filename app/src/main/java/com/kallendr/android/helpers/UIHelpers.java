@@ -2,6 +2,8 @@ package com.kallendr.android.helpers;
 
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.regex.Pattern;
 
