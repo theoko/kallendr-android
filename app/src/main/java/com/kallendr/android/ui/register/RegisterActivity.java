@@ -1,6 +1,9 @@
 package com.kallendr.android.ui.register;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,12 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kallendr.android.R;
+import com.kallendr.android.helpers.OnTaskCompleted;
 import com.kallendr.android.helpers.TextValidator;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.ui.calendar.MyCalendar;
 
 import java.util.ArrayList;
 
 public class RegisterActivity extends AppCompatActivity {
+
+    private static Context mContext;
 
     LinearLayout registrationForm;
     LinearLayout inviteMembersForm;
@@ -57,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         numberOfLines = 1;
         emails = new ArrayList<>();
+        mContext = this.getApplicationContext();
 
         addValidatorListeners();
         addOnClickListeners();
@@ -169,11 +177,21 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 // Invite members
-                inviteList = new TeamInvite(emails);
-                inviteList.sendEmails();
+                inviteList = new TeamInvite(emails, progressBar);
+                inviteList.sendEmails(new OnTaskCompleted() {
+                    @Override
+                    public void onTaskCompleted() {
+                        finishedRegistration();
+                    }
+                });
 
             }
         });
     }
 
+    public void finishedRegistration() {
+        Intent intent = new Intent(mContext, MyCalendar.class);
+        startActivity(intent);
+        finish();
+    }
 }
