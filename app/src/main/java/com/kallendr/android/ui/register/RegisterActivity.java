@@ -2,10 +2,9 @@ package com.kallendr.android.ui.register;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -78,7 +77,9 @@ public class RegisterActivity extends AppCompatActivity {
             public void validate(TextView textView, String text) {
                 if (!UIHelpers.isValidEmail(text)) {
                     // Add errors to field
-                    emailAddress.setError("Invalid email address", getDrawable(R.drawable.ic_input_error));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        emailAddress.setError("Invalid email address", getDrawable(R.drawable.ic_input_error));
+                    }
                     hasErrors = true;
                 } else {
                     hasErrors = false;
@@ -91,7 +92,9 @@ public class RegisterActivity extends AppCompatActivity {
             public void validate(TextView textView, String text) {
                 if (!UIHelpers.isValidTeamName(text)) {
                     // Add errors to field
-                    teamName.setError("Invalid team name. Team names should not contain spaces.", getDrawable(R.drawable.ic_input_error));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        teamName.setError("Invalid team name. Team names should not contain spaces.", getDrawable(R.drawable.ic_input_error));
+                    }
                     hasErrors = true;
                 } else {
                     hasErrors = false;
