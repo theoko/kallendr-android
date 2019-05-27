@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/registrationForm"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,6 +30,8 @@
         android:visibility="gone">
 
         <EditText
+            android:id="@+id/invMember1"
+            android:tag="invMember1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/member_1_email" />
@@ -66,8 +70,7 @@
         android:text="@string/invite_members"
         android:background="#9E88C7"
         android:textColor="@android:color/white"
-        android:layout_marginTop="25dp"
-        android:onClick="btn_inviteMembers" />
+        android:layout_marginTop="25dp" />
 
     <Button
         android:id="@+id/btnCreateTeam"
@@ -76,7 +79,6 @@
         android:text="@string/create_team"
         android:background="#F79F04"
         android:textColor="@android:color/white"
-        android:layout_marginTop="5dp"
-        android:onClick="btn_createTeam" />
+        android:layout_marginTop="5dp" />
 
 </LinearLayout>

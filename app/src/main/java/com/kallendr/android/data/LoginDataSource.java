@@ -1,9 +1,18 @@
 package com.kallendr.android.data;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.data.model.LoggedInUser;
+import com.kallendr.android.ui.calendar.MyCalendar;
 
 import java.io.IOException;
 
@@ -12,18 +21,22 @@ import java.io.IOException;
  */
 public class LoginDataSource {
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public void login(final Context context, String username, String password) {
 
-        AuthResult authResult = FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
-                .getResult();
-
-        if (authResult != null) {
-            FirebaseUser authUser = authResult.getUser();
-
-            return new Result.Success<>(authUser);
-        } else {
-            return new Result.Error(new IOException("Error logging in"));
-        }
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(!task.isSuccessful()) {
+                            Toast.makeText(context, "Please check the credentials and try again.", Toast.LENGTH_LONG).show();
+                        } else {
+                            // Launch MyCalendar activity
+                            Intent intent = new Intent(context, MyCalendar.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        }
+                    }
+                });
 
     }
 
