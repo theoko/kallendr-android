@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "900288341271",
+    "firebase_url": "https://kallendr-30c86.firebaseio.com",
+    "project_id": "kallendr-30c86",
+    "storage_bucket": "kallendr-30c86.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900288341271:android:fc5f1dbcfb2bc729",
+        "android_client_info": {
+          "package_name": "com.kallendr.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "900288341271-mgjib49bpj1aig78v6152e8kjqj7tl6o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP9O2nIk5139zLtX_aL6oeSLEFDm2PtiQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "900288341271-mgjib49bpj1aig78v6152e8kjqj7tl6o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
