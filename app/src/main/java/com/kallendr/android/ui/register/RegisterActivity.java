@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.kallendr.android.R;
+import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.OnTaskCompleted;
 import com.kallendr.android.helpers.TextValidator;
 import com.kallendr.android.helpers.UIHelpers;
-import com.kallendr.android.ui.calendar.MyCalendar;
+import com.kallendr.android.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -31,6 +40,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText emailAddress;
     EditText teamName;
+    EditText password;
+    EditText confirmPassword;
 
     Button btnAddMember;
     Button btnDone;
@@ -51,6 +62,8 @@ public class RegisterActivity extends AppCompatActivity {
         // Registration fields
         emailAddress = findViewById(R.id.emailAddress);
         teamName = findViewById(R.id.teamName);
+        password = findViewById(R.id.password);
+        confirmPassword = findViewById(R.id.confirmPassword);
 
         registrationForm = findViewById(R.id.registrationForm);
         inviteMembersForm = findViewById(R.id.inviteMembersForm);
@@ -148,12 +161,18 @@ public class RegisterActivity extends AppCompatActivity {
 
                 // Get field values
                 String userEmail = emailAddress.getText().toString();
-                String userTeamName = teamName.getText().toString();
+                final String userTeamName = teamName.getText().toString();
 
+                String userPass = password.getText().toString();
+                String userConfirmPass = confirmPassword.getText().toString();
 
+                if(!userPass.equals(userConfirmPass)) {
+                    Toast.makeText(RegisterActivity.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 // Display progress bar
-                ProgressBar progressBar = new ProgressBar(RegisterActivity.this,null, android.R.attr.progressBarStyleLarge);
+                final ProgressBar progressBar = new ProgressBar(RegisterActivity.this,null, android.R.attr.progressBarStyleLarge);
                 progressBar.setIndeterminate(true);
                 registrationForm.addView(progressBar);
 
@@ -166,25 +185,36 @@ public class RegisterActivity extends AppCompatActivity {
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                // Invite team members
-                for (int i=1; i<=numberOfLines; i++) {
-                    // Get field by tag ID
-                    EditText editText = inviteMembersForm.findViewWithTag("invMember" + i);
-                    if(editText != null) {
-                        String tmpEmail = editText.getText().toString();
-                        emails.add(tmpEmail);
-                        System.out.println("Added email: " + tmpEmail);
-                    } else {
-                        System.out.println("i is null at: " + i);
-                    }
-                }
-
-                // Invite members
-                inviteList = new TeamInvite(emails, progressBar);
-                inviteList.sendEmails(new OnTaskCompleted() {
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, userPass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onTaskCompleted() {
-                        finishedRegistration();
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()) {
+                            // Invite team members
+                            DatabaseReference mTeamMembersRef = FirebaseDatabase.getInstance().getReference().child(userTeamName.toLowerCase().trim()).child(Constants.DB_INVITED_USERS);
+                            for (int i=1; i<=numberOfLines; i++) {
+                                // Get field by tag ID
+                                EditText editText = inviteMembersForm.findViewWithTag("invMember" + i);
+                                if(editText != null) {
+                                    String tmpEmail = editText.getText().toString();
+                                    emails.add(tmpEmail);
+                                    mTeamMembersRef.push().setValue(tmpEmail);
+                                    System.out.println("Added email: " + tmpEmail);
+                                } else {
+                                    System.out.println("i is null at: " + i);
+                                }
+                            }
+
+                            // Invite members
+                            inviteList = new TeamInvite(emails, progressBar);
+                            inviteList.sendEmails(new OnTaskCompleted() {
+                                @Override
+                                public void onTaskCompleted() {
+                                    finishedRegistration();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Failed to create user!", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
 
@@ -193,7 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void finishedRegistration() {
-        Intent intent = new Intent(mContext, MyCalendar.class);
+        Intent intent = new Intent(mContext, LoginActivity.class);
         startActivity(intent);
         finish();
     }
