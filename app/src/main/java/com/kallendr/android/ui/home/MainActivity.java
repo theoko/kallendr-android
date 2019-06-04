@@ -15,6 +15,8 @@ import com.kallendr.android.ui.calendar.MyCalendar;
 import com.kallendr.android.ui.login.LoginActivity;
 import com.kallendr.android.ui.register.RegisterActivity;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Objects.requireNonNull(MainActivity.this.getSupportActionBar()).hide();
 
         // Check if user has already signed in
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {

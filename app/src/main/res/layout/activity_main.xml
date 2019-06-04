@@ -6,12 +6,27 @@
     tools:context=".ui.home.MainActivity"
     android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="wrap_content"
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:src="@drawable/ic_kallendr"
-    />
+        android:orientation="vertical"
+        android:gravity="top">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/ic_kallendr"
+            tools:layout_editor_absoluteX="-112dp" />
+
+        <CalendarView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="241dp" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
