@@ -26,6 +26,7 @@ import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.OnTaskCompleted;
 import com.kallendr.android.helpers.TextValidator;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.ui.home.MainActivity;
 import com.kallendr.android.ui.login.LoginActivity;
 
 import java.util.ArrayList;
@@ -223,6 +224,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void finishedRegistration() {
         Intent intent = new Intent(mContext, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(mContext, MainActivity.class);
         startActivity(intent);
         finish();
     }

@@ -52,20 +52,21 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_width="338dp"
-        android:layout_height="59dp"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
         android:layout_gravity="start"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
         android:layout_marginBottom="64dp"
+        android:background="#9E88C7"
         android:enabled="false"
         android:text="@string/action_sign_in"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.038" />
 
     <ProgressBar
         android:id="@+id/loading"
