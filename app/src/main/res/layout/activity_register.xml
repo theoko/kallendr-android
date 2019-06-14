@@ -21,6 +21,20 @@
         android:layout_height="wrap_content"
         android:hint="@string/team_name" />
 
+    <EditText
+        android:id="@+id/userPassword"
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password" />
+
+    <EditText
+        android:id="@+id/userPasswordConfirmation"
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/confirm_password" />
+
     <LinearLayout
         android:id="@+id/inviteMembersForm"
         android:layout_marginTop="10dp"

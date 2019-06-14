@@ -4,36 +4,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.MainActivity"
+    android:background="@color/colorBackground"
     android:orientation="vertical">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:alpha="0.5"
         android:src="@drawable/ic_kallendr"
     />
 
     <LinearLayout
+        android:id="@+id/get_started_layout"
+        android:layout_marginTop="200sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|center">
+
+        <Button
+            android:layout_width="200sp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_shadow"
+            android:textColor="@android:color/white"
+            android:text="Get Started"
+            android:onClick="btn_getStarted" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/options_layout"
+        android:layout_marginTop="200sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="bottom|center">
+        android:visibility="gone"
+        android:gravity="center">
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="200sp"
             android:layout_height="wrap_content"
             android:width="@dimen/activity_horizontal_margin"
-            android:background="#F79F04"
+            android:background="@drawable/button_shadow"
             android:text="@string/create_team"
             android:textColor="@android:color/white"
             android:onClick="btn_createTeam"
         />
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="200sp"
             android:layout_height="wrap_content"
             android:width="@dimen/activity_horizontal_margin"
-            android:background="#9E88C7"
+            android:background="@drawable/button_shadow_accent"
             android:text="@string/join_team"
             android:textColor="@android:color/white"
             android:onClick="btn_joinTeam"

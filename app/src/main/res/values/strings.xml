@@ -19,4 +19,6 @@
     <string name="member_3_email">Member 3 Email</string>
     <string name="add_member">Add member</string>
     <string name="done">Done</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
 </resources>
