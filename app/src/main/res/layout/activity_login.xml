@@ -9,16 +9,27 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".ui.login.LoginActivity">
+    android:background="@color/colorBackground"
+    tools:context=".ui.login.LoginActivity"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:alpha="0.5"
+        android:src="@drawable/ic_kallendr"
+        tools:ignore="MissingConstraints" />
 
     <EditText
         android:id="@+id/username"
+        android:textColor="@android:color/white"
+        android:background="@android:color/transparent"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50sp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="200dp"
         android:layout_marginEnd="24dp"
-
         android:hint="@string/prompt_email"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
@@ -28,12 +39,12 @@
 
     <EditText
         android:id="@+id/password"
+        android:background="@android:color/transparent"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50sp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-
         android:hint="@string/prompt_password"
         android:imeActionLabel="@string/action_sign_in_short"
         android:imeOptions="actionDone"
@@ -45,20 +56,22 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="64dp"
+        android:background="@drawable/button_shadow_accent"
         android:enabled="false"
         android:text="@string/action_sign_in"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintVertical_bias="0.022" />
 
     <ProgressBar
         android:id="@+id/loading"
