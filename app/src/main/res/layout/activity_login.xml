@@ -25,6 +25,7 @@
         android:id="@+id/username"
         android:textColor="@android:color/white"
         android:background="@android:color/transparent"
+        android:alpha="0.6"
         android:layout_width="0dp"
         android:layout_height="50sp"
         android:layout_marginStart="24dp"
@@ -40,6 +41,8 @@
     <EditText
         android:id="@+id/password"
         android:background="@android:color/transparent"
+        android:textColor="@android:color/white"
+        android:alpha="0.6"
         android:layout_width="0dp"
         android:layout_height="50sp"
         android:layout_marginStart="24dp"

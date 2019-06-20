@@ -2,10 +2,12 @@ package com.kallendr.android.ui.register;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +29,7 @@ import com.kallendr.android.ui.calendar.MyCalendar;
 import com.kallendr.android.ui.home.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -52,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         // Registration fields
         emailAddress = findViewById(R.id.emailAddress);
@@ -116,7 +120,9 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(numberOfLines < 5) {
                     EditText editText = new EditText(getApplicationContext());
-                    LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UIHelpers.spToPx(50f, RegisterActivity.this));
+                    editText.setAlpha(0.6f);
+                    editText.setBackgroundColor(Color.TRANSPARENT);
                     editText.setLayoutParams(p);
 
                     // Increment number of lines
@@ -157,6 +163,17 @@ public class RegisterActivity extends AppCompatActivity {
                 String userEmail = emailAddress.getText().toString();
                 String userTeamName = teamName.getText().toString();
                 String userPass = userPassword.getText().toString();
+
+                /* Input validation */
+                if(userEmail.trim().equals("")) {
+
+                }
+                if(userTeamName.trim().equals("")) {
+
+                }
+                if(userPass.trim().equals("")) {
+
+                }
 
                 // Create user with Firebase Authentication
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, userPass)

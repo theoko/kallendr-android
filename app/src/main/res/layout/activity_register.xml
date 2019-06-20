@@ -12,6 +12,7 @@
     <EditText
         android:id="@+id/emailAddress"
         android:background="@android:color/transparent"
+        android:alpha="0.6"
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:layout_marginTop="10sp"
@@ -23,6 +24,7 @@
     <EditText
         android:id="@+id/teamName"
         android:background="@android:color/transparent"
+        android:alpha="0.6"
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:layout_marginTop="10sp"
@@ -33,6 +35,7 @@
     <EditText
         android:id="@+id/userPassword"
         android:background="@android:color/transparent"
+        android:alpha="0.6"
         android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="50sp"
@@ -44,6 +47,7 @@
     <EditText
         android:id="@+id/userPasswordConfirmation"
         android:background="@android:color/transparent"
+        android:alpha="0.6"
         android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="50sp"
@@ -57,7 +61,8 @@
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -65,15 +70,15 @@
             android:id="@+id/invMember1"
             android:tag="invMember1"
             android:background="@android:color/transparent"
+            android:alpha="0.6"
             android:layout_width="match_parent"
             android:layout_height="50sp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
             android:hint="@string/member_1_email" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15sp"
             android:orientation="horizontal">
 
             <Button

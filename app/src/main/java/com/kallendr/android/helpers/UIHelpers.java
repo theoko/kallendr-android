@@ -1,7 +1,9 @@
 package com.kallendr.android.helpers;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -15,6 +17,10 @@ public class UIHelpers {
 
     public static boolean isValidTeamName(CharSequence target) {
         return (!TextUtils.isEmpty(target) && !Pattern.compile("[,\\s]|@.*@").matcher(target).find());
+    }
+
+    public static int spToPx(float sp, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
 }
