@@ -38,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     LinearLayout registrationForm;
     LinearLayout inviteMembersForm;
 
+    TextView teamInviteTitle;
     EditText emailAddress, teamName, userPassword, userPasswordConfirmation;
 
     Button btnAddMember;
@@ -62,6 +63,8 @@ public class RegisterActivity extends AppCompatActivity {
         teamName = findViewById(R.id.teamName);
         userPassword = findViewById(R.id.userPassword);
         userPasswordConfirmation = findViewById(R.id.userPasswordConfirmation);
+
+        teamInviteTitle = findViewById(R.id.teamInviteTitle);
 
         registrationForm = findViewById(R.id.registrationForm);
         inviteMembersForm = findViewById(R.id.inviteMembersForm);
@@ -140,7 +143,12 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Set invite members form visibility to gone
+                teamInviteTitle.setVisibility(View.GONE);
                 inviteMembersForm.setVisibility(View.GONE);
+                emailAddress.setVisibility(View.VISIBLE);
+                userPassword.setVisibility(View.VISIBLE);
+                userPasswordConfirmation.setVisibility(View.VISIBLE);
+                teamName.setVisibility(View.VISIBLE);
                 btnCreateTeam.setVisibility(View.VISIBLE);
                 btnInviteTeam.setVisibility(View.VISIBLE);
             }
@@ -149,7 +157,12 @@ public class RegisterActivity extends AppCompatActivity {
         btnInviteTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                teamInviteTitle.setVisibility(View.VISIBLE);
                 inviteMembersForm.setVisibility(View.VISIBLE);
+                emailAddress.setVisibility(View.GONE);
+                userPassword.setVisibility(View.GONE);
+                userPasswordConfirmation.setVisibility(View.GONE);
+                teamName.setVisibility(View.GONE);
                 btnCreateTeam.setVisibility(View.GONE);
                 btnInviteTeam.setVisibility(View.GONE);
             }
