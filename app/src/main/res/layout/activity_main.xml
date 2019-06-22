@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.MainActivity"
-    android:background="@color/colorBackground"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:alpha="0.5"
+        android:alpha="0.7"
         android:src="@drawable/ic_kallendr"
     />
 
@@ -25,7 +25,8 @@
 
         <Button
             android:layout_width="200sp"
-            android:layout_height="wrap_content"
+            android:layout_height="70sp"
+            android:textSize="18sp"
             android:background="@drawable/button_shadow"
             android:textColor="@android:color/white"
             android:text="Get Started"
@@ -44,7 +45,8 @@
 
         <Button
             android:layout_width="200sp"
-            android:layout_height="wrap_content"
+            android:layout_height="70sp"
+            android:textSize="18sp"
             android:width="@dimen/activity_horizontal_margin"
             android:background="@drawable/button_shadow"
             android:text="@string/create_team"
@@ -54,7 +56,8 @@
 
         <Button
             android:layout_width="200sp"
-            android:layout_height="wrap_content"
+            android:layout_height="70sp"
+            android:textSize="18sp"
             android:width="@dimen/activity_horizontal_margin"
             android:background="@drawable/button_shadow_accent"
             android:text="@string/join_team"

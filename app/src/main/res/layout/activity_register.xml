@@ -4,14 +4,16 @@
     android:id="@+id/registrationForm"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@android:color/white"
     android:orientation="vertical"
     tools:context=".ui.register.RegisterActivity">
 
     <TextView
+        android:id="@+id/pageTitle"
+        android:alpha="0.5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#bc730f"
+        android:textColor="@color/colorBackground"
         android:layout_marginStart="24sp"
         android:textSize="50sp"
         android:text="Registration" />
@@ -24,6 +26,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
+        android:textColor="@android:color/white"
         android:background="@android:color/transparent"
         android:hint="@string/email"
         android:inputType="textEmailAddress" />
@@ -36,6 +39,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
+        android:textColor="@android:color/white"
         android:background="@android:color/transparent"
         android:hint="@string/team_name" />
 
@@ -47,6 +51,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
+        android:textColor="@android:color/white"
         android:background="@android:color/transparent"
         android:hint="@string/password"
         android:inputType="textPassword" />
@@ -59,6 +64,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
+        android:textColor="@android:color/white"
         android:background="@android:color/transparent"
         android:hint="@string/confirm_password"
         android:inputType="textPassword" />
@@ -66,26 +72,15 @@
     <android.support.design.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp">
-
-        <TextView
-            android:id="@+id/teamInviteTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_marginStart="24sp"
-            android:layout_marginBottom="50sp"
-            android:visibility="gone"
-            android:text="Invite to team" />
 
         <LinearLayout
             android:id="@+id/inviteMembersForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5sp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"
             android:orientation="vertical"
             android:visibility="gone">
@@ -109,7 +104,8 @@
                 <Button
                     android:id="@+id/btnAddMember"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70sp"
+                    android:textSize="15sp"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
                     android:layout_weight="1"
@@ -120,7 +116,8 @@
                 <Button
                     android:id="@+id/btnDone"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70sp"
+                    android:textSize="15sp"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
                     android:layout_weight="1"
@@ -137,7 +134,8 @@
     <Button
         android:id="@+id/btnInviteTeam"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70sp"
+        android:textSize="17sp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="24dp"
@@ -148,7 +146,8 @@
     <Button
         android:id="@+id/btnCreateTeam"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70sp"
+        android:textSize="17sp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="24dp"

@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     LinearLayout registrationForm;
     LinearLayout inviteMembersForm;
 
-    TextView teamInviteTitle;
+    TextView pageTitle;
     EditText emailAddress, teamName, userPassword, userPasswordConfirmation;
 
     Button btnAddMember;
@@ -58,13 +58,14 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
+        // Page title
+        pageTitle = findViewById(R.id.pageTitle);
+
         // Registration fields
         emailAddress = findViewById(R.id.emailAddress);
         teamName = findViewById(R.id.teamName);
         userPassword = findViewById(R.id.userPassword);
         userPasswordConfirmation = findViewById(R.id.userPasswordConfirmation);
-
-        teamInviteTitle = findViewById(R.id.teamInviteTitle);
 
         registrationForm = findViewById(R.id.registrationForm);
         inviteMembersForm = findViewById(R.id.inviteMembersForm);
@@ -121,7 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnAddMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(numberOfLines < 5) {
+                if (numberOfLines < 5) {
                     EditText editText = new EditText(getApplicationContext());
                     LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UIHelpers.spToPx(50f, RegisterActivity.this));
                     editText.setAlpha(0.6f);
@@ -143,13 +144,21 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Set invite members form visibility to gone
-                teamInviteTitle.setVisibility(View.GONE);
+                pageTitle.setText("Registration");
+                UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, inviteMembersForm);
                 inviteMembersForm.setVisibility(View.GONE);
+
+                UIHelpers.runFadeInAnimationOn(RegisterActivity.this, emailAddress);
                 emailAddress.setVisibility(View.VISIBLE);
+                UIHelpers.runFadeInAnimationOn(RegisterActivity.this, userPassword);
                 userPassword.setVisibility(View.VISIBLE);
+                UIHelpers.runFadeInAnimationOn(RegisterActivity.this, userPasswordConfirmation);
                 userPasswordConfirmation.setVisibility(View.VISIBLE);
+                UIHelpers.runFadeInAnimationOn(RegisterActivity.this, teamName);
                 teamName.setVisibility(View.VISIBLE);
+                UIHelpers.runFadeInAnimationOn(RegisterActivity.this, btnCreateTeam);
                 btnCreateTeam.setVisibility(View.VISIBLE);
+                UIHelpers.runFadeInAnimationOn(RegisterActivity.this, btnInviteTeam);
                 btnInviteTeam.setVisibility(View.VISIBLE);
             }
         });
@@ -157,13 +166,21 @@ public class RegisterActivity extends AppCompatActivity {
         btnInviteTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                teamInviteTitle.setVisibility(View.VISIBLE);
+                pageTitle.setText("Invite members");
+                UIHelpers.runFadeInAnimationOn(RegisterActivity.this, inviteMembersForm);
                 inviteMembersForm.setVisibility(View.VISIBLE);
+
+                UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, emailAddress);
                 emailAddress.setVisibility(View.GONE);
+                UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, userPassword);
                 userPassword.setVisibility(View.GONE);
+                UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, userPasswordConfirmation);
                 userPasswordConfirmation.setVisibility(View.GONE);
+                UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, teamName);
                 teamName.setVisibility(View.GONE);
+                UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, btnCreateTeam);
                 btnCreateTeam.setVisibility(View.GONE);
+                UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, btnInviteTeam);
                 btnInviteTeam.setVisibility(View.GONE);
             }
         });
@@ -178,13 +195,13 @@ public class RegisterActivity extends AppCompatActivity {
                 String userPass = userPassword.getText().toString();
 
                 /* Input validation */
-                if(userEmail.trim().equals("")) {
+                if (userEmail.trim().equals("")) {
 
                 }
-                if(userTeamName.trim().equals("")) {
+                if (userTeamName.trim().equals("")) {
 
                 }
-                if(userPass.trim().equals("")) {
+                if (userPass.trim().equals("")) {
 
                 }
 
@@ -194,7 +211,7 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
 
-                                if(task.isSuccessful()) {
+                                if (task.isSuccessful()) {
                                     // Display progress bar
                                     ProgressBar progressBar = new ProgressBar(RegisterActivity.this, null, android.R.attr.progressBarStyleLarge);
                                     progressBar.setIndeterminate(true);

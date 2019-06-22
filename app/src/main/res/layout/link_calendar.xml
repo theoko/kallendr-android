@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_calendar_linking"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginTop="20sp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Welcome to Kallendr!"
+            android:textColor="@color/colorBackground"
+            android:textSize="35sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start by linking your favorite calendar"
+            android:textColor="@color/colorBackground"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_outlook_link"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="#0069bd"
+            android:drawableLeft="@mipmap/ic_outlook_btn"
+            android:text="Link Outlook Calendar" />
+
+        <Button
+            android:id="@+id/btn_google_link"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="#1e88e2"
+            android:drawableLeft="@mipmap/ic_google_btn"
+            android:text="Link Google Calendar" />
+
+    </LinearLayout>
+
+</LinearLayout>
