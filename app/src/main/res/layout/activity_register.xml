@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/pageTitle"
-        android:alpha="0.5"
+        android:alpha="0.7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/colorBackground"
@@ -26,7 +26,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:background="@android:color/transparent"
         android:hint="@string/email"
         android:inputType="textEmailAddress" />
@@ -39,7 +39,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:background="@android:color/transparent"
         android:hint="@string/team_name" />
 
@@ -51,7 +51,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:background="@android:color/transparent"
         android:hint="@string/password"
         android:inputType="textPassword" />
@@ -64,7 +64,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginEnd="24dp"
         android:alpha="0.6"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:background="@android:color/transparent"
         android:hint="@string/confirm_password"
         android:inputType="textPassword" />
