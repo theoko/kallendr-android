@@ -12,10 +12,12 @@ import android.widget.LinearLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
+import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.calendar.MyCalendar;
 import com.kallendr.android.ui.login.LoginActivity;
 import com.kallendr.android.ui.register.RegisterActivity;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if user has already signed in
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            Intent intent = new Intent(MainActivity.this, MyCalendar.class);
+            Intent intent = new Intent(MainActivity.this, CalendarMainActivity.class);
             startActivity(intent);
             finish();
         }

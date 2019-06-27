@@ -25,6 +25,7 @@ import com.kallendr.android.R;
 import com.kallendr.android.helpers.OnTaskCompleted;
 import com.kallendr.android.helpers.TextValidator;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.calendar.MyCalendar;
 import com.kallendr.android.ui.home.MainActivity;
 
@@ -265,7 +266,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void finishedRegistration() {
-        Intent intent = new Intent(mContext, MyCalendar.class);
+        Intent intent = new Intent(mContext, CalendarMainActivity.class);
         startActivity(intent);
         finish();
     }

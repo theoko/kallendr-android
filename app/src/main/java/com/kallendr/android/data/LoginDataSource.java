@@ -12,6 +12,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.data.model.LoggedInUser;
+import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.calendar.MyCalendar;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class LoginDataSource {
                             Toast.makeText(context, "Please check the credentials and try again.", Toast.LENGTH_LONG).show();
                         } else {
                             // Launch MyCalendar activity
-                            Intent intent = new Intent(context, MyCalendar.class);
+                            Intent intent = new Intent(context, CalendarMainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }
