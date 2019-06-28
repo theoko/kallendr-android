@@ -27,7 +27,7 @@ import java.util.Date;
 public class CalendarMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private ArrayAdapter listViewAdapter;
+    private EventAdapter eventAdapter;
     private ArrayList<Event> listViewItems;
     private CalendarView calendarView;
     private ListView listView;
@@ -63,24 +63,27 @@ public class CalendarMainActivity extends AppCompatActivity
          * Add example events
          */
         Event event = new Event();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-        event.setTimeOfEvent(simpleDateFormat);
+        event.setTimeOfEvent(new Date(System.currentTimeMillis()));
         event.setDescription("Test description 123");
         listViewItems.add(event);
 
         event = new Event();
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-        event.setTimeOfEvent(simpleDateFormat);
+        event.setTimeOfEvent(new Date(System.currentTimeMillis()));
         event.setDescription("Test description 1234");
         listViewItems.add(event);
-
-        listView.setAdapter(new EventAdapter(this, listViewItems));
+        eventAdapter = new EventAdapter(this, listViewItems);
+        listView.setAdapter(eventAdapter);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // List events for selected day
                 Date currDate = new Date(view.getDate());
+                Event sample = new Event();
+                sample.setTimeOfEvent(new Date(System.currentTimeMillis()));
+                sample.setDescription("Test description 1234");
+                listViewItems.add(sample);
+                eventAdapter.notifyDataSetChanged();
             }
         });
 

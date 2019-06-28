@@ -53,7 +53,7 @@ public class EventAdapter extends BaseAdapter {
         TextView text1 = twoLineListItem.getText1();
         TextView text2 = twoLineListItem.getText2();
 
-        text1.setText(events.get(position).getTimeOfEvent().toLocalizedPattern());
+        text1.setText(events.get(position).getTimeOfEvent());
         text2.setText("" + events.get(position).getDescription());
 
         return twoLineListItem;

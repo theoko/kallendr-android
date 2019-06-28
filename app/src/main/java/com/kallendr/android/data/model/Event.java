@@ -1,17 +1,19 @@
 package com.kallendr.android.data.model;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Event {
-    private SimpleDateFormat timeOfEvent;
+    private String timeOfEvent;
     private String description;
 
-    public SimpleDateFormat getTimeOfEvent() {
+    public String getTimeOfEvent() {
         return timeOfEvent;
     }
 
-    public void setTimeOfEvent(SimpleDateFormat timeOfEvent) {
-        this.timeOfEvent = timeOfEvent;
+    public void setTimeOfEvent(Date timeOfEvent) {
+        this.timeOfEvent = new SimpleDateFormat("HH:mm", Locale.US).format(timeOfEvent);
     }
 
     public String getDescription() {
