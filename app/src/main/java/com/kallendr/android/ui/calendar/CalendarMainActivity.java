@@ -12,16 +12,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
 
 import com.kallendr.android.R;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class CalendarMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private ArrayAdapter listViewAdapter;
+    private ArrayList<String> listViewItems;
     private CalendarView calendarView;
     private ListView listView;
 
@@ -50,19 +54,35 @@ public class CalendarMainActivity extends AppCompatActivity
 
         calendarView = findViewById(R.id.calendarView);
         listView = findViewById(R.id.eventList);
+        listViewItems = new ArrayList<>();
+        listViewAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                listViewItems
+        );
+        listView.setAdapter(listViewAdapter);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // List events for selected day
-                System.out.println("YEAR: " + year);
+                Date currDate = new Date(view.getDate());
+                listViewAdapter.add(String.valueOf(currDate.getDate()));
+                listViewAdapter.notifyDataSetChanged();
             }
         });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         // List events for current day
         long date = calendarView.getDate();
         Date currDate = new Date(date);
-
+        listViewAdapter.add(String.valueOf(currDate.getDate()));
+        listViewAdapter.notifyDataSetChanged();
     }
 
     @Override

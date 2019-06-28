@@ -9,11 +9,25 @@
     tools:showIn="@layout/app_bar_calendar_main"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:padding="20sp"
+        android:text="Calendar" />
+
     <!-- Display calendar of events for this week -->
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:padding="20sp"
+        android:text="Events" />
 
     <ListView
         android:id="@+id/eventList"
