@@ -67,7 +67,7 @@ public class CalendarMainActivity extends AppCompatActivity
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // List events for selected day
                 Date currDate = new Date(view.getDate());
-                listViewAdapter.add(String.valueOf(currDate.getDate()));
+                listViewAdapter.add(String.valueOf(year + "/" + month + "/" + dayOfMonth));
                 listViewAdapter.notifyDataSetChanged();
             }
         });
