@@ -17,7 +17,10 @@ import android.widget.CalendarView;
 import android.widget.ListView;
 
 import com.kallendr.android.R;
+import com.kallendr.android.data.adapters.EventAdapter;
+import com.kallendr.android.data.model.Event;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -25,7 +28,7 @@ public class CalendarMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private ArrayAdapter listViewAdapter;
-    private ArrayList<String> listViewItems;
+    private ArrayList<Event> listViewItems;
     private CalendarView calendarView;
     private ListView listView;
 
@@ -55,20 +58,29 @@ public class CalendarMainActivity extends AppCompatActivity
         calendarView = findViewById(R.id.calendarView);
         listView = findViewById(R.id.eventList);
         listViewItems = new ArrayList<>();
-        listViewAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                listViewItems
-        );
-        listView.setAdapter(listViewAdapter);
+
+        /*
+         * Add example events
+         */
+        Event event = new Event();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        event.setTimeOfEvent(simpleDateFormat);
+        event.setDescription("Test description 123");
+        listViewItems.add(event);
+
+        event = new Event();
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        event.setTimeOfEvent(simpleDateFormat);
+        event.setDescription("Test description 1234");
+        listViewItems.add(event);
+
+        listView.setAdapter(new EventAdapter(this, listViewItems));
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // List events for selected day
                 Date currDate = new Date(view.getDate());
-                listViewAdapter.add(String.valueOf(year + "/" + month + "/" + dayOfMonth));
-                listViewAdapter.notifyDataSetChanged();
             }
         });
 
@@ -81,8 +93,6 @@ public class CalendarMainActivity extends AppCompatActivity
         // List events for current day
         long date = calendarView.getDate();
         Date currDate = new Date(date);
-        listViewAdapter.add(String.valueOf(currDate.getDate()));
-        listViewAdapter.notifyDataSetChanged();
     }
 
     @Override
