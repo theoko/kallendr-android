@@ -80,7 +80,7 @@ public class CalendarMainActivity extends AppCompatActivity
                 // List events for selected day
                 Date currDate = new Date(view.getDate());
                 Event sample = new Event();
-                sample.setTimeOfEvent(new Date(System.currentTimeMillis()));
+                sample.setTimeOfEvent(currDate);
                 sample.setDescription("Test description 1234");
                 listViewItems.add(sample);
                 eventAdapter.notifyDataSetChanged();
