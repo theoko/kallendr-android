@@ -12,21 +12,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.kallendr.android.R;
+import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class CalendarMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private LinearLayout mainCalendarLayout;
     private EventAdapter eventAdapter;
     private ArrayList<Event> listViewItems;
     private CalendarView calendarView;
@@ -55,6 +56,7 @@ public class CalendarMainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        mainCalendarLayout = findViewById(R.id.mainCalendarLayout);
         calendarView = findViewById(R.id.calendarView);
         listView = findViewById(R.id.eventList);
         listViewItems = new ArrayList<>();
@@ -93,9 +95,15 @@ public class CalendarMainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
+        checkIfFirstTime();
+
         // List events for current day
         long date = calendarView.getDate();
         Date currDate = new Date(date);
+    }
+
+    private void checkIfFirstTime() {
+
     }
 
     @Override
