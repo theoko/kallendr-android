@@ -12,14 +12,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.CalendarView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
+import com.kallendr.android.helpers.FirstLoginCallback;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +29,15 @@ import java.util.Date;
 public class CalendarMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private LinearLayout mainCalendarLayout;
+    /**
+     * Calendar setup
+     */
+    private Button btn_outlook_link;
+    private Button btn_google_link;
+
+    /**
+     * Main app functionality
+     */
     private EventAdapter eventAdapter;
     private ArrayList<Event> listViewItems;
     private CalendarView calendarView;
@@ -36,74 +46,100 @@ public class CalendarMainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar_main);
-        setTitle("Kallendr");
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
 
-        mainCalendarLayout = findViewById(R.id.mainCalendarLayout);
-        calendarView = findViewById(R.id.calendarView);
-        listView = findViewById(R.id.eventList);
-        listViewItems = new ArrayList<>();
-
-        /*
-         * Add example events
-         */
-        Event event = new Event();
-        event.setTimeOfEvent(new Date(System.currentTimeMillis()));
-        event.setDescription("Test description 123");
-        listViewItems.add(event);
-
-        event = new Event();
-        event.setTimeOfEvent(new Date(System.currentTimeMillis()));
-        event.setDescription("Test description 1234");
-        listViewItems.add(event);
-        eventAdapter = new EventAdapter(this, listViewItems);
-        listView.setAdapter(eventAdapter);
-
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                // List events for selected day
-                Date currDate = new Date(view.getDate());
-                Event sample = new Event();
-                sample.setTimeOfEvent(currDate);
-                sample.setDescription("Test description 1234");
-                listViewItems.add(sample);
-                eventAdapter.notifyDataSetChanged();
-            }
-        });
-
+        // First login
+        checkIfFirstLogin();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        checkIfFirstTime();
-
-        // List events for current day
-        long date = calendarView.getDate();
-        Date currDate = new Date(date);
     }
 
-    private void checkIfFirstTime() {
+    private void checkIfFirstLogin() {
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setProgressBarIndeterminateVisibility(true);
+        Database.getInstance().firstLogin(new FirstLoginCallback() {
+            @Override
+            public void onFirstLogin(boolean firstLogin) {
+                setProgressBarIndeterminateVisibility(false);
+                if (firstLogin) {
+                    setContentView(R.layout.link_calendar);
 
+                    btn_outlook_link = findViewById(R.id.btn_outlook_link);
+                    btn_google_link = findViewById(R.id.btn_google_link);
+
+                    btn_outlook_link.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                    btn_google_link.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                } else {
+                    setContentView(R.layout.activity_calendar_main);
+                    setTitle("Kallendr");
+                    Toolbar toolbar = findViewById(R.id.toolbar);
+                    setSupportActionBar(toolbar);
+                    FloatingActionButton fab = findViewById(R.id.fab);
+                    fab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+                    });
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    NavigationView navigationView = findViewById(R.id.nav_view);
+                    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                            CalendarMainActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                    drawer.addDrawerListener(toggle);
+                    toggle.syncState();
+                    navigationView.setNavigationItemSelectedListener(CalendarMainActivity.this);
+
+                    calendarView = findViewById(R.id.calendarView);
+                    listView = findViewById(R.id.eventList);
+                    listViewItems = new ArrayList<>();
+
+                    /*
+                     * Add example events
+                     */
+                    Event event = new Event();
+                    event.setTimeOfEvent(new Date(System.currentTimeMillis()));
+                    event.setDescription("Test description 123");
+                    listViewItems.add(event);
+
+                    event = new Event();
+                    event.setTimeOfEvent(new Date(System.currentTimeMillis()));
+                    event.setDescription("Test description 1234");
+                    listViewItems.add(event);
+                    eventAdapter = new EventAdapter(CalendarMainActivity.this, listViewItems);
+                    listView.setAdapter(eventAdapter);
+
+                    calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                        @Override
+                        public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                            // List events for selected day
+                            Date currDate = new Date(view.getDate());
+                            Event sample = new Event();
+                            sample.setTimeOfEvent(currDate);
+                            sample.setDescription("Test description 1234");
+                            listViewItems.add(sample);
+                            eventAdapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    // List events for current day
+                    long date = calendarView.getDate();
+                    Date currDate = new Date(date);
+                }
+            }
+        });
     }
 
     @Override
@@ -162,4 +198,5 @@ public class CalendarMainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
