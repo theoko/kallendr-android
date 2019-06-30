@@ -15,6 +15,7 @@ import com.kallendr.android.helpers.FirstLoginCallback;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Database {
@@ -37,12 +38,27 @@ public class Database {
         ValueEventListener mUserValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() > 0) {
-                    firstLoginCallback.onFirstLogin(false);
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    DatabaseReference firstLogin = mUserReference.child("firstLogin");
+                    ValueEventListener firstLoginValueEventListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists())
+                            {
+                                firstLoginCallback.onFirstLogin(false);
+                            } else {
+                                firstLoginCallback.onFirstLogin(true);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    };
+                    firstLogin.addListenerForSingleValueEvent(firstLoginValueEventListener);
+                    firstLogin.removeEventListener(firstLoginValueEventListener);
                 } else {
-                    Map<String, Object> postValues = new HashMap<String,Object>();
-                    postValues.put("firstLogin", "completed");
-                    mUserReference.updateChildren(postValues);
                     firstLoginCallback.onFirstLogin(true);
                 }
             }
@@ -54,6 +70,14 @@ public class Database {
         };
         mUserReference.addListenerForSingleValueEvent(mUserValueEventListener);
         mUserReference.removeEventListener(mUserValueEventListener);
+    }
+
+    public void onCalendarSetupComplete() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
+        Map<String, Object> postValues = new HashMap<>();
+        postValues.put("firstLogin", Constants.COMPLETE);
+        mUserReference.updateChildren(postValues);
     }
 
     public void getEvents(Date date, final EventCallback eventCallback) {

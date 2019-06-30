@@ -1,9 +1,13 @@
 package com.kallendr.android.ui.calendar;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,14 +25,18 @@ import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
+import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.FirstLoginCallback;
+import com.kallendr.android.helpers.LocalEventGetter;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CalendarMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int PERMISSIONS_REQUEST_READ_CALENDAR = 1;
     /**
      * Calendar setup
      */
@@ -69,6 +77,7 @@ public class CalendarMainActivity extends AppCompatActivity
 
                     btn_outlook_link = findViewById(R.id.btn_outlook_link);
                     btn_google_link = findViewById(R.id.btn_google_link);
+                    btn_phone_calendar = findViewById(R.id.btn_phone_calendar);
 
                     btn_outlook_link.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -85,7 +94,34 @@ public class CalendarMainActivity extends AppCompatActivity
                     btn_phone_calendar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if (ContextCompat.checkSelfPermission(CalendarMainActivity.this, Manifest.permission.READ_CALENDAR)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                // Permission is not granted
+                                // Should we show an explanation?
+                                if (ActivityCompat.shouldShowRequestPermissionRationale(CalendarMainActivity.this,
+                                        Manifest.permission.READ_CALENDAR)) {
+                                    // Show an explanation to the user *asynchronously* -- don't block
+                                    // this thread waiting for the user's response! After the user
+                                    // sees the explanation, try again to request the permission.
+                                } else {
+                                    // No explanation needed; request the permission
+                                    ActivityCompat.requestPermissions(CalendarMainActivity.this,
+                                            new String[]{Manifest.permission.READ_CALENDAR},
+                                            PERMISSIONS_REQUEST_READ_CALENDAR);
 
+                                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                                    // app-defined int constant. The callback method gets the
+                                    // result of the request.
+                                }
+                            } else {
+                                List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
+                                for (LocalEvent localEvent : events) {
+                                    System.out.println("NAME OF EVENT: " + localEvent.getName());
+                                    System.out.println("START: " + localEvent.getStartDate());
+                                    System.out.println("START: " + localEvent.getEndDate());
+                                    System.out.println("DESCRIPTION: " + localEvent.getDescription());
+                                }
+                            }
                         }
                     });
                 } else {

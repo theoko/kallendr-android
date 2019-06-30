@@ -6,4 +6,6 @@ public class Constants {
      */
     public static String userDB = "user_preferences";
     public static String eventsDB = "events";
+    public static String COMPLETE = "completed";
+    public static String INCOMPLETE = "incomplete";
 }
