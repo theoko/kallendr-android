@@ -34,6 +34,7 @@ public class CalendarMainActivity extends AppCompatActivity
      */
     private Button btn_outlook_link;
     private Button btn_google_link;
+    private Button btn_phone_calendar;
 
     /**
      * Main app functionality
@@ -76,6 +77,12 @@ public class CalendarMainActivity extends AppCompatActivity
                         }
                     });
                     btn_google_link.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                    btn_phone_calendar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 

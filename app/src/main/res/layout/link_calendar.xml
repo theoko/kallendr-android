@@ -61,6 +61,16 @@
             android:drawableLeft="@mipmap/ic_google_btn"
             android:text="Link Google Calendar" />
 
+        <Button
+            android:id="@+id/btn_phone_calendar"
+            android:layout_marginTop="10dp"
+            android:textSize="17sp"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="@color/colorBackground"
+            android:text="Continue with phone calendar" />
+
     </LinearLayout>
 
 </LinearLayout>
