@@ -57,6 +57,7 @@ public class CalendarMainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.loader);
 
         // First login
         checkIfFirstLogin();
@@ -68,8 +69,6 @@ public class CalendarMainActivity extends AppCompatActivity
     }
 
     private void checkIfFirstLogin() {
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setProgressBarIndeterminateVisibility(true);
         Database.getInstance().firstLogin(new FirstLoginCallback() {
             @Override
             public void onFirstLogin(boolean firstLogin) {
@@ -166,12 +165,28 @@ public class CalendarMainActivity extends AppCompatActivity
 
     private void readLocalCalendar() {
         List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
-        for (LocalEvent localEvent : events) {
+        if(events.size() > 0)
+        {
+            displayCollectedEventsMsg();
+        } else {
+            displayOtherCalendarOptions();
+        }
+        /*for (LocalEvent localEvent : events) {
             System.out.println("NAME OF EVENT: " + localEvent.getName());
             System.out.println("START: " + localEvent.getStartDate());
             System.out.println("START: " + localEvent.getEndDate());
             System.out.println("DESCRIPTION: " + localEvent.getDescription());
-        }
+        }*/
+    }
+
+    private void displayCollectedEventsMsg()
+    {
+
+    }
+
+    private void displayOtherCalendarOptions()
+    {
+
     }
 
     private void checkPermissionsAndRequestIfNeeded() {
