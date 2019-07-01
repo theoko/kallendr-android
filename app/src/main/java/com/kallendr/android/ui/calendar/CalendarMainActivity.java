@@ -3,6 +3,7 @@ package com.kallendr.android.ui.calendar;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
@@ -73,6 +75,7 @@ public class CalendarMainActivity extends AppCompatActivity
             public void onFirstLogin(boolean firstLogin) {
                 setProgressBarIndeterminateVisibility(false);
                 if (firstLogin) {
+                    checkPermissionsAndRequestIfNeeded();
                     setContentView(R.layout.link_calendar);
 
                     btn_outlook_link = findViewById(R.id.btn_outlook_link);
@@ -95,32 +98,8 @@ public class CalendarMainActivity extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             if (ContextCompat.checkSelfPermission(CalendarMainActivity.this, Manifest.permission.READ_CALENDAR)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                                // Permission is not granted
-                                // Should we show an explanation?
-                                if (ActivityCompat.shouldShowRequestPermissionRationale(CalendarMainActivity.this,
-                                        Manifest.permission.READ_CALENDAR)) {
-                                    // Show an explanation to the user *asynchronously* -- don't block
-                                    // this thread waiting for the user's response! After the user
-                                    // sees the explanation, try again to request the permission.
-                                } else {
-                                    // No explanation needed; request the permission
-                                    ActivityCompat.requestPermissions(CalendarMainActivity.this,
-                                            new String[]{Manifest.permission.READ_CALENDAR},
-                                            PERMISSIONS_REQUEST_READ_CALENDAR);
-
-                                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                                    // app-defined int constant. The callback method gets the
-                                    // result of the request.
-                                }
-                            } else {
-                                List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
-                                for (LocalEvent localEvent : events) {
-                                    System.out.println("NAME OF EVENT: " + localEvent.getName());
-                                    System.out.println("START: " + localEvent.getStartDate());
-                                    System.out.println("START: " + localEvent.getEndDate());
-                                    System.out.println("DESCRIPTION: " + localEvent.getDescription());
-                                }
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                readLocalCalendar();
                             }
                         }
                     });
@@ -183,6 +162,60 @@ public class CalendarMainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    private void readLocalCalendar() {
+        List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
+        for (LocalEvent localEvent : events) {
+            System.out.println("NAME OF EVENT: " + localEvent.getName());
+            System.out.println("START: " + localEvent.getStartDate());
+            System.out.println("START: " + localEvent.getEndDate());
+            System.out.println("DESCRIPTION: " + localEvent.getDescription());
+        }
+    }
+
+    private void checkPermissionsAndRequestIfNeeded() {
+        if (ContextCompat.checkSelfPermission(CalendarMainActivity.this, Manifest.permission.READ_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(CalendarMainActivity.this,
+                    Manifest.permission.READ_CALENDAR)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(CalendarMainActivity.this,
+                        new String[]{Manifest.permission.READ_CALENDAR},
+                        PERMISSIONS_REQUEST_READ_CALENDAR);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode)
+        {
+            case PERMISSIONS_REQUEST_READ_CALENDAR: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Toast.makeText(CalendarMainActivity.this, "Permissions granted", Toast.LENGTH_LONG).show();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
     }
 
     @Override
