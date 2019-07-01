@@ -2,20 +2,48 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:gravity="top"
     android:orientation="vertical">
 
-    <ImageView
+    <LinearLayout
+        android:layout_marginTop="20sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="30sp"
-        android:src="@drawable/ic_kallendr" />
+        android:orientation="horizontal">
 
-    <TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20sp"
+            android:textSize="30sp"
+            android:text="Oops! Something went wrong..."/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20sp"
-        android:textSize="17sp"
-        android:text="@string/kallendr_permissions_msg" />
+        android:padding="40sp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:text="@string/kallendr_permissions_msg" />
+
+        <Button
+            android:id="@+id/btn_allow_access_phone_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:textSize="17sp"
+            android:background="#1e88e2"
+            android:textColor="@android:color/white"
+            android:drawableLeft="@mipmap/ic_google_btn"
+            android:text="Allow access" />
+
+    </LinearLayout>
 
 </LinearLayout>
