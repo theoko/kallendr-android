@@ -8,4 +8,9 @@ public class Constants {
     public static String eventsDB = "events";
     public static String COMPLETE = "completed";
     public static String INCOMPLETE = "incomplete";
+
+    /**
+     * Permission codes
+     */
+    public static final int PERMISSIONS_REQUEST_READ_CALENDAR = 1;
 }

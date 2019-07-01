@@ -1,14 +1,12 @@
 package com.kallendr.android.ui.calendar;
 
-import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,14 +18,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
+import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.FirstLoginCallback;
+import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.LocalEventGetter;
 
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ import java.util.List;
 public class CalendarMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int PERMISSIONS_REQUEST_READ_CALENDAR = 1;
     /**
      * Calendar setup
      */
@@ -73,7 +71,7 @@ public class CalendarMainActivity extends AppCompatActivity
             public void onFirstLogin(boolean firstLogin) {
                 setProgressBarIndeterminateVisibility(false);
                 if (firstLogin) {
-                    checkPermissionsAndRequestIfNeeded();
+                    Helpers.checkPermissionsAndRequestIfNeeded(CalendarMainActivity.this);
                     setContentView(R.layout.link_calendar);
 
                     btn_outlook_link = findViewById(R.id.btn_outlook_link);
@@ -161,8 +159,7 @@ public class CalendarMainActivity extends AppCompatActivity
 
     private void readLocalCalendar() {
         List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
-        if(events.size() > 0)
-        {
+        if (events.size() > 0) {
             displayCollectedEventsMsg();
         } else {
             displayOtherCalendarOptions();
@@ -175,45 +172,25 @@ public class CalendarMainActivity extends AppCompatActivity
         }*/
     }
 
-    private void displayCollectedEventsMsg()
-    {
+    private void readPermissionDenied() {
+        Intent intent = new Intent(CalendarMainActivity.this, PermissionRequestActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void displayCollectedEventsMsg() {
 
     }
 
-    private void displayOtherCalendarOptions()
-    {
+    private void displayOtherCalendarOptions() {
 
-    }
-
-    private void checkPermissionsAndRequestIfNeeded() {
-        if (ContextCompat.checkSelfPermission(CalendarMainActivity.this, Manifest.permission.READ_CALENDAR)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(CalendarMainActivity.this,
-                    Manifest.permission.READ_CALENDAR)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(CalendarMainActivity.this,
-                        new String[]{Manifest.permission.READ_CALENDAR},
-                        PERMISSIONS_REQUEST_READ_CALENDAR);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode)
-        {
-            case PERMISSIONS_REQUEST_READ_CALENDAR: {
+        switch (requestCode) {
+            case Constants.PERMISSIONS_REQUEST_READ_CALENDAR: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -223,7 +200,7 @@ public class CalendarMainActivity extends AppCompatActivity
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-
+                    readPermissionDenied();
                 }
                 return;
             }
