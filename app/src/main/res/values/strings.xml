@@ -35,4 +35,5 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="kallendr_permissions_msg">Kallendr needs to access your phone calendar in order to work properly.</string>
 </resources>

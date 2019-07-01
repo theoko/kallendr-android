@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ListView;
@@ -96,10 +95,7 @@ public class CalendarMainActivity extends AppCompatActivity
                     btn_phone_calendar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (ContextCompat.checkSelfPermission(CalendarMainActivity.this, Manifest.permission.READ_CALENDAR)
-                                    == PackageManager.PERMISSION_GRANTED) {
-                                readLocalCalendar();
-                            }
+
                         }
                     });
                 } else {
@@ -223,10 +219,11 @@ public class CalendarMainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    Toast.makeText(CalendarMainActivity.this, "Permissions granted", Toast.LENGTH_LONG).show();
+                    readLocalCalendar();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+
                 }
                 return;
             }
