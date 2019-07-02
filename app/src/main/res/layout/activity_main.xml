@@ -27,7 +27,7 @@
             android:layout_width="200sp"
             android:layout_height="70sp"
             android:textSize="18sp"
-            android:background="@drawable/button_shadow"
+            android:background="@color/colorBackground"
             android:textColor="@android:color/white"
             android:text="Get Started"
             android:onClick="btn_getStarted" />
@@ -48,7 +48,7 @@
             android:layout_height="70sp"
             android:textSize="18sp"
             android:width="@dimen/activity_horizontal_margin"
-            android:background="@drawable/button_shadow"
+            android:background="@color/colorBackground"
             android:text="@string/create_team"
             android:textColor="@android:color/white"
             android:onClick="btn_createTeam"

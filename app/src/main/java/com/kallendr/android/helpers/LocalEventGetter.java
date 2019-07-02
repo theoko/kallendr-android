@@ -1,10 +1,12 @@
 package com.kallendr.android.helpers;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 
-import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 
 import java.text.SimpleDateFormat;
@@ -12,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 public class LocalEventGetter {
@@ -23,6 +24,11 @@ public class LocalEventGetter {
     public static ArrayList<String> descriptions = new ArrayList<>();
 
     public static List<LocalEvent> readCalendarEvent(Context context) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
+                != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+
         try {
 
             Cursor cursor = context.getContentResolver()
