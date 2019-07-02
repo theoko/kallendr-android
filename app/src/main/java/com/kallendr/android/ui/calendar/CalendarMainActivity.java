@@ -46,17 +46,21 @@ public class CalendarMainActivity extends AppCompatActivity
     private TextView setup_description;
 
     private LinearLayout buttons_calendar_link_layout;
+    private LinearLayout events_layout;
     private Button btn_outlook_link;
     private Button btn_google_link;
     private Button btn_phone_calendar;
+    private ListView initialLocalEventsList;
+    private EventAdapter initialEventAdapter;
+    private ArrayList<Event> initialLocalEventItems;
 
     /**
      * Main app functionality
      */
-    private EventAdapter eventAdapter;
+    private EventAdapter eventAdapterForDay;
     private ArrayList<Event> listViewItems;
-    private CalendarView calendarView;
-    private ListView listView;
+    private CalendarView mainCalendarView;
+    private ListView listViewForDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +88,12 @@ public class CalendarMainActivity extends AppCompatActivity
                     setup_description = findViewById(R.id.setup_description);
 
                     buttons_calendar_link_layout = findViewById(R.id.buttons_calendar_link_layout);
+                    events_layout = findViewById(R.id.events_layout);
                     btn_outlook_link = findViewById(R.id.btn_outlook_link);
                     btn_google_link = findViewById(R.id.btn_google_link);
                     btn_phone_calendar = findViewById(R.id.btn_phone_calendar);
+                    initialLocalEventsList = findViewById(R.id.eventList);
+                    initialLocalEventItems = new ArrayList<>();
 
                     btn_outlook_link.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -127,8 +134,8 @@ public class CalendarMainActivity extends AppCompatActivity
                     toggle.syncState();
                     navigationView.setNavigationItemSelectedListener(CalendarMainActivity.this);
 
-                    calendarView = findViewById(R.id.calendarView);
-                    listView = findViewById(R.id.eventList);
+                    mainCalendarView = findViewById(R.id.calendarView);
+                    listViewForDay = findViewById(R.id.eventList);
                     listViewItems = new ArrayList<>();
 
                     /*
@@ -143,10 +150,10 @@ public class CalendarMainActivity extends AppCompatActivity
                     event.setTimeOfEvent(new Date(System.currentTimeMillis()));
                     event.setDescription("Test description 1234");
                     listViewItems.add(event);
-                    eventAdapter = new EventAdapter(CalendarMainActivity.this, listViewItems);
-                    listView.setAdapter(eventAdapter);
+                    eventAdapterForDay = new EventAdapter(CalendarMainActivity.this, listViewItems);
+                    listViewForDay.setAdapter(eventAdapterForDay);
 
-                    calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                    mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
                         @Override
                         public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                             // List events for selected day
@@ -155,12 +162,12 @@ public class CalendarMainActivity extends AppCompatActivity
                             sample.setTimeOfEvent(currDate);
                             sample.setDescription("Test description 1234");
                             listViewItems.add(sample);
-                            eventAdapter.notifyDataSetChanged();
+                            eventAdapterForDay.notifyDataSetChanged();
                         }
                     });
 
                     // List events for current day
-                    long date = calendarView.getDate();
+                    long date = mainCalendarView.getDate();
                     Date currDate = new Date(date);
                 }
             }
@@ -203,8 +210,20 @@ public class CalendarMainActivity extends AppCompatActivity
         buttons_calendar_link_layout.setVisibility(View.GONE);
 
         int totalEvents = eventList.size();
+        for (LocalEvent localEvent : eventList) {
+            Event event = new Event();
+            event.setTimeOfEvent(new Date(localEvent.getStartDate()));
+            event.setDescription(localEvent.getDescription());
+            initialLocalEventItems.add(
+                    event
+            );
+        }
+        initialEventAdapter = new EventAdapter(CalendarMainActivity.this, initialLocalEventItems);
+        initialLocalEventsList.setAdapter(initialEventAdapter);
+
         setup_header.setText("We found " + totalEvents + " events!");
         setup_description.setText("You can link more calendars later in the settings page");
+        events_layout.setVisibility(View.VISIBLE);
     }
 
     private void displayOtherCalendarOptions() {
