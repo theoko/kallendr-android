@@ -139,30 +139,18 @@ public class CalendarMainActivity extends AppCompatActivity
                     listViewItems = new ArrayList<>();
 
                     /*
-                     * Add example events
+                     * Add events
                      */
-                    Event event = new Event();
-                    event.setTimeOfEvent(new Date(System.currentTimeMillis()));
-                    event.setDescription("Test description 123");
-                    listViewItems.add(event);
-
-                    event = new Event();
-                    event.setTimeOfEvent(new Date(System.currentTimeMillis()));
-                    event.setDescription("Test description 1234");
-                    listViewItems.add(event);
-                    eventAdapterForDay = new EventAdapter(CalendarMainActivity.this, listViewItems);
-                    listViewForDay.setAdapter(eventAdapterForDay);
-
                     mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
                         @Override
                         public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                             // List events for selected day
-                            Date currDate = new Date(view.getDate());
+                            /*Date currDate = new Date(view.getDate());
                             Event sample = new Event();
                             sample.setTimeOfEvent(currDate);
                             sample.setDescription("Test description 1234");
                             listViewItems.add(sample);
-                            eventAdapterForDay.notifyDataSetChanged();
+                            eventAdapterForDay.notifyDataSetChanged();*/
                         }
                     });
 
@@ -212,7 +200,7 @@ public class CalendarMainActivity extends AppCompatActivity
         int totalEvents = eventList.size();
         for (LocalEvent localEvent : eventList) {
             Event event = new Event();
-            event.setTimeOfEvent(new Date(localEvent.getStartDate()));
+            event.setTitleOfEvent(localEvent.getName(), new Date(localEvent.getStartDate()));
             event.setDescription(localEvent.getDescription());
             initialLocalEventItems.add(
                     event

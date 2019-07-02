@@ -5,15 +5,16 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Event {
-    private String timeOfEvent;
+    private String titleOfEvent;
     private String description;
 
     public String getTimeOfEvent() {
-        return timeOfEvent;
+        return titleOfEvent;
     }
 
-    public void setTimeOfEvent(Date timeOfEvent) {
-        this.timeOfEvent = new SimpleDateFormat("HH:mm", Locale.US).format(timeOfEvent);
+    public void setTitleOfEvent(String eventTitle, Date timeOfEvent) {
+        this.titleOfEvent = eventTitle + " ";
+        this.titleOfEvent += new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(timeOfEvent);
     }
 
     public String getDescription() {
