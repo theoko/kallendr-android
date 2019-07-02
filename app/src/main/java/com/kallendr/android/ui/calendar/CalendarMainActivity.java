@@ -3,7 +3,6 @@ package com.kallendr.android.ui.calendar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,7 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
@@ -29,6 +30,7 @@ import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.FirstLoginCallback;
 import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.LocalEventGetter;
+import com.kallendr.android.helpers.UIHelpers;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +42,10 @@ public class CalendarMainActivity extends AppCompatActivity
     /**
      * Calendar setup
      */
+    private TextView setup_header;
+    private TextView setup_description;
+
+    private LinearLayout buttons_calendar_link_layout;
     private Button btn_outlook_link;
     private Button btn_google_link;
     private Button btn_phone_calendar;
@@ -74,6 +80,10 @@ public class CalendarMainActivity extends AppCompatActivity
                 if (firstLogin) {
                     setContentView(R.layout.link_calendar);
 
+                    setup_header = findViewById(R.id.setup_header);
+                    setup_description = findViewById(R.id.setup_description);
+
+                    buttons_calendar_link_layout = findViewById(R.id.buttons_calendar_link_layout);
                     btn_outlook_link = findViewById(R.id.btn_outlook_link);
                     btn_google_link = findViewById(R.id.btn_google_link);
                     btn_phone_calendar = findViewById(R.id.btn_phone_calendar);
@@ -161,18 +171,16 @@ public class CalendarMainActivity extends AppCompatActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Thread started");
                 List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
                 if (events == null) {
                     readPermissionDenied();
                 } else {
                     if (events.size() > 0) {
-                        displayCollectedEventsMsg();
+                        displayCollectedEventsMsg(events);
                     } else {
                         displayOtherCalendarOptions();
                     }
                 }
-                System.out.println("Thread stopped");
             }
         }).run();
 
@@ -190,8 +198,13 @@ public class CalendarMainActivity extends AppCompatActivity
         finish();
     }
 
-    private void displayCollectedEventsMsg() {
-        System.out.println("Permission granted!!!");
+    private void displayCollectedEventsMsg(List<LocalEvent> eventList) {
+        UIHelpers.runFadeOutAnimationOn(CalendarMainActivity.this, buttons_calendar_link_layout);
+        buttons_calendar_link_layout.setVisibility(View.GONE);
+
+        int totalEvents = eventList.size();
+        setup_header.setText("We found " + totalEvents + " events!");
+        setup_description.setText("You can link more calendars later in the settings page");
     }
 
     private void displayOtherCalendarOptions() {
