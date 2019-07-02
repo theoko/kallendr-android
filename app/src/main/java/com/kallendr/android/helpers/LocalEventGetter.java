@@ -23,36 +23,43 @@ public class LocalEventGetter {
     public static ArrayList<String> descriptions = new ArrayList<>();
 
     public static List<LocalEvent> readCalendarEvent(Context context) {
-        Cursor cursor = context.getContentResolver()
-                .query(
-                        Uri.parse("content://com.android.calendar/events"),
-                        new String[] { "calendar_id", "title", "description",
-                                "dtstart", "dtend", "eventLocation" }, null,
-                        null, null);
-        Objects.requireNonNull(cursor).moveToFirst();
-        // fetching calendars name
-        String CNames[] = new String[cursor.getCount()];
+        try {
 
-        // fetching calendars id
-        nameOfEvent.clear();
-        startDates.clear();
-        endDates.clear();
-        descriptions.clear();
-        List<LocalEvent> localEventList = new ArrayList<>();
-        for (int i = 0; i < CNames.length; i++) {
+            Cursor cursor = context.getContentResolver()
+                    .query(
+                            Uri.parse("content://com.android.calendar/events"),
+                            new String[]{"calendar_id", "title", "description",
+                                    "dtstart", "dtend", "eventLocation"}, null,
+                            null, null);
+            Objects.requireNonNull(cursor).moveToFirst();
+            // fetching calendars name
+            String CNames[] = new String[cursor.getCount()];
 
-            LocalEvent localEvent = new LocalEvent();
-            localEvent.setName(cursor.getString(1));
-            localEvent.setStartDate(getDate(Long.parseLong(cursor.getString(3))));
-            localEvent.setEndDate(getDate(Long.parseLong(cursor.getString(4))));
-            localEvent.setDescription(cursor.getString(2));
-            localEventList.add(localEvent);
-            CNames[i] = cursor.getString(1);
-            cursor.moveToNext();
+            // fetching calendars id
+            nameOfEvent.clear();
+            startDates.clear();
+            endDates.clear();
+            descriptions.clear();
+            List<LocalEvent> localEventList = new ArrayList<>();
+            for (int i = 0; i < CNames.length; i++) {
 
+                LocalEvent localEvent = new LocalEvent();
+                localEvent.setName(cursor.getString(1));
+                localEvent.setStartDate(getDate(Long.parseLong(cursor.getString(3))));
+                localEvent.setEndDate(getDate(Long.parseLong(cursor.getString(4))));
+                localEvent.setDescription(cursor.getString(2));
+                localEventList.add(localEvent);
+                CNames[i] = cursor.getString(1);
+                cursor.moveToNext();
+
+            }
+
+            return localEventList;
+
+        } catch (Exception e) {
+
+            return null;
         }
-
-        return localEventList;
     }
 
     public static String getDate(long milliSeconds) {

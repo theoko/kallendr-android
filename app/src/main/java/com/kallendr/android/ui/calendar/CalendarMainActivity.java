@@ -69,9 +69,8 @@ public class CalendarMainActivity extends AppCompatActivity
         Database.getInstance().firstLogin(new FirstLoginCallback() {
             @Override
             public void onFirstLogin(boolean firstLogin) {
-                setProgressBarIndeterminateVisibility(false);
+                Helpers.checkPermissionsAndRequestIfNeeded(CalendarMainActivity.this);
                 if (firstLogin) {
-                    Helpers.checkPermissionsAndRequestIfNeeded(CalendarMainActivity.this);
                     setContentView(R.layout.link_calendar);
 
                     btn_outlook_link = findViewById(R.id.btn_outlook_link);
@@ -93,7 +92,7 @@ public class CalendarMainActivity extends AppCompatActivity
                     btn_phone_calendar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            readLocalCalendar();
                         }
                     });
                 } else {
@@ -159,10 +158,14 @@ public class CalendarMainActivity extends AppCompatActivity
 
     private void readLocalCalendar() {
         List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
-        if (events.size() > 0) {
-            displayCollectedEventsMsg();
+        if(events == null) {
+            readPermissionDenied();
         } else {
-            displayOtherCalendarOptions();
+            if (events.size() > 0) {
+                displayCollectedEventsMsg();
+            } else {
+                displayOtherCalendarOptions();
+            }
         }
         /*for (LocalEvent localEvent : events) {
             System.out.println("NAME OF EVENT: " + localEvent.getName());

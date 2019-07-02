@@ -2,12 +2,9 @@ package com.kallendr.android.helpers;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-
-import com.kallendr.android.ui.calendar.CalendarMainActivity;
 
 public class Helpers {
 
@@ -27,11 +24,18 @@ public class Helpers {
                         new String[]{Manifest.permission.READ_CALENDAR},
                         Constants.PERMISSIONS_REQUEST_READ_CALENDAR);
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // PERMISSIONS_REQUEST_READ_CALENDAR is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
         }
+    }
+
+    public static void requestReadCalendarPermission(Activity context)
+    {
+        ActivityCompat.requestPermissions(context,
+                new String[]{Manifest.permission.READ_CALENDAR},
+                Constants.PERMISSIONS_REQUEST_READ_CALENDAR);
     }
 
 }
