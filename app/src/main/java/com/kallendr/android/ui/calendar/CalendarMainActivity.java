@@ -3,6 +3,7 @@ package com.kallendr.android.ui.calendar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -157,16 +158,24 @@ public class CalendarMainActivity extends AppCompatActivity
     }
 
     private void readLocalCalendar() {
-        List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
-        if(events == null) {
-            readPermissionDenied();
-        } else {
-            if (events.size() > 0) {
-                displayCollectedEventsMsg();
-            } else {
-                displayOtherCalendarOptions();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Thread started");
+                List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
+                if (events == null) {
+                    readPermissionDenied();
+                } else {
+                    if (events.size() > 0) {
+                        displayCollectedEventsMsg();
+                    } else {
+                        displayOtherCalendarOptions();
+                    }
+                }
+                System.out.println("Thread stopped");
             }
-        }
+        }).run();
+
         /*for (LocalEvent localEvent : events) {
             System.out.println("NAME OF EVENT: " + localEvent.getName());
             System.out.println("START: " + localEvent.getStartDate());
@@ -182,7 +191,7 @@ public class CalendarMainActivity extends AppCompatActivity
     }
 
     private void displayCollectedEventsMsg() {
-
+        System.out.println("Permission granted!!!");
     }
 
     private void displayOtherCalendarOptions() {
