@@ -2,6 +2,11 @@ package com.kallendr.android.helpers;
 
 public class Constants {
     /**
+     * App constants
+     */
+    public static String APP_NAME = "Kallendr";
+
+    /**
      * Database
      */
     public static String userDB = "user_preferences";

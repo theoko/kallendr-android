@@ -13,7 +13,7 @@ public class Event {
     }
 
     public void setTitleOfEvent(String eventTitle, Date timeOfEvent) {
-        this.titleOfEvent = eventTitle + " ";
+        this.titleOfEvent = eventTitle + " at ";
         this.titleOfEvent += new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(timeOfEvent);
     }
 
