@@ -30,14 +30,12 @@ import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.LocalEventGetter;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
-import com.kallendr.android.ui.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CalendarMainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class CalendarMainActivity extends AppCompatActivity {
 
     /**
      * Calendar setup
@@ -142,7 +140,14 @@ public class CalendarMainActivity extends AppCompatActivity
                 CalendarMainActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(CalendarMainActivity.this);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                Navigation.selectedItem(CalendarMainActivity.this, drawer, menuItem);
+                return true;
+            }
+        });
 
         mainCalendarView = findViewById(R.id.calendarView);
         listViewForDay = findViewById(R.id.eventList);
@@ -276,14 +281,6 @@ public class CalendarMainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        Navigation.selectedItem(CalendarMainActivity.this, drawer, item);
-        return true;
     }
 
 }
