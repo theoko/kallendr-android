@@ -27,7 +27,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginStart="10sp"
         android:layout_marginEnd="10sp"
-        android:padding="15sp"
+        android:padding="10sp"
         android:orientation="vertical">
 
         <Switch
@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:text="Allow notifications"
             android:textSize="17sp"
+            android:padding="10sp"
             android:showText="false" />
 
         <Switch
@@ -44,6 +45,7 @@
             android:layout_height="wrap_content"
             android:text="Allow calendar access"
             android:textSize="17sp"
+            android:padding="10sp"
             android:showText="false" />
 
     </LinearLayout>
