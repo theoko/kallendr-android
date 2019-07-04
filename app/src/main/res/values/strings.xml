@@ -38,4 +38,5 @@
     <string name="kallendr_permissions_msg">
         Kallendr needs to access your phone calendar in order to work properly.
     </string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>
