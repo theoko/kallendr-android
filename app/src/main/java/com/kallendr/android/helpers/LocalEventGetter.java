@@ -51,8 +51,8 @@ public class LocalEventGetter {
 
                 LocalEvent localEvent = new LocalEvent();
                 localEvent.setName(cursor.getString(1));
-                localEvent.setStartDate(getDate(Long.parseLong(cursor.getString(3))));
-                localEvent.setEndDate(getDate(Long.parseLong(cursor.getString(4))));
+                localEvent.setStartDate(Long.parseLong(cursor.getString(3)));
+                localEvent.setEndDate(Long.parseLong(cursor.getString(4)));
                 localEvent.setDescription(cursor.getString(2));
                 localEventList.add(localEvent);
                 CNames[i] = cursor.getString(1);

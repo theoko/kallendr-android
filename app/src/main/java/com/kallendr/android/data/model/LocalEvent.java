@@ -2,8 +2,8 @@ package com.kallendr.android.data.model;
 
 public class LocalEvent {
     private String name;
-    private String startDate;
-    private String endDate;
+    private long startDate;
+    private long endDate;
     private String description;
 
     public String getName() {
@@ -14,19 +14,19 @@ public class LocalEvent {
         this.name = name;
     }
 
-    public String getStartDate() {
+    public long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(long startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(long endDate) {
         this.endDate = endDate;
     }
 
