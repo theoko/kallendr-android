@@ -71,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             @Override
             public void onFail(String message) {
-
+                
             }
         });
         /**

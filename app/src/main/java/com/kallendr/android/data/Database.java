@@ -137,7 +137,7 @@ public class Database {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                prefMapCallback.onFail(databaseError.getMessage());
             }
         };
         mPrefReference.addListenerForSingleValueEvent(mPrefValueEventListener);
