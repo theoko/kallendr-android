@@ -105,6 +105,8 @@ public class Database {
 
     /**
      * Gets preferences for authenticated user from the server
+     *
+     * @param prefMapCallback
      */
     public void getPreferences(final PrefMapCallback prefMapCallback) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();

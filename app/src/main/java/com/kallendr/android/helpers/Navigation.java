@@ -1,6 +1,7 @@
 package com.kallendr.android.helpers;
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +14,11 @@ import android.widget.TextView;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
+import com.kallendr.android.data.LoginDataSource;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
+import com.kallendr.android.ui.home.MainActivity;
+import com.kallendr.android.ui.login.LoginViewModel;
+import com.kallendr.android.ui.login.LoginViewModelFactory;
 import com.kallendr.android.ui.settings.SettingsActivity;
 import com.kallendr.android.ui.team.ManageTeamActivity;
 
@@ -41,6 +46,12 @@ public class Navigation {
             manageTeamIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             manageTeamIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(manageTeamIntent);
+        } else if (id == R.id.nav_logout) {
+            LoginDataSource loginDataSource = new LoginDataSource();
+            loginDataSource.logout();
+            Intent logoutIntent = new Intent(context, MainActivity.class);
+            logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            context.startActivity(logoutIntent);
         }
     }
 

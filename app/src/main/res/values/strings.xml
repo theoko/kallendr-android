@@ -39,4 +39,8 @@
         Kallendr needs to access your phone calendar in order to work properly.
     </string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="action_today">Today</string>
+    <string name="action_day_view">Test 2</string>
+    <string name="action_three_day_view">Test 3</string>
+    <string name="action_week_view">Test 4</string>
 </resources>
