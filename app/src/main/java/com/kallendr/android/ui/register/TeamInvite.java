@@ -41,12 +41,8 @@ public class TeamInvite {
             @Override
             protected Void doInBackground(ArrayList<String>... emails) {
                 for (String userEmail : emails[0]) {
-                    try {
-                        System.out.println("Emailing: " + userEmail);
-                        TimeUnit.SECONDS.sleep(2);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    // TODO: replace with real method
+                    System.out.println("Emailing: " + userEmail);
                 }
 
                 // TODO: Fix this to return success or failure
