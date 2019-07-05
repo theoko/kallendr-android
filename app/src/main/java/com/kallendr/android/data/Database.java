@@ -22,10 +22,10 @@ public class Database {
     private static Database INSTANCE = null;
     private FirebaseDatabase firebaseDatabase;
 
-    private Database() {}
+    private Database() {
+    }
 
-    public static Database getInstance()
-    {
+    public static Database getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new Database();
         }
@@ -34,10 +34,10 @@ public class Database {
 
     /**
      * Checks if the user has logged in before
+     *
      * @param firstLoginCallback
      */
-    public void firstLogin(final FirstLoginCallback firstLoginCallback)
-    {
+    public void firstLogin(final FirstLoginCallback firstLoginCallback) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         ValueEventListener mUserValueEventListener = new ValueEventListener() {
@@ -48,8 +48,7 @@ public class Database {
                     ValueEventListener firstLoginValueEventListener = new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists())
-                            {
+                            if (dataSnapshot.exists()) {
                                 firstLoginCallback.onFirstLogin(false);
                             } else {
                                 firstLoginCallback.onFirstLogin(true);
@@ -80,8 +79,7 @@ public class Database {
     /**
      * Called when the initial calendar setup is completed
      */
-    public void onCalendarSetupComplete()
-    {
+    public void onCalendarSetupComplete() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         Map<String, Object> postValues = new HashMap<>();
@@ -91,30 +89,43 @@ public class Database {
 
     /**
      * Sets preferences for authenticated user
+     *
      * @param prefMap
      */
     public void setPreferences(Map<String, Boolean> prefMap) {
-        if (prefMap.get(Constants.allowNotifications) != null)
-        {
-
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference mPrefReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
+        if (prefMap.get(Constants.allowNotifications) != null) {
+            mPrefReference.child(Constants.allowNotifications).setValue(prefMap.get(Constants.allowNotifications));
         }
-        if(prefMap.get(Constants.allowCalendarAccess) != null)
-        {
-
+        if (prefMap.get(Constants.allowCalendarAccess) != null) {
+            mPrefReference.child(Constants.allowCalendarAccess).setValue(prefMap.get(Constants.allowCalendarAccess));
         }
     }
 
     /**
      * Gets preferences for authenticated user from the server
      */
-    public void getPreferences(final PrefMapCallback prefMapCallback)
-    {
-        Map<String, Boolean> returnPrefMap = new HashMap<>();
+    public void getPreferences(final PrefMapCallback prefMapCallback) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference mPrefReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
+        final DatabaseReference mPrefReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         ValueEventListener mPrefValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Boolean> returnPrefMap = new HashMap<>();
+                    DatabaseReference allowNotifications = mPrefReference.child(Constants.allowNotifications);
+                    DatabaseReference allowCalendarAccess = mPrefReference.child(Constants.allowCalendarAccess);
+                    returnPrefMap.put(
+                            Constants.allowNotifications,
+                            Boolean.parseBoolean(allowNotifications.getKey())
+                    );
+                    returnPrefMap.put(
+                            Constants.allowCalendarAccess,
+                            Boolean.parseBoolean(allowCalendarAccess.getKey())
+                    );
+                    prefMapCallback.onSuccess(returnPrefMap);
+                }
 
             }
 
@@ -127,8 +138,7 @@ public class Database {
         mPrefReference.removeEventListener(mPrefValueEventListener);
     }
 
-    public void getEvents(Date date, final EventCallback eventCallback)
-    {
+    public void getEvents(Date date, final EventCallback eventCallback) {
         DatabaseReference mEventsReference = FirebaseDatabase.getInstance().getReference().child(Constants.eventsDB);
         ValueEventListener mEventsValueEventListener = new ValueEventListener() {
             @Override

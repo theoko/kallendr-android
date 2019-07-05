@@ -1,25 +1,29 @@
 package com.kallendr.android.ui.settings;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.kallendr.android.R;
+import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Navigation;
-import com.kallendr.android.ui.calendar.CalendarMainActivity;
+import com.kallendr.android.helpers.interfaces.PrefMapCallback;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    private Switch notifications_switch;
+    private Switch calendar_switch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,53 @@ public class SettingsActivity extends AppCompatActivity {
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 Navigation.selectedItem(SettingsActivity.this, drawer, menuItem);
                 return true;
+            }
+        });
+        /**
+         * Preference switches
+         */
+        notifications_switch = findViewById(R.id.notifications_switch);
+        calendar_switch = findViewById(R.id.calendar_switch);
+        /**
+         * Get preferences from the server
+         */
+        Database.getInstance().getPreferences(new PrefMapCallback() {
+            @Override
+            public void onSuccess(Map<String, Boolean> prefMap) {
+                if (prefMap.get(Constants.allowNotifications) != null) {
+                    notifications_switch.setChecked(
+                            prefMap.get(Constants.allowNotifications)
+                    );
+                }
+                if (prefMap.get(Constants.allowCalendarAccess) != null) {
+                   calendar_switch.setChecked(
+                           prefMap.get(Constants.allowCalendarAccess)
+                   );
+                }
+            }
+
+            @Override
+            public void onFail(String message) {
+
+            }
+        });
+        /**
+         * Update preferences on the server with a listener
+         */
+        notifications_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Map<String, Boolean> prefsMap = new HashMap<>();
+                prefsMap.put(Constants.allowNotifications, isChecked);
+                Database.getInstance().setPreferences(prefsMap);
+            }
+        });
+        calendar_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Map<String, Boolean> prefsMap = new HashMap<>();
+                prefsMap.put(Constants.allowCalendarAccess, isChecked);
+                Database.getInstance().setPreferences(prefsMap);
             }
         });
     }
