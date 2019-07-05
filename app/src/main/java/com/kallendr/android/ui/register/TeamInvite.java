@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.kallendr.android.helpers.OnTaskCompleted;
+import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

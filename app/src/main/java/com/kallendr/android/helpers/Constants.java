@@ -18,4 +18,10 @@ public class Constants {
      * Permission codes
      */
     public static final int PERMISSIONS_REQUEST_READ_CALENDAR = 1;
+
+    /**
+     * Preferences
+     */
+    public static String allowNotifications = "allowNotif";
+    public static String allowCalendarAccess = "allowCalAccess";
 }

@@ -1,4 +1,4 @@
-package com.kallendr.android.helpers;
+package com.kallendr.android.helpers.interfaces;
 
 import com.kallendr.android.data.model.Event;
 

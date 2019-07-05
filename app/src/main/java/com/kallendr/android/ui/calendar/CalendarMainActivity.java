@@ -5,12 +5,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +23,7 @@ import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
-import com.kallendr.android.helpers.FirstLoginCallback;
+import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.LocalEventGetter;
 import com.kallendr.android.helpers.Navigation;
@@ -257,14 +255,17 @@ public class CalendarMainActivity extends AppCompatActivity {
         Navigation.backPressed(CalendarMainActivity.this, drawer);
     }
 
-    @Override
+    /**
+     * Options menu
+     */
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.calendar_main, menu);
         return true;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -277,6 +278,6 @@ public class CalendarMainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
 }
