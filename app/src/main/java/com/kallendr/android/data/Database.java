@@ -114,16 +114,22 @@ public class Database {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     Map<String, Boolean> returnPrefMap = new HashMap<>();
-                    DatabaseReference allowNotifications = mPrefReference.child(Constants.allowNotifications);
-                    DatabaseReference allowCalendarAccess = mPrefReference.child(Constants.allowCalendarAccess);
-                    returnPrefMap.put(
-                            Constants.allowNotifications,
-                            Boolean.parseBoolean(allowNotifications.getKey())
-                    );
-                    returnPrefMap.put(
-                            Constants.allowCalendarAccess,
-                            Boolean.parseBoolean(allowCalendarAccess.getKey())
-                    );
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if(ds.getKey() != null && ds.getValue() != null) {
+                            switch (ds.getKey()) {
+                                case "allowNotif":
+                                    returnPrefMap.put(ds.getKey(), Boolean.valueOf(ds.getValue().toString()));
+                                    break;
+
+                                case "allowCalAccess":
+                                    returnPrefMap.put(ds.getKey(), Boolean.valueOf(ds.getValue().toString()));
+                                    break;
+
+                                default:
+
+                            }
+                        }
+                    }
                     prefMapCallback.onSuccess(returnPrefMap);
                 }
 
