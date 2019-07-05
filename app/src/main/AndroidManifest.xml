@@ -12,9 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.team.ManageTeamActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="ManageTeamActivity" />
+        <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.calendar.CalendarMainActivity"
             android:label="@string/title_activity_calendar_main"
