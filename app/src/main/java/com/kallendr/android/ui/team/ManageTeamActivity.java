@@ -42,8 +42,6 @@ public class ManageTeamActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout_manage_team);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        }
+        Navigation.backPressed(ManageTeamActivity.this, drawer);
     }
 }
