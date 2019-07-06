@@ -35,4 +35,5 @@ public class Constants {
     public static String userEmail = "userEmail";
     public static String calendarPermission = "calendarPermission";
     public static String notificationPermission = "notificationPermission";
+    public static String emailSet = "emailSet";
 }

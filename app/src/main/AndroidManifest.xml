@@ -34,6 +34,8 @@
         </activity>
         <activity android:name=".ui.login.LoginActivity" />
         <activity android:name=".ui.calendar.PermissionRequestActivity" />
+
+        <service android:name=".services.EmailService" />
     </application>
 
 </manifest>

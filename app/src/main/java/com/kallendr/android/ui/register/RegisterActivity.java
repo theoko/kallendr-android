@@ -25,12 +25,15 @@ import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
 import com.kallendr.android.helpers.TextValidator;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.services.EmailService;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.home.MainActivity;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -233,14 +236,19 @@ public class RegisterActivity extends AppCompatActivity {
                                     progressBar.setVisibility(View.VISIBLE);
 
                                     // Invite team members
-                                    for (int i = 1; i < numberOfLines; i++) {
+                                    Set<String> invitedUserEmails = new HashSet<>();
+                                    for (int i = 1; i <= numberOfLines; i++) {
                                         // Get field by tag ID
                                         EditText editText = inviteMembersForm.findViewWithTag("invMember" + i);
                                         if (editText != null) {
                                             String tmpEmail = editText.getText().toString();
-                                            emails.add(tmpEmail);
-                                            progressDescription.setText("Inviting " + tmpEmail + "...");
-                                            System.out.println("Added email: " + tmpEmail);
+                                            if(!tmpEmail.equals(""))
+                                            {
+                                                emails.add(tmpEmail);
+                                                invitedUserEmails.add(tmpEmail);
+                                                progressDescription.setText("Inviting " + tmpEmail + "...");
+                                                System.out.println("Added email: " + tmpEmail);
+                                            }
                                         } else {
                                             System.out.println("i is null at: " + i);
                                         }
@@ -252,6 +260,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     // will write the emails provided to the database
                                     Prefs.putString(Constants.userEmail, userEmail);
                                     Prefs.putString(Constants.teamName, userTeamName);
+                                    Prefs.putOrderedStringSet(Constants.emailSet, invitedUserEmails);
 
                                     // Invite members
                                     inviteList = new TeamInvite(emails, progressBar);
@@ -262,6 +271,8 @@ public class RegisterActivity extends AppCompatActivity {
                                             finishedRegistration();
                                         }
                                     });
+
+                                    startService(new Intent(RegisterActivity.this, EmailService.class));
 
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Registration failed!", Toast.LENGTH_LONG).show();
