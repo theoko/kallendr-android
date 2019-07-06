@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.kallendr.android.data.model.Event;
+import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.interfaces.EventCallback;
 import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
@@ -18,9 +19,12 @@ import com.pixplicity.easyprefs.library.Prefs;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Database {
+    public List<LocalEvent> localEventsList;
+
     private static Database INSTANCE = null;
     private FirebaseDatabase firebaseDatabase;
 

@@ -36,6 +36,7 @@
         <activity android:name=".ui.calendar.PermissionRequestActivity" />
 
         <service android:name=".services.EmailService" />
+        <service android:name=".services.EventUploadService" />
     </application>
 
 </manifest>

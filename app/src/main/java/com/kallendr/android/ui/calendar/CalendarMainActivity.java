@@ -3,6 +3,7 @@ package com.kallendr.android.ui.calendar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -28,6 +29,8 @@ import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.LocalEventGetter;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.services.EventUploadService;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -238,6 +241,11 @@ public class CalendarMainActivity extends AppCompatActivity {
         setup_header.setText("We found " + totalEvents + " events!");
         setup_description.setText("You can link more calendars later in the settings page");
         events_layout.setVisibility(View.VISIBLE);
+
+        // Start EventUploadService
+        Database.getInstance().localEventsList = eventList;
+        Intent eventUploadServiceIntent = new Intent(CalendarMainActivity.this, EventUploadService.class);
+        startService(eventUploadServiceIntent);
     }
 
     private void displayOtherCalendarOptions() {
