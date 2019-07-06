@@ -33,4 +33,6 @@ public class Constants {
      */
     public static String teamName = "teamName";
     public static String userEmail = "userEmail";
+    public static String calendarPermission = "calendarPermission";
+    public static String notificationPermission = "notificationPermission";
 }

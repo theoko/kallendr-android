@@ -150,21 +150,32 @@ public class Database {
     }
 
     /**
-     * This method will add the list of emails as child elements to the team that was just created
+     * This method will store the team's name to the database and
+     * add the list of emails as child elements to the team that was just created
+     *
      * @param emails
      */
-    public void addEmailsToTeam(ArrayList<String> emails) {
-        String teamName = Prefs.getString(Constants.teamName, null);
-        if (teamName == null)
-            return;
+    public void setTeamNameAndAddEmailsToInvitationList(ArrayList<String> emails) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference mEmailsReference = FirebaseDatabase.getInstance().getReference()
-                .child(Constants.teamDB)
-                .child(uid)
-                .child(Constants.teamInvites);
-        for (String email : emails)
-        {
-            mEmailsReference.push().setValue(email);
+        String teamName = Prefs.getString(Constants.teamName, null);
+        if (teamName == null) {
+            // teamName cannot be null
+            // If it is, something went completely wrong
+            return;
+        } else {
+            DatabaseReference mTeamEmailsReference = FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.teamDB)
+                    .child(uid);
+            // Save the team name to the database
+            mTeamEmailsReference.child(Constants.teamName)
+                    .setValue(teamName);
+            if (emails.size() > 0) {
+                for (String email : emails) {
+                    // This will generate a random ID as key to the new child
+                    // and will push the email to the list of invites
+                    mTeamEmailsReference.child(Constants.teamInvites).push().setValue(email);
+                }
+            }
         }
     }
 

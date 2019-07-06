@@ -233,7 +233,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     progressBar.setVisibility(View.VISIBLE);
 
                                     // Invite team members
-                                    for (int i = 1; i <= numberOfLines; i++) {
+                                    for (int i = 1; i < numberOfLines; i++) {
                                         // Get field by tag ID
                                         EditText editText = inviteMembersForm.findViewWithTag("invMember" + i);
                                         if (editText != null) {

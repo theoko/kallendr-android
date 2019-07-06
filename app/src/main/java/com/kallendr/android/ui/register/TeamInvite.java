@@ -8,7 +8,6 @@ import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class TeamInvite {
 
@@ -45,7 +44,7 @@ public class TeamInvite {
                     // TODO: replace with real method
                     System.out.println("Emailing: " + userEmail);
                 }
-                Database.getInstance().addEmailsToTeam(emails[0]);
+                Database.getInstance().setTeamNameAndAddEmailsToInvitationList(emails[0]);
 
                 // TODO: Fix this to return success or failure
                 return null;
