@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class TeamInvite {
                     // TODO: replace with real method
                     System.out.println("Emailing: " + userEmail);
                 }
+                Database.getInstance().addEmailsToTeam(emails[0]);
 
                 // TODO: Fix this to return success or failure
                 return null;

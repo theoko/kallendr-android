@@ -151,7 +151,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="24dp"
-        android:background="@drawable/button_shadow"
+        android:background="@color/colorBackground"
         android:text="@string/create_team"
         android:textColor="@android:color/white" />
 

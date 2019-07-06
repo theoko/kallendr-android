@@ -14,6 +14,7 @@ import com.kallendr.android.helpers.interfaces.EventCallback;
 import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.interfaces.PrefMapCallback;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -144,6 +145,22 @@ public class Database {
         };
         mPrefReference.addListenerForSingleValueEvent(mPrefValueEventListener);
         mPrefReference.removeEventListener(mPrefValueEventListener);
+    }
+
+    public void addEmailsToTeam(ArrayList<String> emails) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference mEmailsReference = FirebaseDatabase.getInstance().getReference().child(Constants.teamDB);
+        ValueEventListener mEmailsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
     }
 
     public void getEvents(Date date, final EventCallback eventCallback) {
