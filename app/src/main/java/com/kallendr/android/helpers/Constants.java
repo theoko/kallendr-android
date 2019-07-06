@@ -5,6 +5,7 @@ public class Constants {
      * App constants
      */
     public static String APP_NAME = "Kallendr";
+    public static Boolean DEBUG_MODE = true;
 
     /**
      * Database
