@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.kallendr.android.R;
 import com.kallendr.android.helpers.Constants;
@@ -36,6 +38,11 @@ public class ManageTeamActivity extends AppCompatActivity {
                 return true;
             }
         });
+        // Set text for currently authenticated user
+        View headerView = navigationView.getHeaderView(0);
+        TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
+        TextView emailTextView = headerView.findViewById(R.id.userEmail);
+        Navigation.populateNav(fullNameTextView, emailTextView);
     }
 
     @Override

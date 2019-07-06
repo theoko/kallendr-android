@@ -8,8 +8,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
@@ -71,7 +73,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             @Override
             public void onFail(String message) {
-                
+
             }
         });
         /**
@@ -93,6 +95,11 @@ public class SettingsActivity extends AppCompatActivity {
                 Database.getInstance().setPreferences(prefsMap);
             }
         });
+        // Set text for currently authenticated user
+        View headerView = navigationView.getHeaderView(0);
+        TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
+        TextView emailTextView = headerView.findViewById(R.id.userEmail);
+        Navigation.populateNav(fullNameTextView, emailTextView);
     }
 
     @Override
