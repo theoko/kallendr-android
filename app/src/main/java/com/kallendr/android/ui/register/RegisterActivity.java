@@ -21,11 +21,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kallendr.android.R;
+import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
 import com.kallendr.android.helpers.TextValidator;
 import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.home.MainActivity;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -75,6 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnInviteTeam = findViewById(R.id.btnInviteTeam);
         btnCreateTeam = findViewById(R.id.btnCreateTeam);
 
+        // Number of users invited
         numberOfLines = 1;
         emails = new ArrayList<>();
         mContext = this.getApplicationContext();
@@ -189,8 +192,8 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Get field values
-                String userEmail = emailAddress.getText().toString();
-                String userTeamName = teamName.getText().toString();
+                final String userEmail = emailAddress.getText().toString();
+                final String userTeamName = teamName.getText().toString();
                 String userPass = userPassword.getText().toString();
 
                 /* Input validation */
@@ -242,6 +245,13 @@ public class RegisterActivity extends AppCompatActivity {
                                             System.out.println("i is null at: " + i);
                                         }
                                     }
+
+                                    // Important!
+                                    // Add user data to our shared preferences
+                                    // before running the asynchronous task which
+                                    // will write the emails provided to the database
+                                    Prefs.putString(Constants.userEmail, userEmail);
+                                    Prefs.putString(Constants.teamName, userTeamName);
 
                                     // Invite members
                                     inviteList = new TeamInvite(emails, progressBar);

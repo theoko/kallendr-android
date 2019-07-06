@@ -13,6 +13,7 @@ import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.interfaces.EventCallback;
 import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.interfaces.PrefMapCallback;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,6 +84,7 @@ public class Database {
     public void onCalendarSetupComplete() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
+        // Updates database to indicate that the user has completed setup
         Map<String, Object> postValues = new HashMap<>();
         postValues.put("firstLogin", Constants.COMPLETE);
         mUserReference.updateChildren(postValues);
@@ -118,7 +120,7 @@ public class Database {
                 if (dataSnapshot.exists()) {
                     Map<String, Boolean> returnPrefMap = new HashMap<>();
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        if(ds.getKey() != null && ds.getValue() != null) {
+                        if (ds.getKey() != null && ds.getValue() != null) {
                             switch (ds.getKey()) {
                                 case "allowNotif":
                                     returnPrefMap.put(ds.getKey(), Boolean.valueOf(ds.getValue().toString()));
@@ -147,20 +149,23 @@ public class Database {
         mPrefReference.removeEventListener(mPrefValueEventListener);
     }
 
+    /**
+     * This method will add the list of emails as child elements to the team that was just created
+     * @param emails
+     */
     public void addEmailsToTeam(ArrayList<String> emails) {
+        String teamName = Prefs.getString(Constants.teamName, null);
+        if (teamName == null)
+            return;
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference mEmailsReference = FirebaseDatabase.getInstance().getReference().child(Constants.teamDB);
-        ValueEventListener mEmailsValueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
+        DatabaseReference mEmailsReference = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(uid)
+                .child(Constants.teamInvites);
+        for (String email : emails)
+        {
+            mEmailsReference.push().setValue(email);
+        }
     }
 
     public void getEvents(Date date, final EventCallback eventCallback) {

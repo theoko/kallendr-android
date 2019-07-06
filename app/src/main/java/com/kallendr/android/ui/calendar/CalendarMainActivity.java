@@ -168,7 +168,7 @@ public class CalendarMainActivity extends AppCompatActivity {
         Navigation.populateNav(fullNameTextView, emailTextView);
 
         /*
-         * Add events
+         * Display events
          */
         mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override

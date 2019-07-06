@@ -12,6 +12,8 @@ public class Constants {
     public static String userDB = "user_preferences";
     public static String eventsDB = "events";
     public static String teamDB = "teams";
+    public static String teamInvites = "invites";
+
     public static String COMPLETE = "completed";
     public static String INCOMPLETE = "incomplete";
 
@@ -25,4 +27,10 @@ public class Constants {
      */
     public static String allowNotifications = "allowNotif";
     public static String allowCalendarAccess = "allowCalAccess";
+
+    /**
+     * Shared Preferences Keys
+     */
+    public static String teamName = "teamName";
+    public static String userEmail = "userEmail";
 }

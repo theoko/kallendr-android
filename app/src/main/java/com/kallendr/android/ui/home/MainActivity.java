@@ -1,5 +1,6 @@
 package com.kallendr.android.ui.home;
 
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.calendar.MyCalendar;
 import com.kallendr.android.ui.login.LoginActivity;
 import com.kallendr.android.ui.register.RegisterActivity;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -25,24 +27,20 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout get_started_layout;
     private LinearLayout options_layout;
 
-    private FirebaseAuth.AuthStateListener firebaseAuthListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
         get_started_layout = findViewById(R.id.get_started_layout);
         options_layout = findViewById(R.id.options_layout);
-
-        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-            }
-        };
-
+        // Register Shared Preferences library
+        new Prefs.Builder()
+                .setContext(this)
+                .setMode(ContextWrapper.MODE_PRIVATE)
+                .setPrefsName(getPackageName())
+                .setUseDefaultSharedPreference(true)
+                .build();
         // Check if user has already signed in
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -50,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
     }
 
     public void btn_createTeam(View view) {
