@@ -37,7 +37,10 @@ public class EventUploadService extends Service {
         if (Constants.DEBUG_MODE)
             Toast.makeText(this, "Service EventUploadService started", Toast.LENGTH_LONG).show();
         List<LocalEvent> localEventsList = Database.getInstance().localEventsList;
-        if (localEventsList != null)
-            System.out.println("LOCAL EVENT LIST SIZE: " + localEventsList.size());
+        if (localEventsList != null) {
+            if (Constants.DEBUG_MODE)
+                System.out.println("Local events: " + localEventsList.size());
+            Database.getInstance().uploadEvents(localEventsList);
+        }
     }
 }

@@ -23,10 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 public class Database {
-    public List<LocalEvent> localEventsList;
-
     private static Database INSTANCE = null;
     private FirebaseDatabase firebaseDatabase;
+
+    /**
+     * Temp data holders
+     */
+    public List<LocalEvent> localEventsList;
 
     private Database() {
     }
@@ -183,8 +186,19 @@ public class Database {
         }
     }
 
+    public void uploadEvents(List<LocalEvent> localEventsList) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference mUploadEventsReference = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.eventsDB)
+                .child(uid);
+        for (LocalEvent localEvent : localEventsList) {
+            mUploadEventsReference.push().setValue(localEvent);
+        }
+    }
+
     public void getEvents(Date date, final EventCallback eventCallback) {
-        DatabaseReference mEventsReference = FirebaseDatabase.getInstance().getReference().child(Constants.eventsDB);
+        DatabaseReference mEventsReference = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.eventsDB);
         ValueEventListener mEventsValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
