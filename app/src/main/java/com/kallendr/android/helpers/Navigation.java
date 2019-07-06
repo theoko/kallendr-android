@@ -12,6 +12,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.LoginDataSource;
@@ -83,6 +85,10 @@ public class Navigation {
 
     public static void populateNav(TextView nameTxt, TextView userTxt) {
         // Get user info from Firebase
-
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String username = currentUser.getEmail();
+        String fullName = currentUser.getDisplayName();
+        nameTxt.setText(fullName);
+        userTxt.setText(username);
     }
 }
