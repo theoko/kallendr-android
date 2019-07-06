@@ -195,16 +195,16 @@ public class RegisterActivity extends AppCompatActivity {
 
                 /* Input validation */
                 if (userEmail.trim().equals("")) {
-
+                    return;
                 }
                 if (userTeamName.trim().equals("")) {
-
+                    return;
                 }
                 if (userPass.trim().equals("")) {
-
+                    return;
                 }
 
-                // Create user with Firebase Authentication
+                // Create user with FirebaseAuth
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, userPass)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -274,5 +274,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent intent = new Intent(mContext, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 }
