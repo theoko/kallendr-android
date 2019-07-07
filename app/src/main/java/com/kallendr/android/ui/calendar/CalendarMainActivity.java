@@ -197,14 +197,9 @@ public class CalendarMainActivity extends AppCompatActivity {
             public void run() {
                 List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
                 if (events == null) {
-                    System.out.println("FUUUUUUUCK");
                     readPermissionDenied();
                 } else {
-                    if (events.size() > 0) {
-                        displayCollectedEventsMsg(events);
-                    } else {
-                        displayOtherCalendarOptions();
-                    }
+                    displayCollectedEventsMsg(events);
                 }
             }
         }).run();
@@ -249,8 +244,9 @@ public class CalendarMainActivity extends AppCompatActivity {
         startService(eventUploadServiceIntent);
     }
 
+    // TODO: Fix this
     private void displayOtherCalendarOptions() {
-        System.out.println("OTHER OPTIONS!!!!!!");
+        setup_header.setText("We did not find any events on your phone calendar");
     }
 
     @Override
