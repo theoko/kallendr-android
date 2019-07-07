@@ -29,6 +29,7 @@ import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.LocalEventGetter;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.helpers.interfaces.Result;
 import com.kallendr.android.services.EventUploadService;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -132,6 +133,17 @@ public class CalendarMainActivity extends AppCompatActivity {
     }
 
     private void showMainCalendar(boolean firstLogin) {
+        Database.getInstance().getTeamStatus(new Result<List<String>>() {
+            @Override
+            public void success(List<String> arg) {
+                System.out.println("User belongs to: " + arg.toString());
+            }
+
+            @Override
+            public void fail(List<String> arg) {
+
+            }
+        });
         if (firstLogin) {
             Database.getInstance().onCalendarSetupComplete();
         }

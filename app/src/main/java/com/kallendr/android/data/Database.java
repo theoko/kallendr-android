@@ -160,11 +160,11 @@ public class Database {
 
     /**
      * This method adds a member (by their UID) to a team
+     *
      * @param teamID
      * @param uid
      */
-    public void addMemberToTeam(String teamID, String uid)
-    {
+    public void addMemberToTeam(String teamID, String uid) {
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB)
                 .child(teamID)
@@ -302,24 +302,27 @@ public class Database {
     /**
      * This method returns the teams that the user belongs to
      */
-    public void getTeamStatus() {
+    public void getTeamStatus(final Result<List<String>> listOfTeamIDs) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB);
-        mTeamsUserBelongsTo.orderByChild(Constants.teamMembers).equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot dt : dataSnapshot.getChildren())
-                {
-                    System.out.println("KEY: " + dt.getKey());
-                }
-            }
+        mTeamsUserBelongsTo.orderByKey().startAt(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<String> resultList = new ArrayList<>();
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            System.out.println("KEY: " + dt.getKey());
+                            resultList.add(dt.getKey());
+                        }
+                        listOfTeamIDs.success(resultList);
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        listOfTeamIDs.fail(new ArrayList<String>());
+                    }
+                });
     }
 
     /**
