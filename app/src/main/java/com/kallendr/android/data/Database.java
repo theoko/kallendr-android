@@ -11,9 +11,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
+import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.interfaces.EventCallback;
 import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.interfaces.PrefMapCallback;
+import com.kallendr.android.helpers.interfaces.Result;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
@@ -162,27 +164,42 @@ public class Database {
      *
      * @param emails
      */
-    public void setTeamNameAndAddEmailsToInvitationList(ArrayList<String> emails) {
+    public void setTeamNameAndAddEmailsToInvitationList(final ArrayList<String> emails, final Result<String> result) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String teamName = Prefs.getString(Constants.teamName, null);
+        final String teamName = Prefs.getString(Constants.teamName, null);
         if (teamName == null) {
             // teamName cannot be null
             // If it is, something went completely wrong
             return;
         } else {
-            DatabaseReference mTeamEmailsReference = FirebaseDatabase.getInstance().getReference()
+            final DatabaseReference mTeamEmailsReference = FirebaseDatabase.getInstance().getReference()
                     .child(Constants.teamDB)
-                    .child(uid);
-            // Save the team name to the database
-            mTeamEmailsReference.child(Constants.teamName)
-                    .setValue(teamName);
-            if (emails.size() > 0) {
-                for (String email : emails) {
-                    // This will generate a random ID as key to the new child
-                    // and will push the email to the list of invites
-                    mTeamEmailsReference.child(Constants.teamInvites).push().setValue(email);
+                    .child(Helpers.generateUniqueTeamIdentifier(uid, teamName));
+            mTeamEmailsReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        // Save the team name to the database
+                        mTeamEmailsReference.child(Constants.teamName)
+                                .setValue(teamName);
+                        if (emails.size() > 0) {
+                            for (String email : emails) {
+                                // This will generate a random ID as key to the new child
+                                // and will push the email to the list of invites
+                                mTeamEmailsReference.child(Constants.teamInvites).push().setValue(email);
+                            }
+                        }
+                        result.success("Team created successfully");
+                    } else {
+                        result.fail("The team already exists!");
+                    }
                 }
-            }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 

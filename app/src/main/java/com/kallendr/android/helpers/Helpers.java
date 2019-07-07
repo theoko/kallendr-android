@@ -8,6 +8,10 @@ import android.support.v4.content.ContextCompat;
 
 public class Helpers {
 
+    /**
+     * Checks if the permission to read the calendar is granted and if not it tries to obtain it
+     * @param context
+     */
     public static void checkPermissionsAndRequestIfNeeded(Activity context) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -31,11 +35,24 @@ public class Helpers {
         }
     }
 
+    /**
+     * This method requests the permission to access calendar
+     * @param context
+     */
     public static void requestReadCalendarPermission(Activity context)
     {
         ActivityCompat.requestPermissions(context,
                 new String[]{Manifest.permission.READ_CALENDAR},
                 Constants.PERMISSIONS_REQUEST_READ_CALENDAR);
+    }
+
+    /**
+     * This method generates an identifier for a team
+     * @return unique team identifier
+     */
+    public static String generateUniqueTeamIdentifier(String uid, String teamName)
+    {
+        return uid + "_" + teamName;
     }
 
 }
