@@ -41,8 +41,6 @@ public class CalendarMainActivity extends AppCompatActivity {
     /**
      * Menu setup
      */
-    private TextView userFullName;
-    private TextView userEmail;
 
     /**
      * Calendar setup
@@ -52,8 +50,6 @@ public class CalendarMainActivity extends AppCompatActivity {
 
     private LinearLayout buttons_calendar_link_layout;
     private LinearLayout events_layout;
-    private LinearLayout mainCalendarLayout;
-    private NavigationView nav_view;
     private Button btn_outlook_link;
     private Button btn_google_link;
     private Button btn_phone_calendar;
@@ -162,8 +158,6 @@ public class CalendarMainActivity extends AppCompatActivity {
         listViewForDay = findViewById(R.id.eventList);
         listViewItems = new ArrayList<>();
 
-        mainCalendarLayout = findViewById(R.id.mainCalendarLayout);
-        nav_view = findViewById(R.id.nav_view);
         // Set text for currently authenticated user
         View headerView = navigationView.getHeaderView(0);
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);

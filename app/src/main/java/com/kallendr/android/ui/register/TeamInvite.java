@@ -69,7 +69,7 @@ public class TeamInvite {
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 doneSendingEmails();
-                listener.onTaskCompleted();
+                listener.onTaskCompleted(this.taskSuccessful, this.taskMessage);
             }
         }
 

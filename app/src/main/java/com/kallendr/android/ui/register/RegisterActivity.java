@@ -266,7 +266,12 @@ public class RegisterActivity extends AppCompatActivity {
                                     inviteList = new TeamInvite(emails, progressBar);
                                     inviteList.sendEmails(new OnTaskCompleted() {
                                         @Override
-                                        public void onTaskCompleted() {
+                                        public void onTaskCompleted(boolean taskSuccessful, String taskMessage) {
+                                            /**
+                                             * We ignore taskSuccessful and taskMessage since the user has just
+                                             * registered which means that the team that was created is their first team.
+                                             * Otherwise, we would check taskSuccessful and display taskMessage.
+                                             */
                                             progressDescription.setText("Done");
                                             finishedRegistration();
                                         }
