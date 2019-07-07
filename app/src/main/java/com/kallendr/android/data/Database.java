@@ -239,6 +239,8 @@ public class Database {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildrenCount() != localEventsList.size()) {
                     for (LocalEvent localEvent : localEventsList) {
+                        // This will generate a unique ID as a key for the event and set its value
+                        // automatically by reading the fields of the LocalEvent class
                         mUploadEventsReference.push().setValue(localEvent);
                     }
                 }
@@ -302,7 +304,22 @@ public class Database {
      */
     public void getTeamStatus() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB);
+        mTeamsUserBelongsTo.orderByChild(Constants.teamMembers).equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot dt : dataSnapshot.getChildren())
+                {
+                    System.out.println("KEY: " + dt.getKey());
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
