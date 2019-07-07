@@ -197,6 +197,7 @@ public class CalendarMainActivity extends AppCompatActivity {
             public void run() {
                 List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
                 if (events == null) {
+                    System.out.println("FUUUUUUUCK");
                     readPermissionDenied();
                 } else {
                     if (events.size() > 0) {
@@ -249,7 +250,7 @@ public class CalendarMainActivity extends AppCompatActivity {
     }
 
     private void displayOtherCalendarOptions() {
-
+        System.out.println("OTHER OPTIONS!!!!!!");
     }
 
     @Override

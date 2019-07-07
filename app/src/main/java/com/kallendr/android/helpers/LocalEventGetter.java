@@ -29,6 +29,7 @@ public class LocalEventGetter {
             return null;
         }
 
+        List<LocalEvent> localEventList = new ArrayList<>();
         try {
 
             Cursor cursor = context.getContentResolver()
@@ -46,7 +47,7 @@ public class LocalEventGetter {
             startDates.clear();
             endDates.clear();
             descriptions.clear();
-            List<LocalEvent> localEventList = new ArrayList<>();
+
             for (int i = 0; i < CNames.length; i++) {
 
                 LocalEvent localEvent = new LocalEvent();
@@ -63,8 +64,7 @@ public class LocalEventGetter {
             return localEventList;
 
         } catch (Exception e) {
-
-            return null;
+            return localEventList;
         }
     }
 

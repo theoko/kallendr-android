@@ -6,6 +6,7 @@ import android.widget.ProgressBar;
 
 import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
+import com.kallendr.android.helpers.interfaces.Result;
 
 import java.util.ArrayList;
 
@@ -33,6 +34,8 @@ public class TeamInvite {
         public static class SendEmailsTask extends AsyncTask<ArrayList<String>, Void, Void> {
 
             private OnTaskCompleted listener;
+            private boolean taskSuccessful;
+            private String taskMessage;
 
             public SendEmailsTask(OnTaskCompleted listener) {
                 this.listener = listener;
@@ -44,7 +47,19 @@ public class TeamInvite {
                     // TODO: replace with real method
                     System.out.println("Emailing: " + userEmail);
                 }
-                Database.getInstance().setTeamNameAndAddEmailsToInvitationList(emails[0]);
+                Database.getInstance().setTeamNameAndAddEmailsToInvitationList(emails[0], new Result<String>() {
+                    @Override
+                    public void success(String arg) {
+                        taskSuccessful = true;
+                        taskMessage = arg;
+                    }
+
+                    @Override
+                    public void fail(String arg) {
+                        taskSuccessful = false;
+                        taskMessage = arg;
+                    }
+                });
 
                 // TODO: Fix this to return success or failure
                 return null;
