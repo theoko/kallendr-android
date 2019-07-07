@@ -159,22 +159,38 @@ public class Database {
     }
 
     /**
+     * This method adds a member (by their UID) to a team
+     * @param teamID
+     * @param uid
+     */
+    public void addMemberToTeam(String teamID, String uid)
+    {
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(teamID)
+                .child(Constants.teamMembers)
+                .push()
+                .setValue(uid);
+    }
+
+    /**
      * This method will store the team's name to the database and
      * add the list of emails as child elements to the team that was just created
      *
      * @param emails
      */
     public void setTeamNameAndAddEmailsToInvitationList(final ArrayList<String> emails, final Result<String> result) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final String teamName = Prefs.getString(Constants.teamName, null);
         if (teamName == null) {
             // teamName cannot be null
             // If it is, something went completely wrong
             return;
         } else {
+            final String teamID = Helpers.generateUniqueTeamIdentifier(uid, teamName);
             final DatabaseReference mTeamEmailsReference = FirebaseDatabase.getInstance().getReference()
                     .child(Constants.teamDB)
-                    .child(Helpers.generateUniqueTeamIdentifier(uid, teamName));
+                    .child(teamID);
             mTeamEmailsReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -182,6 +198,9 @@ public class Database {
                         // Save the team name to the database
                         mTeamEmailsReference.child(Constants.teamName)
                                 .setValue(teamName);
+                        // Add authenticated user to their own team
+                        addMemberToTeam(teamID, uid);
+                        // Check if we have any invited users
                         if (emails.size() > 0) {
                             for (String email : emails) {
                                 // This will generate a random ID as key to the new child
@@ -189,8 +208,10 @@ public class Database {
                                 mTeamEmailsReference.child(Constants.teamInvites).push().setValue(email);
                             }
                         }
+                        // Our team has been created successfully
                         result.success("Team created successfully");
                     } else {
+                        // Team already exists
                         result.fail("The team already exists!");
                     }
                 }
