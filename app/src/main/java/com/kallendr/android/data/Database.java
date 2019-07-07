@@ -186,25 +186,23 @@ public class Database {
         }
     }
 
-    public void uploadEvents(List<LocalEvent> localEventsList) {
+    /**
+     * This method is responsible for uploading the list of events provided as the first argument to Firebase
+     *
+     * @param localEventsList
+     */
+    public void uploadEvents(final List<LocalEvent> localEventsList) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference mUploadEventsReference = FirebaseDatabase.getInstance().getReference()
+        final DatabaseReference mUploadEventsReference = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.eventsDB)
                 .child(uid);
-        for (LocalEvent localEvent : localEventsList) {
-            mUploadEventsReference.push().setValue(localEvent);
-        }
-    }
-
-    public void getEvents(Date date, final EventCallback eventCallback) {
-        DatabaseReference mEventsReference = FirebaseDatabase.getInstance().getReference()
-                .child(Constants.eventsDB);
-        ValueEventListener mEventsValueEventListener = new ValueEventListener() {
+        ValueEventListener mUploadEventsValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot event : dataSnapshot.getChildren()) {
-                    Event thisEvent = event.getValue(Event.class);
-                    System.out.println(thisEvent.getDescription());
+                if (dataSnapshot.getChildrenCount() != localEventsList.size()) {
+                    for (LocalEvent localEvent : localEventsList) {
+                        mUploadEventsReference.push().setValue(localEvent);
+                    }
                 }
             }
 
@@ -213,7 +211,76 @@ public class Database {
 
             }
         };
+        mUploadEventsReference.addListenerForSingleValueEvent(mUploadEventsValueEventListener);
+    }
+
+    /**
+     * This method is responsible for retrieving events that are within the range of the provided dates
+     *
+     * @param startTimeInMillis
+     * @param endTimeInMillis
+     * @param eventCallback
+     */
+    public void getEvents(final long startTimeInMillis, final long endTimeInMillis, final EventCallback eventCallback) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference mEventsReference = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.eventsDB)
+                .child(uid);
+        ValueEventListener mEventsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<LocalEvent> returnList = new ArrayList<>();
+                for (DataSnapshot event : dataSnapshot.getChildren()) {
+                    long startDate = Long.valueOf(event.child("startDate").getValue().toString());
+                    long endDate = Long.valueOf(event.child("endDate").getValue().toString());
+
+                    if (startTimeInMillis >= startDate && endTimeInMillis <= endDate) {
+                        String name = event.child("name").getValue().toString();
+                        String description = event.child("description").getValue().toString();
+
+                        LocalEvent localEvent = new LocalEvent();
+                        localEvent.setName(name);
+                        localEvent.setStartDate(startDate);
+                        localEvent.setEndDate(endDate);
+                        localEvent.setDescription(description);
+                        returnList.add(localEvent);
+                    }
+                }
+
+                eventCallback.onSuccess(returnList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                eventCallback.onFail(databaseError.getMessage());
+            }
+        };
         mEventsReference.addListenerForSingleValueEvent(mEventsValueEventListener);
         mEventsReference.removeEventListener(mEventsValueEventListener);
+    }
+
+    /**
+     * This method returns the teams that the user belongs to
+     */
+    public void getTeamStatus() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+    }
+
+    /**
+     * This method is responsible for getting the events of a team that are within the range of the provided dates
+     *
+     * @param startTimeInMillis
+     * @param endTimeInMillis
+     * @param eventCallback
+     */
+    public void getTeamEvents(final long startTimeInMillis, final long endTimeInMillis, final EventCallback eventCallback) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Get team members
+        DatabaseReference mMembersReference = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(uid)
+                .child(Constants.teamMembers);
+        // Get events of members
     }
 }

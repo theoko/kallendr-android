@@ -40,6 +40,7 @@ public class EventUploadService extends Service {
         if (localEventsList != null) {
             if (Constants.DEBUG_MODE)
                 System.out.println("Local events: " + localEventsList.size());
+            /* Upload all local events to Firebase */
             Database.getInstance().uploadEvents(localEventsList);
         }
     }

@@ -15,6 +15,8 @@ public class Constants {
     public static String teamDB = "teams";
     public static String teamInvites = "invites";
 
+    public static String teamMembers = "members";
+
     public static String COMPLETE = "completed";
     public static String INCOMPLETE = "incomplete";
 
