@@ -10,6 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
+import com.kallendr.android.data.model.Team;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.interfaces.EventCallback;
@@ -302,7 +303,7 @@ public class Database {
     /**
      * This method returns the teams that the user belongs to
      */
-    public void getTeamStatus(final Result<List<String>> listOfTeamIDs) {
+    public void getTeamStatus(final Result<List<Team>> listOfTeamIDs) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB);
@@ -310,17 +311,25 @@ public class Database {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<String> resultList = new ArrayList<>();
+                        List<Team> resultList = new ArrayList<>();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
-                            System.out.println("KEY: " + dt.getKey());
-                            resultList.add(dt.getKey());
+                            String teamID = dt.getKey();
+                            if (Constants.DEBUG_MODE)
+                                System.out.println("KEY: " + teamID);
+
+                            String teamName = (String) dt.child(Constants.teamName).getValue();
+                            long membersCount = dt.child(Constants.teamMembers).getChildrenCount();
+                            Team team = new Team();
+                            team.setTeamName(teamName);
+                            team.setDescription(membersCount + " members");
+                            resultList.add(team);
                         }
                         listOfTeamIDs.success(resultList);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        listOfTeamIDs.fail(new ArrayList<String>());
+                        listOfTeamIDs.fail(new ArrayList<Team>());
                     }
                 });
     }

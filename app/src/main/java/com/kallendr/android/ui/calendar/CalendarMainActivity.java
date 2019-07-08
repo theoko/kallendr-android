@@ -21,8 +21,10 @@ import android.widget.TextView;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
+import com.kallendr.android.data.adapters.TeamAdapter;
 import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
+import com.kallendr.android.data.model.Team;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.Helpers;
@@ -33,6 +35,7 @@ import com.kallendr.android.helpers.interfaces.Result;
 import com.kallendr.android.services.EventUploadService;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,44 +90,7 @@ public class CalendarMainActivity extends AppCompatActivity {
             public void onFirstLogin(boolean firstLogin) {
                 Helpers.checkPermissionsAndRequestIfNeeded(CalendarMainActivity.this);
                 if (firstLogin) {
-                    setContentView(R.layout.link_calendar);
-
-                    setup_header = findViewById(R.id.setup_header);
-                    setup_description = findViewById(R.id.setup_description);
-
-                    buttons_calendar_link_layout = findViewById(R.id.buttons_calendar_link_layout);
-                    events_layout = findViewById(R.id.events_layout);
-                    btn_outlook_link = findViewById(R.id.btn_outlook_link);
-                    btn_google_link = findViewById(R.id.btn_google_link);
-                    btn_phone_calendar = findViewById(R.id.btn_phone_calendar);
-                    btn_continue_with_local_calendar = findViewById(R.id.btn_continue_with_local_calendar);
-                    initialLocalEventsList = findViewById(R.id.eventList);
-                    initialLocalEventItems = new ArrayList<>();
-
-                    btn_outlook_link.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    });
-                    btn_google_link.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    });
-                    btn_phone_calendar.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            readLocalCalendar();
-                        }
-                    });
-                    btn_continue_with_local_calendar.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showMainCalendar(true);
-                        }
-                    });
+                    showLinkCalendar();
                 } else {
                     showMainCalendar(false);
                 }
@@ -132,69 +98,130 @@ public class CalendarMainActivity extends AppCompatActivity {
         });
     }
 
-    private void showMainCalendar(boolean firstLogin) {
-        Database.getInstance().getTeamStatus(new Result<List<String>>() {
-            @Override
-            public void success(List<String> arg) {
-                System.out.println("User belongs to: " + arg.toString());
-            }
+    private void showLinkCalendar() {
+        setContentView(R.layout.link_calendar);
 
+        setup_header = findViewById(R.id.setup_header);
+        setup_description = findViewById(R.id.setup_description);
+
+        buttons_calendar_link_layout = findViewById(R.id.buttons_calendar_link_layout);
+        events_layout = findViewById(R.id.events_layout);
+        btn_outlook_link = findViewById(R.id.btn_outlook_link);
+        btn_google_link = findViewById(R.id.btn_google_link);
+        btn_phone_calendar = findViewById(R.id.btn_phone_calendar);
+        btn_continue_with_local_calendar = findViewById(R.id.btn_continue_with_local_calendar);
+        initialLocalEventsList = findViewById(R.id.eventList);
+        initialLocalEventItems = new ArrayList<>();
+
+        btn_outlook_link.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void fail(List<String> arg) {
+            public void onClick(View v) {
 
             }
         });
+        btn_google_link.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        btn_phone_calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readLocalCalendar();
+            }
+        });
+        btn_continue_with_local_calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMainCalendar(true);
+            }
+        });
+    }
+
+    private void showMainCalendar(final boolean firstLogin) {
         if (firstLogin) {
             Database.getInstance().onCalendarSetupComplete();
         }
-        setContentView(R.layout.activity_calendar_main);
-        setTitle(Constants.APP_NAME);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                CalendarMainActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        // We should check if the user belongs to many teams.
+        // In case they do, let them choose which team to pull events from.
+        Database.getInstance().getTeamStatus(new Result<List<Team>>() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                Navigation.selectedItem(CalendarMainActivity.this, drawer, menuItem);
-                return true;
-            }
-        });
+            public void success(List<Team> arg) {
+                if (arg.size() > 1) {
+                    String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+                    if (selectedTeam == null) {
+                        setContentView(R.layout.team_chooser);
+                        ListView teamChooseList = findViewById(R.id.teamChooseList);
+                        TeamAdapter teamAdapter = new TeamAdapter(
+                                CalendarMainActivity.this,
+                                new ArrayList<>(arg)
+                        );
+                        teamChooseList.setAdapter(teamAdapter);
 
-        mainCalendarView = findViewById(R.id.calendarView);
-        listViewForDay = findViewById(R.id.eventList);
-        listViewItems = new ArrayList<>();
+                        // Set selected team
+                    }
+                } else {
+                    if (firstLogin) {
+                        finish();
+                        startActivity(getIntent());
+                    }
+                    setContentView(R.layout.activity_calendar_main);
+                    setTitle(Constants.APP_NAME);
+                    Toolbar toolbar = findViewById(R.id.toolbar);
+                    setSupportActionBar(toolbar);
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    NavigationView navigationView = findViewById(R.id.nav_view);
+                    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                            CalendarMainActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                    drawer.addDrawerListener(toggle);
+                    toggle.syncState();
+                    navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                            Navigation.selectedItem(CalendarMainActivity.this, drawer, menuItem);
+                            return true;
+                        }
+                    });
 
-        // Set text for currently authenticated user
-        View headerView = navigationView.getHeaderView(0);
-        TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
-        TextView emailTextView = headerView.findViewById(R.id.userEmail);
-        Navigation.populateNav(fullNameTextView, emailTextView);
+                    mainCalendarView = findViewById(R.id.calendarView);
+                    listViewForDay = findViewById(R.id.eventList);
+                    listViewItems = new ArrayList<>();
 
-        /*
-         * Display events
-         */
-        mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                // List events for selected day
-                            /*Date currDate = new Date(view.getDate());
+                    // Set text for currently authenticated user
+                    View headerView = navigationView.getHeaderView(0);
+                    TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
+                    TextView emailTextView = headerView.findViewById(R.id.userEmail);
+                    Navigation.populateNav(fullNameTextView, emailTextView);
+
+                    /*
+                     * Display events
+                     */
+                    mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                        @Override
+                        public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                            // List events for selected day
+                /*Date currDate = new Date(view.getDate());
                             Event sample = new Event();
                             sample.setTimeOfEvent(currDate);
                             sample.setDescription("Test description 1234");
                             listViewItems.add(sample);
                             eventAdapterForDay.notifyDataSetChanged();*/
+                        }
+                    });
+
+                    // List events for current day
+                    long date = mainCalendarView.getDate();
+                    Date currDate = new Date(date);
+                }
+            }
+
+            @Override
+            public void fail(List<Team> arg) {
+                // Display error to user
             }
         });
-
-        // List events for current day
-        long date = mainCalendarView.getDate();
-        Date currDate = new Date(date);
     }
 
     private void readLocalCalendar() {
