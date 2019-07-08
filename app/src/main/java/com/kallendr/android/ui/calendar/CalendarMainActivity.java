@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -151,7 +150,7 @@ public class CalendarMainActivity extends AppCompatActivity {
                                 if (Constants.DEBUG_MODE)
                                     System.out.println("selected team: " + selectedTeam.getTeamName());
                                 // Set selected team
-                                Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamName());
+                                Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamID());
                                 showCalendar();
                             }
                         });

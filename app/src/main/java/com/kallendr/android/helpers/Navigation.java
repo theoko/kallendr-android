@@ -1,12 +1,9 @@
 package com.kallendr.android.helpers;
 
 import android.app.AlertDialog;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
@@ -15,13 +12,9 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
-import com.kallendr.android.data.Database;
 import com.kallendr.android.data.LoginDataSource;
 import com.kallendr.android.ui.calendar.CalendarActivity;
-import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.home.MainActivity;
-import com.kallendr.android.ui.login.LoginViewModel;
-import com.kallendr.android.ui.login.LoginViewModelFactory;
 import com.kallendr.android.ui.settings.SettingsActivity;
 import com.kallendr.android.ui.team.ManageTeamActivity;
 

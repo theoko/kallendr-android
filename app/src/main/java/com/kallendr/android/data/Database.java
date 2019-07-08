@@ -320,6 +320,7 @@ public class Database {
                             String teamName = (String) dt.child(Constants.teamName).getValue();
                             long membersCount = dt.child(Constants.teamMembers).getChildrenCount();
                             Team team = new Team();
+                            team.setTeamID(teamID);
                             team.setTeamName(teamName);
                             if (membersCount == 1) {
                                 team.setDescription(membersCount + " member");
