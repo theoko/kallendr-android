@@ -134,27 +134,7 @@ public class CalendarMainActivity extends AppCompatActivity {
             @Override
             public void success(List<Team> arg) {
                 if (arg.size() > 1) {
-                    final String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
-                    if (selectedTeam == null) {
-                        setContentView(R.layout.team_chooser);
-                        final ListView teamChooseList = findViewById(R.id.teamChooseList);
-                        TeamAdapter teamAdapter = new TeamAdapter(
-                                CalendarMainActivity.this,
-                                new ArrayList<>(arg)
-                        );
-                        teamChooseList.setAdapter(teamAdapter);
-                        teamChooseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                Team selectedTeam = (Team) teamChooseList.getItemAtPosition(position);
-                                if (Constants.DEBUG_MODE)
-                                    System.out.println("selected team: " + selectedTeam.getTeamName());
-                                // Set selected team
-                                Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamID());
-                                showCalendar();
-                            }
-                        });
-                    }
+                    chooseTeam(arg);
                 } else {
                     showCalendar();
                 }
@@ -165,6 +145,31 @@ public class CalendarMainActivity extends AppCompatActivity {
                 // Display error to user
             }
         });
+    }
+
+    private void chooseTeam(List<Team> teamList)
+    {
+        final String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+        if (selectedTeam == null) {
+            setContentView(R.layout.team_chooser);
+            final ListView teamChooseList = findViewById(R.id.teamChooseList);
+            TeamAdapter teamAdapter = new TeamAdapter(
+                    CalendarMainActivity.this,
+                    new ArrayList<>(teamList)
+            );
+            teamChooseList.setAdapter(teamAdapter);
+            teamChooseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Team selectedTeam = (Team) teamChooseList.getItemAtPosition(position);
+                    if (Constants.DEBUG_MODE)
+                        System.out.println("selected team: " + selectedTeam.getTeamName());
+                    // Set selected team
+                    Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamID());
+                    showCalendar();
+                }
+            });
+        }
     }
 
     /**

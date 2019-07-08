@@ -17,6 +17,10 @@
             android:icon="@drawable/ic_menu_settings"
             android:title="Settings" />
         <item
+            android:id="@+id/nav_switch_team"
+            android:icon="@drawable/ic_menu_switch_team"
+            android:title="Switch team" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_menu_logout"
             android:title="Logout" />

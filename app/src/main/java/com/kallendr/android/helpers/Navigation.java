@@ -17,6 +17,7 @@ import com.kallendr.android.ui.calendar.CalendarActivity;
 import com.kallendr.android.ui.home.MainActivity;
 import com.kallendr.android.ui.settings.SettingsActivity;
 import com.kallendr.android.ui.team.ManageTeamActivity;
+import com.pixplicity.easyprefs.library.Prefs;
 
 /**
  * Intent.FLAG_ACTIVITY_SINGLE_TOP: This flag brings back the desired activity in case is already running
@@ -42,6 +43,9 @@ public class Navigation {
             manageTeamIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             manageTeamIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(manageTeamIntent);
+        } else if (id == R.id.nav_switch_team) {
+            String teamID = Prefs.getString(Constants.selectedTeam, null);
+            
         } else if (id == R.id.nav_logout) {
             LoginDataSource loginDataSource = new LoginDataSource();
             loginDataSource.logout();
