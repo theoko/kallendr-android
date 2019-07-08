@@ -23,6 +23,10 @@
             android:name=".ui.calendar.CalendarMainActivity"
             android:label="@string/title_activity_calendar_main"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.calendar.CalendarActivity"
+            android:label="@string/title_activity_calendar_main"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.calendar.MyCalendar" />
         <activity android:name=".ui.register.RegisterActivity" />
         <activity android:name=".ui.home.MainActivity">

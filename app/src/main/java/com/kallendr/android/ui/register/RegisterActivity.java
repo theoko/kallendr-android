@@ -242,15 +242,16 @@ public class RegisterActivity extends AppCompatActivity {
                                         EditText editText = inviteMembersForm.findViewWithTag("invMember" + i);
                                         if (editText != null) {
                                             String tmpEmail = editText.getText().toString();
-                                            if(!tmpEmail.equals(""))
-                                            {
+                                            if (!tmpEmail.equals("")) {
                                                 emails.add(tmpEmail);
                                                 invitedUserEmails.add(tmpEmail);
                                                 progressDescription.setText("Inviting " + tmpEmail + "...");
-                                                System.out.println("Added email: " + tmpEmail);
+                                                if (Constants.DEBUG_MODE)
+                                                    System.out.println("Added email: " + tmpEmail);
                                             }
                                         } else {
-                                            System.out.println("i is null at: " + i);
+                                            if (Constants.DEBUG_MODE)
+                                                System.out.println("i is null at: " + i);
                                         }
                                     }
 

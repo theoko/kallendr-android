@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.LoginDataSource;
+import com.kallendr.android.ui.calendar.CalendarActivity;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.home.MainActivity;
 import com.kallendr.android.ui.login.LoginViewModel;
@@ -34,7 +35,7 @@ public class Navigation {
 
         drawer.closeDrawer(GravityCompat.START);
         if (id == R.id.nav_home) {
-            Intent calendarMainIntent = new Intent(context, CalendarMainActivity.class);
+            Intent calendarMainIntent = new Intent(context, CalendarActivity.class);
             calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(calendarMainIntent);

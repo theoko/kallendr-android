@@ -328,6 +328,8 @@ public class Database {
                             }
                             resultList.add(team);
                         }
+                        if(Constants.DEBUG_MODE)
+                            System.out.println("listOfTeamIDs.success()");
                         listOfTeamIDs.success(resultList);
                     }
 

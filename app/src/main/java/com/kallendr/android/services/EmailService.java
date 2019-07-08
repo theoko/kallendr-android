@@ -38,7 +38,8 @@ public class EmailService extends Service {
             if (Constants.DEBUG_MODE)
                 Toast.makeText(this, emailSet.toString(), Toast.LENGTH_LONG).show();
             for (String email : emailSet) {
-                System.out.println("GOT EMAIL: " + email);
+                if (Constants.DEBUG_MODE)
+                    System.out.println("GOT EMAIL: " + email);
             }
         }
     }

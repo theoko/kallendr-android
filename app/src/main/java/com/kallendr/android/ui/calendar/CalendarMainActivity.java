@@ -4,12 +4,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -42,10 +38,6 @@ import java.util.List;
 public class CalendarMainActivity extends AppCompatActivity {
 
     /**
-     * Menu setup
-     */
-
-    /**
      * Calendar setup
      */
     private TextView setup_header;
@@ -57,17 +49,10 @@ public class CalendarMainActivity extends AppCompatActivity {
     private Button btn_google_link;
     private Button btn_phone_calendar;
     private Button btn_continue_with_local_calendar;
+
     private ListView initialLocalEventsList;
     private EventAdapter initialEventAdapter;
     private ArrayList<Event> initialLocalEventItems;
-
-    /**
-     * Main app functionality
-     */
-    private EventAdapter eventAdapterForDay;
-    private ArrayList<Event> listViewItems;
-    private CalendarView mainCalendarView;
-    private ListView listViewForDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +125,8 @@ public class CalendarMainActivity extends AppCompatActivity {
 
     private void showMainCalendar(final boolean firstLogin) {
         if (firstLogin) {
+            if (Constants.DEBUG_MODE)
+                System.out.println("Calling onCalendarSetupComplete()");
             Database.getInstance().onCalendarSetupComplete();
         }
         // We should check if the user belongs to many teams.
@@ -161,7 +148,8 @@ public class CalendarMainActivity extends AppCompatActivity {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 Team selectedTeam = (Team) teamChooseList.getItemAtPosition(position);
-                                System.out.println("selected team: " + selectedTeam.getTeamName());
+                                if (Constants.DEBUG_MODE)
+                                    System.out.println("selected team: " + selectedTeam.getTeamName());
                                 // Set selected team
                                 Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamName());
                                 showCalendar();
@@ -180,56 +168,14 @@ public class CalendarMainActivity extends AppCompatActivity {
         });
     }
 
-    private void showCalendar()
-    {
-        setContentView(R.layout.activity_calendar_main);
-        setTitle(Constants.APP_NAME);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                CalendarMainActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                Navigation.selectedItem(CalendarMainActivity.this, drawer, menuItem);
-                return true;
-            }
-        });
-
-        mainCalendarView = findViewById(R.id.calendarView);
-        listViewForDay = findViewById(R.id.eventList);
-        listViewItems = new ArrayList<>();
-
-        // Set text for currently authenticated user
-        View headerView = navigationView.getHeaderView(0);
-        TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
-        TextView emailTextView = headerView.findViewById(R.id.userEmail);
-        Navigation.populateNav(fullNameTextView, emailTextView);
-
-        /*
-         * Display events
-         */
-        mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                // List events for selected day
-                /*Date currDate = new Date(view.getDate());
-                            Event sample = new Event();
-                            sample.setTimeOfEvent(currDate);
-                            sample.setDescription("Test description 1234");
-                            listViewItems.add(sample);
-                            eventAdapterForDay.notifyDataSetChanged();*/
-            }
-        });
-
-        // List events for current day
-        long date = mainCalendarView.getDate();
-        Date currDate = new Date(date);
+    /**
+     * Finally, this method will switch to the calendar activity
+     */
+    private void showCalendar() {
+        if (Constants.DEBUG_MODE)
+            System.out.println("Setting view to calendar");
+        startActivity(new Intent(CalendarMainActivity.this, CalendarActivity.class));
+        finish();
     }
 
     private void readLocalCalendar() {
@@ -244,13 +190,6 @@ public class CalendarMainActivity extends AppCompatActivity {
                 }
             }
         }).run();
-
-        /*for (LocalEvent localEvent : events) {
-            System.out.println("NAME OF EVENT: " + localEvent.getName());
-            System.out.println("START: " + localEvent.getStartDate());
-            System.out.println("START: " + localEvent.getEndDate());
-            System.out.println("DESCRIPTION: " + localEvent.getDescription());
-        }*/
     }
 
     private void readPermissionDenied() {
@@ -300,7 +239,16 @@ public class CalendarMainActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    readLocalCalendar();
+                    // Check for first login
+                    Database.getInstance().firstLogin(new FirstLoginCallback() {
+                        @Override
+                        public void onFirstLogin(boolean firstLogin) {
+                            if (firstLogin)
+                            {
+                                readLocalCalendar();
+                            }
+                        }
+                    });
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
