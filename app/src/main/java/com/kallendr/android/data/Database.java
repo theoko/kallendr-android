@@ -300,6 +300,27 @@ public class Database {
         mEventsReference.removeEventListener(mEventsValueEventListener);
     }
 
+    public void getTeamNameByID(String teamID, final Result<String> result)
+    {
+        DatabaseReference mTeam = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(teamID)
+                .child(Constants.teamName);
+        ValueEventListener mTeamValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                result.success((String) dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                result.fail("Failed to get team name");
+            }
+        };
+        mTeam.addListenerForSingleValueEvent(mTeamValueEventListener);
+        mTeam.removeEventListener(mTeamValueEventListener);
+    }
+
     /**
      * This method returns the teams that the user belongs to
      */
