@@ -3,7 +3,6 @@ package com.kallendr.android.ui.calendar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -26,16 +25,15 @@ import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.data.model.Team;
 import com.kallendr.android.helpers.Constants;
-import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.LocalEventGetter;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.interfaces.Result;
 import com.kallendr.android.services.EventUploadService;
 import com.pixplicity.easyprefs.library.Prefs;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -158,6 +156,12 @@ public class CalendarMainActivity extends AppCompatActivity {
                                 new ArrayList<>(arg)
                         );
                         teamChooseList.setAdapter(teamAdapter);
+                        teamChooseList.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
 
                         // Set selected team
                     }

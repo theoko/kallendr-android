@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
+import com.kallendr.android.R;
 import com.kallendr.android.data.model.Team;
 
 import java.util.ArrayList;
@@ -46,13 +47,13 @@ public class TeamAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             twoLineListItem = (TwoLineListItem) inflater.inflate(
-                    android.R.layout.simple_list_item_2, null);
+                    R.layout.custom_simple_list_item_2, null);
         } else {
             twoLineListItem = (TwoLineListItem) convertView;
         }
 
-        TextView text1 = twoLineListItem.getText1();
-        TextView text2 = twoLineListItem.getText2();
+        TextView text1 = twoLineListItem.findViewById(R.id.text1);
+        TextView text2 = twoLineListItem.findViewById(R.id.text2);
 
         text1.setText(teams.get(position).getTeamName());
         text2.setText(teams.get(position).getDescription());
