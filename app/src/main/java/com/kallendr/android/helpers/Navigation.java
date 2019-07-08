@@ -93,7 +93,7 @@ public class Navigation {
         String teamID = Prefs.getString(Constants.selectedTeam, null);
         String username = currentUser.getEmail();
         String fullName = currentUser.getDisplayName();
-        if (fullName.equals("") && teamID != null) {
+        if (fullName == null && teamID != null) {
             Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
                 @Override
                 public void success(String arg) {
