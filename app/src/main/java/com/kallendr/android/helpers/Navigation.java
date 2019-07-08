@@ -92,8 +92,9 @@ public class Navigation {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String teamID = Prefs.getString(Constants.selectedTeam, null);
         String username = currentUser.getEmail();
-        String fullName = currentUser.getDisplayName();
-        if (fullName == null && teamID != null) {
+        if (Constants.DEBUG_MODE)
+            System.out.println("Navigation teamID: " + teamID);
+        if (teamID != null) {
             Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
                 @Override
                 public void success(String arg) {
@@ -105,8 +106,6 @@ public class Navigation {
                     nameTxt.setText(arg);
                 }
             });
-        } else {
-            nameTxt.setText(fullName);
         }
         userTxt.setText(username);
     }
