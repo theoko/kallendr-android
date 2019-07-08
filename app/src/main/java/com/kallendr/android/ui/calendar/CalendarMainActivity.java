@@ -57,14 +57,14 @@ public class CalendarMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loader);
-
-        // First login
-        checkIfFirstLogin();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // First login
+        checkIfFirstLogin();
     }
 
     private void checkIfFirstLogin() {
@@ -169,6 +169,8 @@ public class CalendarMainActivity extends AppCompatActivity {
                     showCalendar();
                 }
             });
+        } else {
+            showCalendar();
         }
     }
 
@@ -250,6 +252,8 @@ public class CalendarMainActivity extends AppCompatActivity {
                             if (firstLogin)
                             {
                                 readLocalCalendar();
+                            } else {
+                                showMainCalendar(false);
                             }
                         }
                     });

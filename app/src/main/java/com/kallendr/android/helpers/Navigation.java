@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
 import com.kallendr.android.data.LoginDataSource;
 import com.kallendr.android.ui.calendar.CalendarActivity;
+import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.home.MainActivity;
 import com.kallendr.android.ui.settings.SettingsActivity;
 import com.kallendr.android.ui.team.ManageTeamActivity;
@@ -44,8 +45,11 @@ public class Navigation {
             manageTeamIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(manageTeamIntent);
         } else if (id == R.id.nav_switch_team) {
-            String teamID = Prefs.getString(Constants.selectedTeam, null);
-            
+            Prefs.remove(Constants.selectedTeam);
+            Intent calendarMainIntent = new Intent(context, CalendarMainActivity.class);
+            calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(calendarMainIntent);
         } else if (id == R.id.nav_logout) {
             LoginDataSource loginDataSource = new LoginDataSource();
             loginDataSource.logout();
