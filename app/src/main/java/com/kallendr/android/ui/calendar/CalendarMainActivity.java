@@ -164,62 +164,12 @@ public class CalendarMainActivity extends AppCompatActivity {
                                 System.out.println("selected team: " + selectedTeam.getTeamName());
                                 // Set selected team
                                 Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamName());
+                                showCalendar();
                             }
                         });
                     }
                 } else {
-                    if (firstLogin) {
-                        finish();
-                        startActivity(getIntent());
-                    }
-                    setContentView(R.layout.activity_calendar_main);
-                    setTitle(Constants.APP_NAME);
-                    Toolbar toolbar = findViewById(R.id.toolbar);
-                    setSupportActionBar(toolbar);
-                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                    NavigationView navigationView = findViewById(R.id.nav_view);
-                    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                            CalendarMainActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-                    drawer.addDrawerListener(toggle);
-                    toggle.syncState();
-                    navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                        @Override
-                        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                            Navigation.selectedItem(CalendarMainActivity.this, drawer, menuItem);
-                            return true;
-                        }
-                    });
-
-                    mainCalendarView = findViewById(R.id.calendarView);
-                    listViewForDay = findViewById(R.id.eventList);
-                    listViewItems = new ArrayList<>();
-
-                    // Set text for currently authenticated user
-                    View headerView = navigationView.getHeaderView(0);
-                    TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
-                    TextView emailTextView = headerView.findViewById(R.id.userEmail);
-                    Navigation.populateNav(fullNameTextView, emailTextView);
-
-                    /*
-                     * Display events
-                     */
-                    mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-                        @Override
-                        public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                            // List events for selected day
-                /*Date currDate = new Date(view.getDate());
-                            Event sample = new Event();
-                            sample.setTimeOfEvent(currDate);
-                            sample.setDescription("Test description 1234");
-                            listViewItems.add(sample);
-                            eventAdapterForDay.notifyDataSetChanged();*/
-                        }
-                    });
-
-                    // List events for current day
-                    long date = mainCalendarView.getDate();
-                    Date currDate = new Date(date);
+                    showCalendar();
                 }
             }
 
@@ -228,6 +178,58 @@ public class CalendarMainActivity extends AppCompatActivity {
                 // Display error to user
             }
         });
+    }
+
+    private void showCalendar()
+    {
+        setContentView(R.layout.activity_calendar_main);
+        setTitle(Constants.APP_NAME);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                CalendarMainActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                Navigation.selectedItem(CalendarMainActivity.this, drawer, menuItem);
+                return true;
+            }
+        });
+
+        mainCalendarView = findViewById(R.id.calendarView);
+        listViewForDay = findViewById(R.id.eventList);
+        listViewItems = new ArrayList<>();
+
+        // Set text for currently authenticated user
+        View headerView = navigationView.getHeaderView(0);
+        TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
+        TextView emailTextView = headerView.findViewById(R.id.userEmail);
+        Navigation.populateNav(fullNameTextView, emailTextView);
+
+        /*
+         * Display events
+         */
+        mainCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                // List events for selected day
+                /*Date currDate = new Date(view.getDate());
+                            Event sample = new Event();
+                            sample.setTimeOfEvent(currDate);
+                            sample.setDescription("Test description 1234");
+                            listViewItems.add(sample);
+                            eventAdapterForDay.notifyDataSetChanged();*/
+            }
+        });
+
+        // List events for current day
+        long date = mainCalendarView.getDate();
+        Date currDate = new Date(date);
     }
 
     private void readLocalCalendar() {
