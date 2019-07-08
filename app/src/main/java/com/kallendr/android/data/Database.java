@@ -321,7 +321,11 @@ public class Database {
                             long membersCount = dt.child(Constants.teamMembers).getChildrenCount();
                             Team team = new Team();
                             team.setTeamName(teamName);
-                            team.setDescription(membersCount + " members");
+                            if (membersCount == 1) {
+                                team.setDescription(membersCount + " member");
+                            } else {
+                                team.setDescription(membersCount + " members");
+                            }
                             resultList.add(team);
                         }
                         listOfTeamIDs.success(resultList);

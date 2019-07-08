@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.LinearLayout;
@@ -147,23 +148,24 @@ public class CalendarMainActivity extends AppCompatActivity {
             @Override
             public void success(List<Team> arg) {
                 if (arg.size() > 1) {
-                    String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+                    final String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
                     if (selectedTeam == null) {
                         setContentView(R.layout.team_chooser);
-                        ListView teamChooseList = findViewById(R.id.teamChooseList);
+                        final ListView teamChooseList = findViewById(R.id.teamChooseList);
                         TeamAdapter teamAdapter = new TeamAdapter(
                                 CalendarMainActivity.this,
                                 new ArrayList<>(arg)
                         );
                         teamChooseList.setAdapter(teamAdapter);
-                        teamChooseList.setOnClickListener(new View.OnClickListener() {
+                        teamChooseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
-                            public void onClick(View v) {
-
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Team selectedTeam = (Team) teamChooseList.getItemAtPosition(position);
+                                System.out.println("selected team: " + selectedTeam.getTeamName());
+                                // Set selected team
+                                Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamName());
                             }
                         });
-
-                        // Set selected team
                     }
                 } else {
                     if (firstLogin) {
