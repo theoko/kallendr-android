@@ -134,8 +134,11 @@ public class CalendarMainActivity extends AppCompatActivity {
             @Override
             public void success(List<Team> arg) {
                 if (arg.size() > 1) {
+                    // The user should choose the team they wish to sign in to
                     chooseTeam(arg);
                 } else {
+                    // Set selected team
+
                     showCalendar();
                 }
             }

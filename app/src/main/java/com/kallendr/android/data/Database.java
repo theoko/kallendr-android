@@ -231,10 +231,16 @@ public class Database {
                         addMemberToTeam(teamID, uid);
                         // Check if we have any invited users
                         if (emails.size() > 0) {
+                            long time = new Date().getTime();
                             for (String email : emails) {
                                 // This will generate a random ID as key to the new child
                                 // and will push the email to the list of invites
-                                mTeamEmailsReference.child(Constants.teamInvites).child(email).setValue(new Date().getTime());
+                                mTeamEmailsReference.child(Constants.teamInvites).child(email).setValue(time);
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child(Constants.userInvites)
+                                        .child(email)
+                                        .child(teamID)
+                                        .setValue(time);
                             }
                         }
                         // Our team has been created successfully
@@ -501,32 +507,36 @@ public class Database {
     public void getInviteStatus(final Result<List<Team>> listOfTeamIDs) {
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
-                .child(Constants.teamDB);
-        mTeamsUserBelongsTo.orderByChild(email)
+                .child(Constants.userInvites)
+                .child(email);
+        mTeamsUserBelongsTo
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<Team> resultList = new ArrayList<>();
+                        final List<Team> resultList = new ArrayList<>();
+                        final long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String teamID = dt.getKey();
                             if (Constants.DEBUG_MODE)
                                 System.out.println("KEY: " + teamID);
 
-                            String teamName = (String) dt.child(Constants.teamName).getValue();
-                            long membersCount = dt.child(Constants.teamMembers).getChildrenCount();
-                            Team team = new Team();
-                            team.setTeamID(teamID);
-                            team.setTeamName(teamName);
-                            if (membersCount == 1) {
-                                team.setDescription(membersCount + " member");
-                            } else {
-                                team.setDescription(membersCount + " members");
-                            }
-                            resultList.add(team);
+                            Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
+                                @Override
+                                public void success(Team arg) {
+                                    resultList.add(arg);
+                                    if (resultList.size() == childrenCount) {
+                                        if (Constants.DEBUG_MODE)
+                                            System.out.println("listOfTeamIDs.success()");
+                                        listOfTeamIDs.success(resultList);
+                                    }
+                                }
+
+                                @Override
+                                public void fail(Team arg) {
+                                    listOfTeamIDs.fail(null);
+                                }
+                            });
                         }
-                        if (Constants.DEBUG_MODE)
-                            System.out.println("listOfTeamIDs.success()");
-                        listOfTeamIDs.success(resultList);
                     }
 
                     @Override

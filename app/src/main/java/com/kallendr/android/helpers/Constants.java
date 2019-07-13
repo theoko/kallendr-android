@@ -12,6 +12,7 @@ public class Constants {
      */
     public static String userDB = "user_preferences";
     public static String userTeams = "user_teams";
+    public static String userInvites = "user_invites";
     public static String eventsDB = "events";
     public static String teamDB = "teams";
     public static String teamInvites = "invites";
