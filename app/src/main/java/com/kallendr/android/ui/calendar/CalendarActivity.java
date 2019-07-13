@@ -19,10 +19,10 @@ import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
+import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.interfaces.EventCallback;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,9 +67,16 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
+
         mainCalendarView = findViewById(R.id.calendarView);
         listViewForDay = findViewById(R.id.eventList);
+
         listViewItems = new ArrayList<>();
+        eventAdapterForDay = new EventAdapter(
+                CalendarActivity.this,
+                new ArrayList<>(listViewItems)
+        );
+        listViewForDay.setAdapter(eventAdapterForDay);
 
         // Set text for currently authenticated user
         View headerView = navigationView.getHeaderView(0);
@@ -84,6 +91,7 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // List events for selected day
+                populateDayWithEvents(new Date(view.getDate()));
                 /*Date currDate = new Date(view.getDate());
                             Event sample = new Event();
                             sample.setTimeOfEvent(currDate);
@@ -93,29 +101,42 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        // List events for current day
-        Database.getInstance().getTeamEvents(
-                new Date().getTime(),
-                new Date().getTime(),
-                new EventCallback() {
-                    @Override
-                    public void onSuccess(List<LocalEvent> eventList) {
-
-                    }
-
-                    @Override
-                    public void onFail(String message) {
-
-                    }
-                }
-        );
-
+        /**
+         * List team events for current day
+         */
         long date = mainCalendarView.getDate();
         Date currDate = new Date(date);
+        populateDayWithEvents(currDate);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    private void populateDayWithEvents(Date currDate) {
+        long[] times = Helpers.generateStartAndEndMillis(currDate);
+        Database.getInstance().getTeamEvents(
+                times[0],
+                times[1],
+                new EventCallback() {
+                    @Override
+                    public void onSuccess(List<LocalEvent> eventList) {
+                        // Update UI
+                        for (LocalEvent localEvent : eventList) {
+                            Event event = new Event();
+                            event.setTitleOfEvent(localEvent.getName(), new Date(localEvent.getStartDate()));
+                            event.setDescription(localEvent.getDescription());
+                            listViewItems.add(event);
+                        }
+                        eventAdapterForDay.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFail(String message) {
+                        // Show message to user
+                    }
+                }
+        );
     }
 }

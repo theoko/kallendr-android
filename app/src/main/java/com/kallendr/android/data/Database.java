@@ -567,13 +567,29 @@ public class Database {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     // A team should always have at least one user
                     if (dataSnapshot.getChildrenCount() > 0) {
+                        final List<LocalEvent> eventsWithinRangeList = new ArrayList<>();
+                        long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String userID = dt.getKey();
+                            final long finalChildrenCount = childrenCount;
                             Database.getInstance().getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
                                 @Override
                                 public void onSuccess(List<LocalEvent> eventList) {
                                     // Events for this user
-
+                                    int remaining = eventList.size();
+                                    for (LocalEvent event : eventList) {
+                                        long startDate = event.getStartDate();
+                                        long endDate = event.getEndDate();
+                                        // Check if event is within range
+                                        if (startDate >= startTimeInMillis && endDate <= endTimeInMillis) {
+                                            eventsWithinRangeList.add(event);
+                                        }
+                                        // Return when we reach the end of events and the end of children
+                                        if (finalChildrenCount == 0 && remaining == 0) {
+                                            eventCallback.onSuccess(eventsWithinRangeList);
+                                        }
+                                        remaining--;
+                                    }
                                 }
 
                                 @Override
@@ -581,6 +597,7 @@ public class Database {
 
                                 }
                             });
+                            childrenCount--;
                         }
                     }
                 }
