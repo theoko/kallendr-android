@@ -14,13 +14,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kallendr.android.R;
+import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
+import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Navigation;
+import com.kallendr.android.helpers.interfaces.EventCallback;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -89,6 +94,22 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         // List events for current day
+        Database.getInstance().getTeamEvents(
+                new Date().getTime(),
+                new Date().getTime(),
+                new EventCallback() {
+                    @Override
+                    public void onSuccess(List<LocalEvent> eventList) {
+
+                    }
+
+                    @Override
+                    public void onFail(String message) {
+
+                    }
+                }
+        );
+
         long date = mainCalendarView.getDate();
         Date currDate = new Date(date);
     }
