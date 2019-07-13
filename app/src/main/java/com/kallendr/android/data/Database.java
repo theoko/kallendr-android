@@ -63,6 +63,9 @@ public class Database {
                             if (dataSnapshot.exists()) {
                                 firstLoginCallback.onFirstLogin(false);
                             } else {
+                                // Check if user is invited to a team.
+                                // In case they are, add them to that team
+                                settleInvites();
                                 firstLoginCallback.onFirstLogin(true);
                             }
                         }
@@ -86,6 +89,25 @@ public class Database {
         };
         mUserReference.addListenerForSingleValueEvent(mUserValueEventListener);
         mUserReference.removeEventListener(mUserValueEventListener);
+    }
+
+    public void settleInvites() {
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        getInviteStatus(new Result<List<Team>>() {
+            @Override
+            public void success(List<Team> arg) {
+                for (Team team : arg)
+                {
+                    String teamID = team.getTeamID();
+                    addMemberToTeam(teamID, uid);
+                }
+            }
+
+            @Override
+            public void fail(List<Team> arg) {
+
+            }
+        });
     }
 
     /**
@@ -300,8 +322,13 @@ public class Database {
         mEventsReference.removeEventListener(mEventsValueEventListener);
     }
 
-    public void getTeamNameByID(String teamID, final Result<String> result)
-    {
+    /**
+     * This method is responsible for getting a team's name by providing the team ID.
+     * To learn how a team ID is generated, see Helpers.java.
+     * @param teamID
+     * @param result
+     */
+    public void getTeamNameByID(String teamID, final Result<String> result) {
         DatabaseReference mTeam = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB)
                 .child(teamID)
@@ -323,6 +350,7 @@ public class Database {
 
     /**
      * This method returns the teams that the user belongs to
+     * @param listOfTeamIDs
      */
     public void getTeamStatus(final Result<List<Team>> listOfTeamIDs) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -350,7 +378,50 @@ public class Database {
                             }
                             resultList.add(team);
                         }
-                        if(Constants.DEBUG_MODE)
+                        if (Constants.DEBUG_MODE)
+                            System.out.println("listOfTeamIDs.success()");
+                        listOfTeamIDs.success(resultList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        listOfTeamIDs.fail(new ArrayList<Team>());
+                    }
+                });
+    }
+
+    /**
+     * This method returns a list of teams that the user is invited to
+     * @param listOfTeamIDs
+     */
+    public void getInviteStatus(final Result<List<Team>> listOfTeamIDs)
+    {
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB);
+        mTeamsUserBelongsTo.orderByValue().startAt(email)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<Team> resultList = new ArrayList<>();
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            String teamID = dt.getKey();
+                            if (Constants.DEBUG_MODE)
+                                System.out.println("KEY: " + teamID);
+
+                            String teamName = (String) dt.child(Constants.teamName).getValue();
+                            long membersCount = dt.child(Constants.teamMembers).getChildrenCount();
+                            Team team = new Team();
+                            team.setTeamID(teamID);
+                            team.setTeamName(teamName);
+                            if (membersCount == 1) {
+                                team.setDescription(membersCount + " member");
+                            } else {
+                                team.setDescription(membersCount + " members");
+                            }
+                            resultList.add(team);
+                        }
+                        if (Constants.DEBUG_MODE)
                             System.out.println("listOfTeamIDs.success()");
                         listOfTeamIDs.success(resultList);
                     }

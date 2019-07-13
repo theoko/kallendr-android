@@ -147,6 +147,10 @@ public class CalendarMainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method is called whenever a user belongs to more than one teams
+     * @param teamList
+     */
     private void chooseTeam(List<Team> teamList)
     {
         final String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
