@@ -138,7 +138,8 @@ public class CalendarMainActivity extends AppCompatActivity {
                     chooseTeam(arg);
                 } else {
                     // Set selected team
-
+                    String teamID = arg.get(0).getTeamID();
+                    Prefs.putString(Constants.selectedTeam, teamID);
                     showCalendar();
                 }
             }
