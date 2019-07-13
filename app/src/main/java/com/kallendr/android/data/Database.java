@@ -553,7 +553,6 @@ public class Database {
      * @param eventCallback
      */
     public void getTeamEvents(final long startTimeInMillis, final long endTimeInMillis, final EventCallback eventCallback) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
         if (selectedTeam != null) {
             // Get team members
@@ -571,21 +570,35 @@ public class Database {
                         long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String userID = dt.getKey();
+                            if (Constants.DEBUG_MODE)
+                                System.out.println("Getting events for: " + userID);
                             final long finalChildrenCount = childrenCount;
                             Database.getInstance().getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
                                 @Override
                                 public void onSuccess(List<LocalEvent> eventList) {
                                     // Events for this user
                                     int remaining = eventList.size();
+                                    if (Constants.DEBUG_MODE)
+                                        System.out.println("Got " + remaining + " events total!");
                                     for (LocalEvent event : eventList) {
                                         long startDate = event.getStartDate();
                                         long endDate = event.getEndDate();
                                         // Check if event is within range
+                                        if (Constants.DEBUG_MODE) {
+                                            System.out.println("Comparing: " + startDate  + " >= " + startTimeInMillis + " && " + endDate + " <= " + endTimeInMillis);
+                                        }
                                         if (startDate >= startTimeInMillis && endDate <= endTimeInMillis) {
+                                            if (Constants.DEBUG_MODE)
+                                                System.out.println("Adding event: " + event.getName());
                                             eventsWithinRangeList.add(event);
                                         }
+                                        eventsWithinRangeList.add(event);
                                         // Return when we reach the end of events and the end of children
-                                        if (finalChildrenCount == 0 && remaining == 0) {
+                                        if (Constants.DEBUG_MODE) {
+                                            System.out.println("finalChildrenCount: " + finalChildrenCount);
+                                            System.out.println("remaining: " + remaining);
+                                        }
+                                        if (finalChildrenCount == 1 && remaining == 1) {
                                             eventCallback.onSuccess(eventsWithinRangeList);
                                         }
                                         remaining--;

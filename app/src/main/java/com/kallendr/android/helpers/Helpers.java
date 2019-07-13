@@ -65,9 +65,7 @@ public class Helpers {
      */
     public static long[] generateStartAndEndMillis(Date currDate) {
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, currDate.getYear());
-        cal.set(Calendar.MONTH, currDate.getMonth());
-        cal.set(Calendar.DAY_OF_MONTH, currDate.getDay());
+        cal.setTimeInMillis(currDate.getTime());
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);

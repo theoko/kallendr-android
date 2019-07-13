@@ -91,13 +91,10 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // List events for selected day
+                if (Constants.DEBUG_MODE) {
+                    System.out.println("Changed date to: " + year + "/" + month + "/" + dayOfMonth);
+                }
                 populateDayWithEvents(new Date(view.getDate()));
-                /*Date currDate = new Date(view.getDate());
-                            Event sample = new Event();
-                            sample.setTimeOfEvent(currDate);
-                            sample.setDescription("Test description 1234");
-                            listViewItems.add(sample);
-                            eventAdapterForDay.notifyDataSetChanged();*/
             }
         });
 
