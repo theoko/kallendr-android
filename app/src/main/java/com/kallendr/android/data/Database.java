@@ -464,7 +464,7 @@ public class Database {
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String teamID = dt.getKey();
                             if (Constants.DEBUG_MODE)
-                                System.out.println("KEY: " + teamID);
+                                System.out.println("getTeamStatus KEY: " + teamID);
 
                             // Get info for this team
                             Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
@@ -488,7 +488,6 @@ public class Database {
                                         System.out.println("Failed to get team!!!");
                                 }
                             });
-                            listOfTeamIDs.success(resultList);
                         }
                     }
 
