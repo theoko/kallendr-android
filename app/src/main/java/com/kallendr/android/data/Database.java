@@ -182,7 +182,8 @@ public class Database {
     }
 
     /**
-     * This method adds a member (by their UID) to a team
+     * This method adds a member (by their UID) to a team.
+     * This includes the date that the user joined the team.
      *
      * @param teamID
      * @param uid
@@ -192,8 +193,9 @@ public class Database {
                 .child(Constants.teamDB)
                 .child(teamID)
                 .child(Constants.teamMembers)
+                .child(uid)
                 .push()
-                .setValue(uid);
+                .setValue(new Date().getTime());
     }
 
     /**
@@ -228,7 +230,7 @@ public class Database {
                             for (String email : emails) {
                                 // This will generate a random ID as key to the new child
                                 // and will push the email to the list of invites
-                                mTeamEmailsReference.child(Constants.teamInvites).push().setValue(email);
+                                mTeamEmailsReference.child(Constants.teamInvites).child(email).push().setValue(new Date().getTime());
                             }
                         }
                         // Our team has been created successfully
@@ -356,7 +358,7 @@ public class Database {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB);
-        mTeamsUserBelongsTo.orderByKey().startAt(uid)
+        mTeamsUserBelongsTo.orderByChild(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
