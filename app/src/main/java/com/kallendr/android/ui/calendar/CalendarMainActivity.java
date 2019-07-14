@@ -134,8 +134,12 @@ public class CalendarMainActivity extends AppCompatActivity {
             @Override
             public void success(List<Team> arg) {
                 if (arg.size() > 1) {
+                    // The user should choose the team they wish to sign in to
                     chooseTeam(arg);
                 } else {
+                    // Set selected team
+                    String teamID = arg.get(0).getTeamID();
+                    Prefs.putString(Constants.selectedTeam, teamID);
                     showCalendar();
                 }
             }
@@ -147,6 +151,10 @@ public class CalendarMainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method is called whenever a user belongs to more than one teams
+     * @param teamList
+     */
     private void chooseTeam(List<Team> teamList)
     {
         final String selectedTeam = Prefs.getString(Constants.selectedTeam, null);

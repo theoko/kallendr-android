@@ -10,39 +10,42 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kallendr.android.R;
+import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
 import com.kallendr.android.data.model.Event;
+import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
+import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.Navigation;
+import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.helpers.interfaces.EventCallback;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class CalendarActivity extends AppCompatActivity {
 
     /**
      * Main app functionality
      */
-    private EventAdapter eventAdapterForDay;
-    private ArrayList<Event> listViewItems;
     private CalendarView mainCalendarView;
+    private ArrayList<Event> listViewItems;
+    private EventAdapter eventAdapterForDay;
     private ListView listViewForDay;
-
-    private ListView initialLocalEventsList;
-    private EventAdapter initialEventAdapter;
-    private ArrayList<Event> initialLocalEventItems;
+    private LinearLayout events_loader_layout;
+    private LinearLayout no_events_msg_layout;
+    private TextView txtViewForDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        initialLocalEventsList = findViewById(R.id.eventList);
-        initialLocalEventItems = new ArrayList<>();
-
         setContentView(R.layout.activity_calendar_main);
         setTitle(Constants.APP_NAME);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -63,8 +66,16 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         mainCalendarView = findViewById(R.id.calendarView);
-        listViewForDay = findViewById(R.id.eventList);
+        listViewForDay = findViewById(R.id.eventListForDay);
+        events_loader_layout = findViewById(R.id.events_loader_layout);
+        no_events_msg_layout = findViewById(R.id.no_events_msg_layout);
+        txtViewForDay = findViewById(R.id.txtViewForDay);
         listViewItems = new ArrayList<>();
+        eventAdapterForDay = new EventAdapter(
+                CalendarActivity.this,
+                listViewItems
+        );
+        listViewForDay.setAdapter(eventAdapterForDay);
 
         // Set text for currently authenticated user
         View headerView = navigationView.getHeaderView(0);
@@ -79,22 +90,72 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // List events for selected day
-                /*Date currDate = new Date(view.getDate());
-                            Event sample = new Event();
-                            sample.setTimeOfEvent(currDate);
-                            sample.setDescription("Test description 1234");
-                            listViewItems.add(sample);
-                            eventAdapterForDay.notifyDataSetChanged();*/
+                if (Constants.DEBUG_MODE) {
+                    System.out.println("Changed date to: " + year + "/" + month + "/" + dayOfMonth);
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                populateDayWithEvents(calendar.getTime());
             }
         });
 
-        // List events for current day
+        /**
+         * List team events for current day
+         */
         long date = mainCalendarView.getDate();
         Date currDate = new Date(date);
+        populateDayWithEvents(currDate);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    private void populateDayWithEvents(Date currDate) {
+        if (no_events_msg_layout.getVisibility() == View.VISIBLE) {
+            no_events_msg_layout.setVisibility(View.GONE);
+        }
+        no_events_msg_layout.setVisibility(View.GONE);
+        events_loader_layout.setVisibility(View.VISIBLE);
+        final long[] times = Helpers.generateStartAndEndMillis(currDate);
+        Database.getInstance().getTeamEvents(
+                times[0],
+                times[1],
+                new EventCallback() {
+                    @Override
+                    public void onSuccess(List<LocalEvent> eventList) {
+                        // Update UI
+                        listViewItems.clear();
+                        for (LocalEvent localEvent : eventList) {
+                            Event event = new Event();
+                            event.setTitleOfEvent(localEvent.getName(), new Date(localEvent.getStartDate()));
+                            event.setDescription(localEvent.getDescription());
+                            listViewItems.add(event);
+                        }
+                        if (Constants.DEBUG_MODE) {
+                            System.out.println("Adapter total events: " + eventAdapterForDay.getCount());
+                        }
+                        eventAdapterForDay.notifyDataSetChanged();
+                        events_loader_layout.setVisibility(View.GONE);
+                        String no_events = getString(R.string.no_events);
+                        txtViewForDay.setText(no_events + " " + UIHelpers.getReadableDateForMillis(times[0]));
+                        if (eventList.isEmpty()) {
+                            no_events_msg_layout.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onFail(String message) {
+                        // Show message to user
+                        String no_events = getString(R.string.no_events);
+                        txtViewForDay.setText(no_events + " " + UIHelpers.getReadableDateForMillis(times[0]));
+                        events_loader_layout.setVisibility(View.GONE);
+                        no_events_msg_layout.setVisibility(View.VISIBLE);
+                    }
+                }
+        );
     }
 }

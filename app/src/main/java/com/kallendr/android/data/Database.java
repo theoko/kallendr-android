@@ -20,6 +20,7 @@ import com.kallendr.android.helpers.interfaces.Result;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +64,9 @@ public class Database {
                             if (dataSnapshot.exists()) {
                                 firstLoginCallback.onFirstLogin(false);
                             } else {
+                                // Check if user is invited to a team.
+                                // In case they are, add them to that team
+                                settleInvites();
                                 firstLoginCallback.onFirstLogin(true);
                             }
                         }
@@ -86,6 +90,24 @@ public class Database {
         };
         mUserReference.addListenerForSingleValueEvent(mUserValueEventListener);
         mUserReference.removeEventListener(mUserValueEventListener);
+    }
+
+    public void settleInvites() {
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        getInviteStatus(new Result<List<Team>>() {
+            @Override
+            public void success(List<Team> arg) {
+                for (Team team : arg) {
+                    String teamID = team.getTeamID();
+                    addMemberToTeam(teamID, uid);
+                }
+            }
+
+            @Override
+            public void fail(List<Team> arg) {
+
+            }
+        });
     }
 
     /**
@@ -160,18 +182,25 @@ public class Database {
     }
 
     /**
-     * This method adds a member (by their UID) to a team
+     * This method adds a member (by their UID) to a team.
+     * This includes the date that the user joined the team.
      *
      * @param teamID
      * @param uid
      */
     public void addMemberToTeam(String teamID, String uid) {
+        long time = new Date().getTime();
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB)
                 .child(teamID)
                 .child(Constants.teamMembers)
-                .push()
-                .setValue(uid);
+                .child(uid)
+                .setValue(time);
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userTeams)
+                .child(uid)
+                .child(teamID)
+                .setValue(time);
     }
 
     /**
@@ -203,10 +232,16 @@ public class Database {
                         addMemberToTeam(teamID, uid);
                         // Check if we have any invited users
                         if (emails.size() > 0) {
+                            long time = new Date().getTime();
                             for (String email : emails) {
                                 // This will generate a random ID as key to the new child
                                 // and will push the email to the list of invites
-                                mTeamEmailsReference.child(Constants.teamInvites).push().setValue(email);
+                                mTeamEmailsReference.child(Constants.teamInvites).child(email).setValue(time);
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child(Constants.userInvites)
+                                        .child(email)
+                                        .child(teamID)
+                                        .setValue(time);
                             }
                         }
                         // Our team has been created successfully
@@ -300,8 +335,59 @@ public class Database {
         mEventsReference.removeEventListener(mEventsValueEventListener);
     }
 
-    public void getTeamNameByID(String teamID, final Result<String> result)
-    {
+    /**
+     * This method is responsible for getting a user's events.
+     *
+     * @param userUID
+     * @param startTimeInMillis
+     * @param endTimeInMillis
+     * @param eventCallback
+     */
+    public void getEventsForUID(String userUID, final long startTimeInMillis, final long endTimeInMillis, final EventCallback eventCallback) {
+        DatabaseReference mEventsReference = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.eventsDB)
+                .child(userUID);
+        ValueEventListener mEventsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    List<LocalEvent> localEventList = new ArrayList<>();
+                    for (DataSnapshot eventDt : dataSnapshot.getChildren()) {
+                        String eventName = (String) eventDt.child(Constants.name_field).getValue();
+                        String eventDescription = (String) eventDt.child(Constants.description_field).getValue();
+                        long eventStartDate = (long) eventDt.child(Constants.startDate_field).getValue();
+                        long eventEndDate = (long) eventDt.child(Constants.endDate_field).getValue();
+
+                        LocalEvent localEvent = new LocalEvent();
+                        localEvent.setName(eventName);
+                        localEvent.setDescription(eventDescription);
+                        localEvent.setStartDate(eventStartDate);
+                        localEvent.setEndDate(eventEndDate);
+                        localEventList.add(localEvent);
+                    }
+                    eventCallback.onSuccess(localEventList);
+                } else {
+                    eventCallback.onFail("No events found");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                eventCallback.onFail(databaseError.getMessage());
+            }
+        };
+        mEventsReference.addListenerForSingleValueEvent(mEventsValueEventListener);
+        mEventsReference.removeEventListener(mEventsValueEventListener);
+    }
+
+    /**
+     * This method is responsible for getting a team's name by providing the team ID.
+     * To learn how a team ID is generated, see Helpers.java.
+     *
+     * @param teamID
+     * @param result
+     */
+    public void getTeamNameByID(String teamID, final Result<String> result) {
         DatabaseReference mTeam = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB)
                 .child(teamID)
@@ -322,37 +408,88 @@ public class Database {
     }
 
     /**
-     * This method returns the teams that the user belongs to
+     * This method is responsible for getting information for the specified team.
+     *
+     * @param teamID
+     * @param result
+     */
+    public void getTeamInfo(final String teamID, final Result<Team> result) {
+        DatabaseReference mTeam = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(teamID);
+        ValueEventListener mTeamValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    String teamName = (String) dataSnapshot.child(Constants.teamName).getValue();
+                    long membersCount = dataSnapshot.child(Constants.teamMembers).getChildrenCount();
+                    Team team = new Team();
+                    team.setTeamID(teamID);
+                    team.setTeamName(teamName);
+                    if (membersCount == 1) {
+                        team.setDescription(membersCount + " member");
+                    } else {
+                        team.setDescription(membersCount + " members");
+                    }
+                    result.success(team);
+                } else {
+                    result.fail(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                result.fail(null);
+            }
+        };
+        mTeam.addListenerForSingleValueEvent(mTeamValueEventListener);
+        mTeam.removeEventListener(mTeamValueEventListener);
+    }
+
+    /**
+     * This method returns the teams that the user belongs to.
+     *
+     * @param listOfTeamIDs
      */
     public void getTeamStatus(final Result<List<Team>> listOfTeamIDs) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
-                .child(Constants.teamDB);
-        mTeamsUserBelongsTo.orderByKey().startAt(uid)
+                .child(Constants.userTeams)
+                .child(uid);
+        mTeamsUserBelongsTo
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<Team> resultList = new ArrayList<>();
+                        final List<Team> resultList = new ArrayList<>();
+                        final long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String teamID = dt.getKey();
                             if (Constants.DEBUG_MODE)
-                                System.out.println("KEY: " + teamID);
+                                System.out.println("getTeamStatus KEY: " + teamID);
 
-                            String teamName = (String) dt.child(Constants.teamName).getValue();
-                            long membersCount = dt.child(Constants.teamMembers).getChildrenCount();
-                            Team team = new Team();
-                            team.setTeamID(teamID);
-                            team.setTeamName(teamName);
-                            if (membersCount == 1) {
-                                team.setDescription(membersCount + " member");
-                            } else {
-                                team.setDescription(membersCount + " members");
-                            }
-                            resultList.add(team);
+                            // Get info for this team
+                            Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
+                                @Override
+                                public void success(Team arg) {
+                                    if (arg == null) {
+                                        listOfTeamIDs.fail(null);
+                                    }
+                                    resultList.add(arg);
+                                    if (Constants.DEBUG_MODE)
+                                        System.out.println("resultList size: " + resultList.size() + ", childrenCount: " + childrenCount);
+                                    // Return whenever we get all the teams
+                                    if (resultList.size() == childrenCount) {
+                                        listOfTeamIDs.success(resultList);
+                                    }
+                                }
+
+                                @Override
+                                public void fail(Team arg) {
+                                    if (Constants.DEBUG_MODE)
+                                        System.out.println("Failed to get team!!!");
+                                }
+                            });
                         }
-                        if(Constants.DEBUG_MODE)
-                            System.out.println("listOfTeamIDs.success()");
-                        listOfTeamIDs.success(resultList);
                     }
 
                     @Override
@@ -363,19 +500,132 @@ public class Database {
     }
 
     /**
-     * This method is responsible for getting the events of a team that are within the range of the provided dates
+     * This method returns a list of teams that the user is invited to.
+     *
+     * @param listOfTeamIDs
+     */
+    public void getInviteStatus(final Result<List<Team>> listOfTeamIDs) {
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userInvites)
+                .child(email);
+        mTeamsUserBelongsTo
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        final List<Team> resultList = new ArrayList<>();
+                        final long childrenCount = dataSnapshot.getChildrenCount();
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            String teamID = dt.getKey();
+                            if (Constants.DEBUG_MODE)
+                                System.out.println("KEY: " + teamID);
+
+                            Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
+                                @Override
+                                public void success(Team arg) {
+                                    resultList.add(arg);
+                                    if (resultList.size() == childrenCount) {
+                                        if (Constants.DEBUG_MODE)
+                                            System.out.println("listOfTeamIDs.success()");
+                                        listOfTeamIDs.success(resultList);
+                                    }
+                                }
+
+                                @Override
+                                public void fail(Team arg) {
+                                    listOfTeamIDs.fail(null);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        listOfTeamIDs.fail(new ArrayList<Team>());
+                    }
+                });
+    }
+
+    /**
+     * This method is responsible for getting the events of a team that are within the range of the provided dates.
      *
      * @param startTimeInMillis
      * @param endTimeInMillis
      * @param eventCallback
      */
     public void getTeamEvents(final long startTimeInMillis, final long endTimeInMillis, final EventCallback eventCallback) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        // Get team members
-        DatabaseReference mMembersReference = FirebaseDatabase.getInstance().getReference()
-                .child(Constants.teamDB)
-                .child(uid)
-                .child(Constants.teamMembers);
-        // Get events of members
+        String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+        if (selectedTeam != null) {
+            // Get team members
+            DatabaseReference mTeamMembersReference = FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.teamDB)
+                    .child(selectedTeam)
+                    .child(Constants.teamMembers);
+            // For each member, get their events
+            mTeamMembersReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    // A team should always have at least one user
+                    if (dataSnapshot.getChildrenCount() > 0) {
+                        if (Constants.DEBUG_MODE) {
+                            // Print selected date
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTimeInMillis(startTimeInMillis);
+
+                            int mYear = calendar.get(Calendar.YEAR);
+                            int mMonth = calendar.get(Calendar.MONTH);
+                            int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+                            System.out.println("Start time: " + mYear + "/" + mMonth + "/" + mDay);
+                            calendar.setTimeInMillis(endTimeInMillis);
+                            mYear = calendar.get(Calendar.YEAR);
+                            mMonth = calendar.get(Calendar.MONTH);
+                            mDay = calendar.get(Calendar.DAY_OF_MONTH);
+                            System.out.println("End time: " + mYear + "/" + mMonth + "/" + mDay);
+                        }
+                        final List<LocalEvent> eventsWithinRangeList = new ArrayList<>();
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            String userID = dt.getKey();
+                            if (Constants.DEBUG_MODE)
+                                System.out.println("Getting events for: " + userID);
+                            Database.getInstance().getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
+                                @Override
+                                public void onSuccess(List<LocalEvent> eventList) {
+                                    // Events for this user
+                                    int remaining = eventList.size();
+                                    if (Constants.DEBUG_MODE)
+                                        System.out.println("Got " + remaining + " events total!");
+                                    for (LocalEvent event : eventList) {
+                                        long startDate = event.getStartDate();
+                                        long endDate = event.getEndDate();
+                                        // Check if event is within range
+                                        if (startDate >= startTimeInMillis && startDate <= endTimeInMillis) {
+                                            if (Constants.DEBUG_MODE)
+                                                System.out.println("Adding event: " + event.getName());
+                                            eventsWithinRangeList.add(event);
+                                        }
+                                        // Return when we reach the end of events and the end of children
+                                        if (remaining == 1) {
+                                            eventCallback.onSuccess(eventsWithinRangeList);
+                                        }
+                                        remaining--;
+                                    }
+                                }
+
+                                @Override
+                                public void onFail(String message) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
     }
 }

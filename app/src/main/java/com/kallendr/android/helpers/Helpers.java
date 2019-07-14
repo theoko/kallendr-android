@@ -6,6 +6,9 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class Helpers {
 
     /**
@@ -53,6 +56,26 @@ public class Helpers {
     public static String generateUniqueTeamIdentifier(String uid, String teamName)
     {
         return uid + "_" + teamName;
+    }
+
+    /**
+     * This method will generate the start and end date in millis given the current date.
+     * @param currDate
+     * @return
+     */
+    public static long[] generateStartAndEndMillis(Date currDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(currDate.getTime());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        Date startDate = cal.getTime();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        Date endDate = cal.getTime();
+
+        return new long[]{startDate.getTime(), endDate.getTime()};
     }
 
 }
