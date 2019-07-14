@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
@@ -33,22 +34,14 @@ public class CalendarActivity extends AppCompatActivity {
     /**
      * Main app functionality
      */
-    private EventAdapter eventAdapterForDay;
-    private ArrayList<Event> listViewItems;
     private CalendarView mainCalendarView;
+    private ArrayList<Event> listViewItems;
+    private EventAdapter eventAdapterForDay;
     private ListView listViewForDay;
-
-    private ListView initialLocalEventsList;
-    private EventAdapter initialEventAdapter;
-    private ArrayList<Event> initialLocalEventItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        initialLocalEventsList = findViewById(R.id.eventList);
-        initialLocalEventItems = new ArrayList<>();
-
         setContentView(R.layout.activity_calendar_main);
         setTitle(Constants.APP_NAME);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -70,7 +63,7 @@ public class CalendarActivity extends AppCompatActivity {
 
 
         mainCalendarView = findViewById(R.id.calendarView);
-        listViewForDay = findViewById(R.id.eventList);
+        listViewForDay = findViewById(R.id.eventListForDay);
 
         listViewItems = new ArrayList<>();
         eventAdapterForDay = new EventAdapter(
@@ -131,12 +124,16 @@ public class CalendarActivity extends AppCompatActivity {
                             event.setDescription(localEvent.getDescription());
                             listViewItems.add(event);
                         }
+                        if (Constants.DEBUG_MODE) {
+                            System.out.println("Adapter total events: " + eventAdapterForDay.getCount());
+                        }
                         eventAdapterForDay.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onFail(String message) {
                         // Show message to user
+                        Toast.makeText(CalendarActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 }
         );
