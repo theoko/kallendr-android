@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ public class CalendarActivity extends AppCompatActivity {
     private ArrayList<Event> listViewItems;
     private EventAdapter eventAdapterForDay;
     private ListView listViewForDay;
+    private LinearLayout events_loader_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         mainCalendarView = findViewById(R.id.calendarView);
         listViewForDay = findViewById(R.id.eventListForDay);
+        events_loader_layout = findViewById(R.id.events_loader_layout);
         listViewItems = new ArrayList<>();
         eventAdapterForDay = new EventAdapter(
                 CalendarActivity.this,
@@ -108,6 +111,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void populateDayWithEvents(Date currDate) {
+        events_loader_layout.setVisibility(View.VISIBLE);
         long[] times = Helpers.generateStartAndEndMillis(currDate);
         Database.getInstance().getTeamEvents(
                 times[0],
@@ -127,12 +131,14 @@ public class CalendarActivity extends AppCompatActivity {
                             System.out.println("Adapter total events: " + eventAdapterForDay.getCount());
                         }
                         eventAdapterForDay.notifyDataSetChanged();
+                        events_loader_layout.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onFail(String message) {
                         // Show message to user
                         Toast.makeText(CalendarActivity.this, message, Toast.LENGTH_LONG).show();
+                        events_loader_layout.setVisibility(View.GONE);
                     }
                 }
         );
