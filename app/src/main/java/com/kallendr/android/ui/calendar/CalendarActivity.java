@@ -13,7 +13,6 @@ import android.widget.CalendarView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
@@ -23,6 +22,7 @@ import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.Navigation;
+import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.helpers.interfaces.EventCallback;
 
 import java.util.ArrayList;
@@ -41,6 +41,7 @@ public class CalendarActivity extends AppCompatActivity {
     private ListView listViewForDay;
     private LinearLayout events_loader_layout;
     private LinearLayout no_events_msg_layout;
+    private TextView txtViewForDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class CalendarActivity extends AppCompatActivity {
         listViewForDay = findViewById(R.id.eventListForDay);
         events_loader_layout = findViewById(R.id.events_loader_layout);
         no_events_msg_layout = findViewById(R.id.no_events_msg_layout);
+        txtViewForDay = findViewById(R.id.txtViewForDay);
         listViewItems = new ArrayList<>();
         eventAdapterForDay = new EventAdapter(
                 CalendarActivity.this,
@@ -118,7 +120,7 @@ public class CalendarActivity extends AppCompatActivity {
         }
         no_events_msg_layout.setVisibility(View.GONE);
         events_loader_layout.setVisibility(View.VISIBLE);
-        long[] times = Helpers.generateStartAndEndMillis(currDate);
+        final long[] times = Helpers.generateStartAndEndMillis(currDate);
         Database.getInstance().getTeamEvents(
                 times[0],
                 times[1],
@@ -138,6 +140,8 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                         eventAdapterForDay.notifyDataSetChanged();
                         events_loader_layout.setVisibility(View.GONE);
+                        String no_events = getString(R.string.no_events);
+                        txtViewForDay.setText(no_events + " " + UIHelpers.getReadableDateForMillis(times[0]));
                         if (eventList.isEmpty()) {
                             no_events_msg_layout.setVisibility(View.VISIBLE);
                         }
@@ -146,6 +150,8 @@ public class CalendarActivity extends AppCompatActivity {
                     @Override
                     public void onFail(String message) {
                         // Show message to user
+                        String no_events = getString(R.string.no_events);
+                        txtViewForDay.setText(no_events + " " + UIHelpers.getReadableDateForMillis(times[0]));
                         events_loader_layout.setVisibility(View.GONE);
                         no_events_msg_layout.setVisibility(View.VISIBLE);
                     }
