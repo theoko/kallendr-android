@@ -40,6 +40,7 @@ public class CalendarActivity extends AppCompatActivity {
     private EventAdapter eventAdapterForDay;
     private ListView listViewForDay;
     private LinearLayout events_loader_layout;
+    private LinearLayout no_events_msg_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class CalendarActivity extends AppCompatActivity {
         mainCalendarView = findViewById(R.id.calendarView);
         listViewForDay = findViewById(R.id.eventListForDay);
         events_loader_layout = findViewById(R.id.events_loader_layout);
+        no_events_msg_layout = findViewById(R.id.no_events_msg_layout);
         listViewItems = new ArrayList<>();
         eventAdapterForDay = new EventAdapter(
                 CalendarActivity.this,
@@ -111,6 +113,10 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void populateDayWithEvents(Date currDate) {
+        if (no_events_msg_layout.getVisibility() == View.VISIBLE) {
+            no_events_msg_layout.setVisibility(View.GONE);
+        }
+        no_events_msg_layout.setVisibility(View.GONE);
         events_loader_layout.setVisibility(View.VISIBLE);
         long[] times = Helpers.generateStartAndEndMillis(currDate);
         Database.getInstance().getTeamEvents(
@@ -132,13 +138,16 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                         eventAdapterForDay.notifyDataSetChanged();
                         events_loader_layout.setVisibility(View.GONE);
+                        if (eventList.isEmpty()) {
+                            no_events_msg_layout.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     @Override
                     public void onFail(String message) {
                         // Show message to user
-                        Toast.makeText(CalendarActivity.this, message, Toast.LENGTH_LONG).show();
                         events_loader_layout.setVisibility(View.GONE);
+                        no_events_msg_layout.setVisibility(View.VISIBLE);
                     }
                 }
         );
