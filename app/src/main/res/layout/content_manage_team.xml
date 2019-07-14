@@ -16,8 +16,23 @@
         android:layout_height="wrap_content"
         android:textSize="30sp"
         android:padding="12sp"
-        android:text="Team Members" />
+        android:text="Team members" />
 
-    
+    <ListView
+        android:id="@+id/teamMembersListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:padding="12sp"
+        android:text="Invited users" />
+
+    <ListView
+        android:id="@+id/invitedUsersListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

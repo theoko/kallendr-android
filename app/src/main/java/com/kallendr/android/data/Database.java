@@ -625,7 +625,20 @@ public class Database {
 
                 }
             });
+        } else {
+            eventCallback.onFail("No team selected");
         }
+    }
 
+    /**
+     * This method is responsible for getting a list containing the emails of the invited users for the selected team.
+     *
+     * @param emails
+     */
+    public void getInvitedUsers(Result<List<String>> emails) {
+        String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+        if (selectedTeam != null) {
+
+        }
     }
 }

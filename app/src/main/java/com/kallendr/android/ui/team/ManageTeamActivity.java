@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kallendr.android.R;
@@ -16,6 +17,9 @@ import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Navigation;
 
 public class ManageTeamActivity extends AppCompatActivity {
+
+    private ListView teamMembersListView;
+    private ListView invitedUsersListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +47,29 @@ public class ManageTeamActivity extends AppCompatActivity {
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
         Navigation.populateNav(fullNameTextView, emailTextView);
+
+        teamMembersListView = findViewById(R.id.teamMembersListView);
+        invitedUsersListView = findViewById(R.id.invitedUsersListView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayTeamMembers();
+        displayInvitedUsers();
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout_manage_team);
         Navigation.backPressed(ManageTeamActivity.this, drawer);
+    }
+
+    private void displayTeamMembers() {
+
+    }
+
+    private void displayInvitedUsers() {
+
     }
 }
