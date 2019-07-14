@@ -24,6 +24,7 @@ import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.interfaces.EventCallback;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -94,7 +95,11 @@ public class CalendarActivity extends AppCompatActivity {
                 if (Constants.DEBUG_MODE) {
                     System.out.println("Changed date to: " + year + "/" + month + "/" + dayOfMonth);
                 }
-                populateDayWithEvents(new Date(view.getDate()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                populateDayWithEvents(calendar.getTime());
             }
         });
 

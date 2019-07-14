@@ -20,6 +20,7 @@ import com.kallendr.android.helpers.interfaces.Result;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -566,13 +567,26 @@ public class Database {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     // A team should always have at least one user
                     if (dataSnapshot.getChildrenCount() > 0) {
+                        if (Constants.DEBUG_MODE) {
+                            // Print selected date
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTimeInMillis(startTimeInMillis);
+
+                            int mYear = calendar.get(Calendar.YEAR);
+                            int mMonth = calendar.get(Calendar.MONTH);
+                            int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+                            System.out.println("Start time: " + mYear + "/" + mMonth + "/" + mDay);
+                            calendar.setTimeInMillis(endTimeInMillis);
+                            mYear = calendar.get(Calendar.YEAR);
+                            mMonth = calendar.get(Calendar.MONTH);
+                            mDay = calendar.get(Calendar.DAY_OF_MONTH);
+                            System.out.println("End time: " + mYear + "/" + mMonth + "/" + mDay);
+                        }
                         final List<LocalEvent> eventsWithinRangeList = new ArrayList<>();
-                        long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String userID = dt.getKey();
                             if (Constants.DEBUG_MODE)
                                 System.out.println("Getting events for: " + userID);
-                            final long finalChildrenCount = childrenCount;
                             Database.getInstance().getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
                                 @Override
                                 public void onSuccess(List<LocalEvent> eventList) {
@@ -584,21 +598,14 @@ public class Database {
                                         long startDate = event.getStartDate();
                                         long endDate = event.getEndDate();
                                         // Check if event is within range
-                                        if (Constants.DEBUG_MODE) {
-                                            System.out.println("Comparing: " + startDate  + " >= " + startTimeInMillis + " && " + endDate + " <= " + endTimeInMillis);
-                                        }
-                                        if (startDate >= startTimeInMillis && endDate <= endTimeInMillis) {
+                                        if (startDate >= startTimeInMillis && startDate <= endTimeInMillis) {
                                             if (Constants.DEBUG_MODE)
                                                 System.out.println("Adding event: " + event.getName());
                                             eventsWithinRangeList.add(event);
                                         }
                                         eventsWithinRangeList.add(event);
                                         // Return when we reach the end of events and the end of children
-                                        if (Constants.DEBUG_MODE) {
-                                            System.out.println("finalChildrenCount: " + finalChildrenCount);
-                                            System.out.println("remaining: " + remaining);
-                                        }
-                                        if (finalChildrenCount == 1 && remaining == 1) {
+                                        if (remaining == 1) {
                                             eventCallback.onSuccess(eventsWithinRangeList);
                                         }
                                         remaining--;
@@ -610,7 +617,6 @@ public class Database {
 
                                 }
                             });
-                            childrenCount--;
                         }
                     }
                 }
