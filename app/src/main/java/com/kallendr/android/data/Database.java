@@ -603,7 +603,6 @@ public class Database {
                                                 System.out.println("Adding event: " + event.getName());
                                             eventsWithinRangeList.add(event);
                                         }
-                                        eventsWithinRangeList.add(event);
                                         // Return when we reach the end of events and the end of children
                                         if (remaining == 1) {
                                             eventCallback.onSuccess(eventsWithinRangeList);

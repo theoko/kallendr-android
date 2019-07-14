@@ -61,14 +61,12 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-
         mainCalendarView = findViewById(R.id.calendarView);
         listViewForDay = findViewById(R.id.eventListForDay);
-
         listViewItems = new ArrayList<>();
         eventAdapterForDay = new EventAdapter(
                 CalendarActivity.this,
-                new ArrayList<>(listViewItems)
+                listViewItems
         );
         listViewForDay.setAdapter(eventAdapterForDay);
 
@@ -118,6 +116,7 @@ public class CalendarActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(List<LocalEvent> eventList) {
                         // Update UI
+                        listViewItems.clear();
                         for (LocalEvent localEvent : eventList) {
                             Event event = new Event();
                             event.setTitleOfEvent(localEvent.getName(), new Date(localEvent.getStartDate()));
