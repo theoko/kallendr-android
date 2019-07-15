@@ -13,6 +13,7 @@ public class Helpers {
 
     /**
      * Checks if the permission to read the calendar is granted and if not it tries to obtain it
+     *
      * @param context
      */
     public static void checkPermissionsAndRequestIfNeeded(Activity context) {
@@ -40,10 +41,10 @@ public class Helpers {
 
     /**
      * This method requests the permission to access calendar
+     *
      * @param context
      */
-    public static void requestReadCalendarPermission(Activity context)
-    {
+    public static void requestReadCalendarPermission(Activity context) {
         ActivityCompat.requestPermissions(context,
                 new String[]{Manifest.permission.READ_CALENDAR},
                 Constants.PERMISSIONS_REQUEST_READ_CALENDAR);
@@ -51,15 +52,16 @@ public class Helpers {
 
     /**
      * This method generates an identifier for a team
+     *
      * @return unique team identifier
      */
-    public static String generateUniqueTeamIdentifier(String uid, String teamName)
-    {
+    public static String generateUniqueTeamIdentifier(String uid, String teamName) {
         return uid + "_" + teamName;
     }
 
     /**
      * This method will generate the start and end date in millis given the current date.
+     *
      * @param currDate
      * @return
      */
@@ -76,6 +78,26 @@ public class Helpers {
         Date endDate = cal.getTime();
 
         return new long[]{startDate.getTime(), endDate.getTime()};
+    }
+
+    /**
+     * This method replaces '.' with acceptable characters
+     *
+     * @param email
+     * @return
+     */
+    public static String encodeEmailForFirebase(String email) {
+        return email.replaceAll("\\.", ",");
+    }
+
+    /**
+     * This method replaces '.' with acceptable characters
+     *
+     * @param email
+     * @return decoded email
+     */
+    public static String decodeEmailFromFirebase(String email) {
+        return email.replaceAll(",", ".");
     }
 
 }

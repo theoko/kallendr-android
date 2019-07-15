@@ -9,17 +9,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kallendr.android.R;
+import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Navigation;
+import com.kallendr.android.helpers.interfaces.Result;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ManageTeamActivity extends AppCompatActivity {
 
+    // ListView
     private ListView teamMembersListView;
     private ListView invitedUsersListView;
+
+    // List
+    ArrayList<String> invitedUserList;
+
+    // Adapters
+    ArrayAdapter<String> invitedUsersAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +63,13 @@ public class ManageTeamActivity extends AppCompatActivity {
 
         teamMembersListView = findViewById(R.id.teamMembersListView);
         invitedUsersListView = findViewById(R.id.invitedUsersListView);
+        invitedUserList = new ArrayList<>();
+        invitedUsersAdapter = new ArrayAdapter<>(
+                ManageTeamActivity.this,
+                android.R.layout.simple_list_item_1,
+                invitedUserList
+        );
+        invitedUsersListView.setAdapter(invitedUsersAdapter);
     }
 
     @Override
@@ -70,6 +90,21 @@ public class ManageTeamActivity extends AppCompatActivity {
     }
 
     private void displayInvitedUsers() {
+        Database.getInstance().getInvitedUsers(new Result<List<String>>() {
+            @Override
+            public void success(List<String> arg) {
+                if (arg.size() > 0) {
+                    // Update UI
+                    invitedUserList.clear();
+                    invitedUserList.addAll(arg);
+                    invitedUsersAdapter.notifyDataSetChanged();
+                }
+            }
 
+            @Override
+            public void fail(List<String> arg) {
+
+            }
+        });
     }
 }

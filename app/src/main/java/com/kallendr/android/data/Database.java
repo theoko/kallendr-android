@@ -1,6 +1,7 @@
 package com.kallendr.android.data;
 
 import android.support.annotation.NonNull;
+import android.support.constraint.solver.widgets.Helper;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -236,10 +237,11 @@ public class Database {
                             for (String email : emails) {
                                 // This will generate a random ID as key to the new child
                                 // and will push the email to the list of invites
-                                mTeamEmailsReference.child(Constants.teamInvites).child(email).setValue(time);
+                                String encodedEmail = Helpers.encodeEmailForFirebase(email);
+                                mTeamEmailsReference.child(Constants.teamInvites).child(encodedEmail).setValue(time);
                                 FirebaseDatabase.getInstance().getReference()
                                         .child(Constants.userInvites)
-                                        .child(email)
+                                        .child(encodedEmail)
                                         .child(teamID)
                                         .setValue(time);
                             }
@@ -635,10 +637,37 @@ public class Database {
      *
      * @param emails
      */
-    public void getInvitedUsers(Result<List<String>> emails) {
+    public void getInvitedUsers(final Result<List<String>> emails) {
         String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
         if (selectedTeam != null) {
+            DatabaseReference mInvitedUsersReference = FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.teamDB)
+                    .child(selectedTeam)
+                    .child(Constants.teamInvites);
+            ValueEventListener mInvitesUsersValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                        List<String> emailList = new ArrayList<>();
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            String userEmail = Helpers.decodeEmailFromFirebase(dt.getKey());
+                            emailList.add(userEmail);
+                        }
+                        emails.success(emailList);
+                    } else {
+                        emails.success(new ArrayList<String>());
+                    }
+                }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    emails.fail(new ArrayList<String>());
+                }
+            };
+            mInvitedUsersReference.addListenerForSingleValueEvent(mInvitesUsersValueEventListener);
+            mInvitedUsersReference.removeEventListener(mInvitesUsersValueEventListener);
+        } else {
+            emails.fail(new ArrayList<String>());
         }
     }
 }
