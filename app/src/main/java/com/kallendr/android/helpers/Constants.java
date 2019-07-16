@@ -12,6 +12,7 @@ public class Constants {
      */
     public static String userDB = "user_preferences";
     public static String userTeams = "user_teams";
+    public static String userTeamsChild = "belongs_to";
     public static String userInvites = "user_invites";
     public static String eventsDB = "events";
     public static String teamDB = "teams";
@@ -19,6 +20,7 @@ public class Constants {
     public static String emailField = "email";
 
 
+    public static String firstLoginField = "firstLogin";
     public static String COMPLETE = "completed";
     public static String INCOMPLETE = "incomplete";
 

@@ -116,12 +116,13 @@ public class Database {
      * Called when the initial calendar setup is completed
      */
     public void onCalendarSetupComplete() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         // Updates database to indicate that the user has completed setup
-        Map<String, Object> postValues = new HashMap<>();
-        postValues.put("firstLogin", Constants.COMPLETE);
-        mUserReference.updateChildren(postValues);
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userDB)
+                .child(uid)
+                .child(Constants.firstLoginField)
+                .setValue(Constants.COMPLETE);
     }
 
     /**
@@ -203,6 +204,7 @@ public class Database {
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userTeams)
                 .child(uid)
+                .child(Constants.userTeamsChild)
                 .child(teamID)
                 .setValue(time);
         FirebaseDatabase.getInstance().getReference()
@@ -466,7 +468,8 @@ public class Database {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userTeams)
-                .child(uid);
+                .child(uid)
+                .child(Constants.userTeamsChild);
         mTeamsUserBelongsTo
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -695,13 +698,34 @@ public class Database {
             ValueEventListener mInvitesUsersValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
-                        List<String> emailList = new ArrayList<>();
+                    final long childrenCount = dataSnapshot.getChildrenCount();
+                    if (dataSnapshot.exists() && childrenCount > 0) {
+                        final List<String> emailList = new ArrayList<>();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
-                            String userEmail = Helpers.decodeEmailFromFirebase(dt.getKey());
-                            emailList.add(userEmail);
+                            // Get email from UID
+                            String userUID = dt.getKey();
+                            DatabaseReference mEmailReference = FirebaseDatabase.getInstance().getReference()
+                                    .child(Constants.userTeams)
+                                    .child(userUID)
+                                    .child(Constants.emailField);
+                            ValueEventListener mEmailValueEventListener = new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String userEmail = (String) dataSnapshot.getValue();
+                                    userEmail = Helpers.decodeEmailFromFirebase(userEmail);
+                                    emailList.add(userEmail);
+                                    if (childrenCount == emailList.size())
+                                        emails.success(emailList);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    emails.fail(new ArrayList<String>());
+                                }
+                            };
+                            mEmailReference.addListenerForSingleValueEvent(mEmailValueEventListener);
+                            mEmailReference.removeEventListener(mEmailValueEventListener);
                         }
-                        emails.success(emailList);
                     } else {
                         emails.success(new ArrayList<String>());
                     }
