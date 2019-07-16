@@ -98,6 +98,8 @@ public class ManageTeamActivity extends AppCompatActivity {
                     invitedUserList.clear();
                     invitedUserList.addAll(arg);
                     invitedUsersAdapter.notifyDataSetChanged();
+                } else {
+
                 }
             }
 

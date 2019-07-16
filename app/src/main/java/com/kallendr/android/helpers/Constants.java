@@ -16,6 +16,7 @@ public class Constants {
     public static String eventsDB = "events";
     public static String teamDB = "teams";
     public static String teamInvites = "invites";
+    public static String emailField = "email";
 
 
     public static String COMPLETE = "completed";
