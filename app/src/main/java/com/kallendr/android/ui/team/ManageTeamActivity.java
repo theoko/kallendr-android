@@ -29,9 +29,11 @@ public class ManageTeamActivity extends AppCompatActivity {
     private ListView invitedUsersListView;
 
     // List
+    ArrayList<String> membersList;
     ArrayList<String> invitedUserList;
 
     // Adapters
+    ArrayAdapter<String> membersAdapter;
     ArrayAdapter<String> invitedUsersAdapter;
 
     @Override
@@ -64,6 +66,12 @@ public class ManageTeamActivity extends AppCompatActivity {
         teamMembersListView = findViewById(R.id.teamMembersListView);
         invitedUsersListView = findViewById(R.id.invitedUsersListView);
         invitedUserList = new ArrayList<>();
+        membersList = new ArrayList<>();
+        membersAdapter = new ArrayAdapter<>(
+                ManageTeamActivity.this,
+                android.R.layout.simple_list_item_1,
+                membersList
+        );
         invitedUsersAdapter = new ArrayAdapter<>(
                 ManageTeamActivity.this,
                 android.R.layout.simple_list_item_1,
@@ -86,7 +94,23 @@ public class ManageTeamActivity extends AppCompatActivity {
     }
 
     private void displayTeamMembers() {
+        Database.getInstance().getTeamMembers(new Result<List<String>>() {
+            @Override
+            public void success(List<String> arg) {
+                if (arg.size() > 0) {
+                    membersList.clear();
+                    membersList.addAll(arg);
+                    membersAdapter.notifyDataSetChanged();
+                } else {
 
+                }
+            }
+
+            @Override
+            public void fail(List<String> arg) {
+
+            }
+        });
     }
 
     private void displayInvitedUsers() {
