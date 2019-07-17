@@ -108,6 +108,7 @@ public class Database {
                 for (Team team : arg) {
                     String teamID = team.getTeamID();
                     addMemberToTeam(teamID, email, uid);
+                    removeMemberFromInvitedUser(teamID, email);
                 }
             }
 
@@ -218,6 +219,22 @@ public class Database {
                 .child(uid)
                 .child(Constants.emailField)
                 .setValue(email);
+    }
+
+    /**
+     * This method removes a user account from the invited users
+     *
+     * @param teamID
+     * @param email
+     */
+    private void removeMemberFromInvitedUser(String teamID, String email) {
+        String encodedEmail = Helpers.encodeEmailForFirebase(email);
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(teamID)
+                .child(Constants.teamInvites)
+                .child(encodedEmail)
+                .removeValue();
     }
 
     /**
