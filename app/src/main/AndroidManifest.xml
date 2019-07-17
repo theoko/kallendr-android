@@ -40,7 +40,8 @@
         <activity android:name=".ui.calendar.PermissionRequestActivity" />
 
         <service android:name=".services.EmailService" />
-        <service android:name=".services.EventUploadService" />
+        <service android:name=".services.InitialEventUploadService" />
+        <service android:name=".services.PulledEventUploadService" />
     </application>
 
 </manifest>

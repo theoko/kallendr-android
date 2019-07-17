@@ -1,5 +1,6 @@
 package com.kallendr.android.ui.team;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -9,7 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,12 +22,23 @@ import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Navigation;
+import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.helpers.interfaces.Result;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ManageTeamActivity extends AppCompatActivity {
+
+    // Layouts
+    private LinearLayout inviteMemberLayout;
+
+    // Forms
+    private EditText invitedUserEmailAddress;
+
+    // Buttons
+    private Button btnAddTeamMember;
 
     // ListView
     private ListView teamMembersListView;
@@ -63,6 +79,9 @@ public class ManageTeamActivity extends AppCompatActivity {
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
         Navigation.populateNav(fullNameTextView, emailTextView);
 
+        inviteMemberLayout = findViewById(R.id.inviteMemberLayout);
+        invitedUserEmailAddress = findViewById(R.id.invitedUserEmailAddress);
+        btnAddTeamMember = findViewById(R.id.btnAddTeamMember);
         teamMembersListView = findViewById(R.id.teamMembersListView);
         invitedUsersListView = findViewById(R.id.invitedUsersListView);
         invitedUserList = new ArrayList<>();
@@ -133,5 +152,30 @@ public class ManageTeamActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void btn_addMember(View view) {
+        // Update button text
+        final String teamID = Prefs.getString(Constants.selectedTeam, null);
+        if (teamID != null) {
+            Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
+                @Override
+                public void success(String teamName) {
+                    btnAddTeamMember.setText("Invite to " + teamName);
+                }
+
+                @Override
+                public void fail(String arg) {
+                    btnAddTeamMember.setText("Invite");
+                }
+            });
+        }
+        // Show edittext
+        inviteMemberLayout.setVisibility(View.VISIBLE);
+        UIHelpers.runFadeInAnimationOn(ManageTeamActivity.this, inviteMemberLayout);
+        // Request focus
+        invitedUserEmailAddress.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(invitedUserEmailAddress, InputMethodManager.SHOW_IMPLICIT);
     }
 }
