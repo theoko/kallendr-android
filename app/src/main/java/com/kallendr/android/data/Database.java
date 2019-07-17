@@ -57,6 +57,9 @@ public class Database {
         ValueEventListener mUserValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Check if user is invited to a team.
+                // In case they are, add them to that team
+                settleInvites();
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     DatabaseReference firstLogin = mUserReference.child("firstLogin");
                     ValueEventListener firstLoginValueEventListener = new ValueEventListener() {
@@ -65,9 +68,6 @@ public class Database {
                             if (dataSnapshot.exists()) {
                                 firstLoginCallback.onFirstLogin(false);
                             } else {
-                                // Check if user is invited to a team.
-                                // In case they are, add them to that team
-                                settleInvites();
                                 firstLoginCallback.onFirstLogin(true);
                             }
                         }
@@ -94,11 +94,17 @@ public class Database {
     }
 
     public void settleInvites() {
+        if (Constants.DEBUG_MODE) {
+            System.out.println("Calling settleInvites()");
+        }
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         getInviteStatus(new Result<List<Team>>() {
             @Override
             public void success(List<Team> arg) {
+                if (Constants.DEBUG_MODE) {
+                    System.out.println("getInviteStatus size: " + arg.size());
+                }
                 for (Team team : arg) {
                     String teamID = team.getTeamID();
                     addMemberToTeam(teamID, email, uid);
@@ -520,6 +526,10 @@ public class Database {
      */
     public void getInviteStatus(final Result<List<Team>> listOfTeamIDs) {
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        email = Helpers.encodeEmailForFirebase(email);
+        if (Constants.DEBUG_MODE) {
+            System.out.println("Encoding email to: " + email);
+        }
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userInvites)
                 .child(email);
