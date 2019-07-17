@@ -77,6 +77,7 @@ public class ManageTeamActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 invitedUserList
         );
+        teamMembersListView.setAdapter(membersAdapter);
         invitedUsersListView.setAdapter(invitedUsersAdapter);
     }
 

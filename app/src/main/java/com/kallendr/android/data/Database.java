@@ -714,6 +714,8 @@ public class Database {
                                     String userEmail = (String) dataSnapshot.getValue();
                                     userEmail = Helpers.decodeEmailFromFirebase(userEmail);
                                     emailList.add(userEmail);
+                                    if (Constants.DEBUG_MODE)
+                                        System.out.println("emailList size: " + emailList.size() + ", childrenCount: " + childrenCount);
                                     if (childrenCount == emailList.size())
                                         emails.success(emailList);
                                 }
