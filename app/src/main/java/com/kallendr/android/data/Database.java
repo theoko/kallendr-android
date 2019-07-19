@@ -771,4 +771,23 @@ public class Database {
             emails.fail(new ArrayList<String>());
         }
     }
+
+    public void invite(String userEmail) {
+        String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+        if (selectedTeam != null) {
+            String encodedEmail = Helpers.encodeEmailForFirebase(userEmail);
+            long time = new Date().getTime();
+            FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.teamDB)
+                    .child(selectedTeam)
+                    .child(Constants.teamInvites)
+                    .child(encodedEmail)
+                    .setValue(time);
+            FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.userInvites)
+                    .child(encodedEmail)
+                    .child(selectedTeam)
+                    .setValue(time);
+        }
+    }
 }

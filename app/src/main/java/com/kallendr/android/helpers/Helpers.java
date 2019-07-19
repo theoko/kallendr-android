@@ -8,6 +8,8 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Helpers {
 
@@ -98,6 +100,20 @@ public class Helpers {
      */
     public static String decodeEmailFromFirebase(String email) {
         return email.replaceAll(",", ".");
+    }
+
+    /**
+     * Method is used for checking valid email id format.
+     * Taken from https://stackoverflow.com/questions/6119722/how-to-check-edittexts-text-is-email-address-or-not
+     *
+     * @param email
+     * @return boolean true for valid false for invalid
+     */
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 }

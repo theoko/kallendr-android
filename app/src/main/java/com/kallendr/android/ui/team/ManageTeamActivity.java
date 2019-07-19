@@ -17,10 +17,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.Constants;
+import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.helpers.interfaces.Result;
@@ -155,27 +157,38 @@ public class ManageTeamActivity extends AppCompatActivity {
     }
 
     public void btn_addMember(View view) {
-        // Update button text
-        final String teamID = Prefs.getString(Constants.selectedTeam, null);
-        if (teamID != null) {
-            Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
-                @Override
-                public void success(String teamName) {
-                    btnAddTeamMember.setText("Invite to " + teamName);
-                }
+        // Validate email if the invitation form is visible
+        if (inviteMemberLayout.getVisibility() == View.VISIBLE) {
+            String userEmail = invitedUserEmailAddress.getText().toString();
+            boolean emailValid = Helpers.isEmailValid(userEmail);
+            if (emailValid) {
+                Database.getInstance().invite(userEmail);
+            } else {
+                Toast.makeText(ManageTeamActivity.this, "Please enter a valid email address", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            // Update button text
+            final String teamID = Prefs.getString(Constants.selectedTeam, null);
+            if (teamID != null) {
+                Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
+                    @Override
+                    public void success(String teamName) {
+                        btnAddTeamMember.setText("Invite to " + teamName);
+                    }
 
-                @Override
-                public void fail(String arg) {
-                    btnAddTeamMember.setText("Invite");
-                }
-            });
+                    @Override
+                    public void fail(String arg) {
+                        btnAddTeamMember.setText("Invite");
+                    }
+                });
+            }
+            // Show edittext
+            inviteMemberLayout.setVisibility(View.VISIBLE);
+            UIHelpers.runFadeInAnimationOn(ManageTeamActivity.this, inviteMemberLayout);
+            // Request focus
+            invitedUserEmailAddress.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(invitedUserEmailAddress, InputMethodManager.SHOW_IMPLICIT);
         }
-        // Show edittext
-        inviteMemberLayout.setVisibility(View.VISIBLE);
-        UIHelpers.runFadeInAnimationOn(ManageTeamActivity.this, inviteMemberLayout);
-        // Request focus
-        invitedUserEmailAddress.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(invitedUserEmailAddress, InputMethodManager.SHOW_IMPLICIT);
     }
 }
