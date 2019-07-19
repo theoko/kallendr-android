@@ -1,15 +1,15 @@
 package com.kallendr.android.data;
 
 import android.support.annotation.NonNull;
-import android.support.constraint.solver.widgets.Helper;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.data.model.Team;
 import com.kallendr.android.helpers.Constants;
@@ -206,19 +206,40 @@ public class Database {
                 .child(teamID)
                 .child(Constants.teamMembers)
                 .child(uid)
-                .setValue(time);
+                .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
         /* user_teams -> ...uid...: ...time..., user_teams -> email: ...email... */
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userTeams)
                 .child(uid)
                 .child(Constants.userTeamsChild)
                 .child(teamID)
-                .setValue(time);
+                .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userTeams)
                 .child(uid)
                 .child(Constants.emailField)
-                .setValue(email);
+                .setValue(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
     }
 
     /**
@@ -234,7 +255,14 @@ public class Database {
                 .child(teamID)
                 .child(Constants.teamInvites)
                 .child(encodedEmail)
-                .removeValue();
+                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
     }
 
     /**
@@ -277,7 +305,14 @@ public class Database {
                                         .child(Constants.userInvites)
                                         .child(encodedEmail)
                                         .child(teamID)
-                                        .setValue(time);
+                                        .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+
+                                        }
+                                    }
+                                });
                             }
                         }
                         // Our team has been created successfully
@@ -782,12 +817,26 @@ public class Database {
                     .child(selectedTeam)
                     .child(Constants.teamInvites)
                     .child(encodedEmail)
-                    .setValue(time);
+                    .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+
+                    }
+                }
+            });
             FirebaseDatabase.getInstance().getReference()
                     .child(Constants.userInvites)
                     .child(encodedEmail)
                     .child(selectedTeam)
-                    .setValue(time);
+                    .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+
+                    }
+                }
+            });
         }
     }
 }

@@ -163,6 +163,7 @@ public class ManageTeamActivity extends AppCompatActivity {
             boolean emailValid = Helpers.isEmailValid(userEmail);
             if (emailValid) {
                 Database.getInstance().invite(userEmail);
+                Toast.makeText(ManageTeamActivity.this, "Please enter a valid email address", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(ManageTeamActivity.this, "Please enter a valid email address", Toast.LENGTH_LONG).show();
             }
