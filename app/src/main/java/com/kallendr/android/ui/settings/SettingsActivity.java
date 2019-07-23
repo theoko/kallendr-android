@@ -6,9 +6,13 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -19,13 +23,25 @@ import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.interfaces.PrefMapCallback;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private Switch notifications_switch;
     private Switch calendar_switch;
+    private AppCompatSpinner meeting_duration_spinner;
+    private AppCompatSpinner meeting_breaks_spinner;
+    private List<String> meetingDurationOptions;
+    private List<String> meetingBreaksOptions;
+    private ArrayAdapter<String> meetingDurationAdapter;
+    private ArrayAdapter<String> meetingBreaksAdapter;
+
+    private final String CUSTOM_TEXT = "Custom...";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +69,69 @@ public class SettingsActivity extends AppCompatActivity {
          */
         notifications_switch = findViewById(R.id.notifications_switch);
         calendar_switch = findViewById(R.id.calendar_switch);
+        meeting_duration_spinner = findViewById(R.id.meeting_duration_spinner);
+        meeting_breaks_spinner = findViewById(R.id.meeting_breaks_spinner);
+        meetingDurationOptions = new ArrayList<>();
+        meetingBreaksOptions = new ArrayList<>();
+        // Add duration options
+        for (int i = 0; i < 60; i = i + 5) {
+            if (i > 0)
+                meetingDurationOptions.add(String.valueOf(i));
+        }
+        meetingDurationOptions.add(CUSTOM_TEXT);
+        for (int i = 0; i < 60; i = i + 5) {
+            if (i > 0)
+                meetingBreaksOptions.add(String.valueOf(i));
+        }
+        meetingBreaksOptions.add(CUSTOM_TEXT);
+        meetingDurationAdapter = new ArrayAdapter<>(
+                SettingsActivity.this,
+                R.layout.spinner_item,
+                meetingDurationOptions
+        );
+        meetingBreaksAdapter = new ArrayAdapter<>(
+                SettingsActivity.this,
+                R.layout.spinner_item,
+                meetingBreaksOptions
+        );
+        meeting_duration_spinner.setAdapter(meetingDurationAdapter);
+        meeting_breaks_spinner.setAdapter(meetingBreaksAdapter);
+        // Set listeners
+        meeting_duration_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = meetingDurationOptions.get(position);
+                if (DEBUG_MODE) {
+                    Log.d(getClass().getName(), "Selected " + selectedItem);
+                }
+                // Get selected item
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                if (DEBUG_MODE) {
+                    Log.d(getClass().getName(), "Nothing selected");
+                }
+            }
+        });
+        meeting_breaks_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = meetingBreaksOptions.get(position);
+                if (DEBUG_MODE) {
+                    Log.d(getClass().getName(), "Selected " + meetingBreaksOptions.get(position));
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                if (DEBUG_MODE) {
+                    Log.d(getClass().getName(), "Nothing selected");
+                }
+            }
+        });
         /**
          * Get preferences from the server
          */
@@ -65,9 +144,9 @@ public class SettingsActivity extends AppCompatActivity {
                     );
                 }
                 if (prefMap.get(Constants.allowCalendarAccess) != null) {
-                   calendar_switch.setChecked(
-                           prefMap.get(Constants.allowCalendarAccess)
-                   );
+                    calendar_switch.setChecked(
+                            prefMap.get(Constants.allowCalendarAccess)
+                    );
                 }
             }
 
