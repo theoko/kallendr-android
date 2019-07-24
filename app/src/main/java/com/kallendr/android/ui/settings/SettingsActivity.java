@@ -1,5 +1,6 @@
 package com.kallendr.android.ui.settings;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -11,9 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -40,6 +43,10 @@ public class SettingsActivity extends AppCompatActivity {
     private List<String> meetingBreaksOptions;
     private ArrayAdapter<String> meetingDurationAdapter;
     private ArrayAdapter<String> meetingBreaksAdapter;
+
+    // Custom times input
+    private EditText customMeetingDurationInput;
+    private EditText customMeetingBreaksInput;
 
     private final String CUSTOM_TEXT = "Custom...";
 
@@ -71,6 +78,10 @@ public class SettingsActivity extends AppCompatActivity {
         calendar_switch = findViewById(R.id.calendar_switch);
         meeting_duration_spinner = findViewById(R.id.meeting_duration_spinner);
         meeting_breaks_spinner = findViewById(R.id.meeting_breaks_spinner);
+
+        customMeetingDurationInput = findViewById(R.id.customMeetingDurationInput);
+        customMeetingBreaksInput = findViewById(R.id.customMeetingBreaksInput);
+
         meetingDurationOptions = new ArrayList<>();
         meetingBreaksOptions = new ArrayList<>();
         // Add duration options
@@ -105,7 +116,9 @@ public class SettingsActivity extends AppCompatActivity {
                     Log.d(getClass().getName(), "Selected " + selectedItem);
                 }
                 // Get selected item
-
+                if (selectedItem.equals(CUSTOM_TEXT)) {
+                    showCustomInputForMeetingDuration();
+                }
             }
 
             @Override
@@ -122,7 +135,9 @@ public class SettingsActivity extends AppCompatActivity {
                 if (DEBUG_MODE) {
                     Log.d(getClass().getName(), "Selected " + meetingBreaksOptions.get(position));
                 }
-
+                if (selectedItem.equals(CUSTOM_TEXT)) {
+                    showCustomInputForMeetingBreaks();
+                }
             }
 
             @Override
@@ -185,5 +200,23 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         Navigation.backPressed(SettingsActivity.this, drawer);
+    }
+
+    private void showCustomInputForMeetingDuration() {
+        customMeetingDurationInput.setVisibility(View.VISIBLE);
+        meeting_duration_spinner.setVisibility(View.GONE);
+        // Request focus
+        customMeetingDurationInput.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(customMeetingDurationInput, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void showCustomInputForMeetingBreaks() {
+        customMeetingBreaksInput.setVisibility(View.VISIBLE);
+        meeting_breaks_spinner.setVisibility(View.GONE);
+        // Request focus
+        customMeetingBreaksInput.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(customMeetingBreaksInput, InputMethodManager.SHOW_IMPLICIT);
     }
 }

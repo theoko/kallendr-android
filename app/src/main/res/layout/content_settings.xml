@@ -75,6 +75,15 @@
             android:layout_height="wrap_content"
             android:padding="20sp" />
 
+        <EditText
+            android:id="@+id/customMeetingDurationInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:hint="Custom meeting duration"
+            android:padding="20sp"
+            android:visibility="gone" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,6 +97,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20sp" />
+
+        <EditText
+            android:id="@+id/customMeetingBreaksInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:hint="Custom meeting breaks"
+            android:padding="20sp"
+            android:visibility="gone" />
 
         <Switch
             android:id="@+id/notifications_switch"
