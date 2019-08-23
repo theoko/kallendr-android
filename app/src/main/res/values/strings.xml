@@ -44,4 +44,5 @@
     <string name="action_three_day_view">Test 3</string>
     <string name="action_week_view">Test 4</string>
     <string name="no_events">No events found for</string>
+    <string name="action_google_signin">Sign in with Google</string>
 </resources>

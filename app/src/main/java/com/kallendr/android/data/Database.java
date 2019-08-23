@@ -59,6 +59,7 @@ public class Database {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Check if user is invited to a team.
                 // In case they are, add them to that team
+                createUser();
                 settleInvites();
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     DatabaseReference firstLogin = mUserReference.child("firstLogin");
@@ -91,6 +92,23 @@ public class Database {
         };
         mUserReference.addListenerForSingleValueEvent(mUserValueEventListener);
         mUserReference.removeEventListener(mUserValueEventListener);
+    }
+
+    public void createUser() {
+        if (Constants.DEBUG_MODE) {
+            System.out.println("Calling createUser()");
+        }
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        FirebaseDatabase.getInstance().getReference()
+                .child(uid)
+                .child(Constants.emailField)
+                .setValue(email);
+        FirebaseDatabase.getInstance().getReference()
+                .child(uid)
+                .child(Constants.usernameField)
+                .setValue(displayName);
     }
 
     public void settleInvites() {

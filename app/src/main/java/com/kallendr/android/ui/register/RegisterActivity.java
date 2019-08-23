@@ -281,7 +281,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     startService(new Intent(RegisterActivity.this, EmailService.class));
 
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Registration failed!", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             }
                         });

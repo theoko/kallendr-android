@@ -10,6 +10,7 @@ public class Constants {
     /**
      * Database
      */
+    public static String users = "users";
     public static String userDB = "user_preferences";
     public static String userTeams = "user_teams";
     public static String userTeamsChild = "belongs_to";
@@ -18,6 +19,7 @@ public class Constants {
     public static String teamDB = "teams";
     public static String teamInvites = "invites";
     public static String emailField = "email";
+    public static String usernameField = "username";
 
 
     public static String firstLoginField = "firstLogin";
