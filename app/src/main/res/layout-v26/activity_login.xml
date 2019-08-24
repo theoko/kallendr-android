@@ -36,27 +36,21 @@
         android:layout_marginBottom="24dp"
         android:alpha="0.7"
         android:src="@drawable/ic_kallendr"
-        app:layout_constraintBottom_toTopOf="@+id/loginWithGoogle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.54"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/loginWithGoogle"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
         android:layout_width="match_parent"
-        android:layout_height="70sp"
+        android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:background="@android:color/white"
-        android:drawableStart="@drawable/googleg_standard_color_18"
-        android:enabled="false"
-        android:padding="15sp"
         android:text="@string/action_google_signin"
         android:textColor="@android:color/black"
-        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
