@@ -2,13 +2,14 @@ package com.kallendr.android.data;
 
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.data.model.Team;
 import com.kallendr.android.helpers.Constants;
@@ -56,6 +57,10 @@ public class Database {
         ValueEventListener mUserValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Check if user is invited to a team.
+                // In case they are, add them to that team
+                createUser();
+                settleInvites();
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     DatabaseReference firstLogin = mUserReference.child("firstLogin");
                     ValueEventListener firstLoginValueEventListener = new ValueEventListener() {
@@ -64,9 +69,6 @@ public class Database {
                             if (dataSnapshot.exists()) {
                                 firstLoginCallback.onFirstLogin(false);
                             } else {
-                                // Check if user is invited to a team.
-                                // In case they are, add them to that team
-                                settleInvites();
                                 firstLoginCallback.onFirstLogin(true);
                             }
                         }
@@ -92,14 +94,39 @@ public class Database {
         mUserReference.removeEventListener(mUserValueEventListener);
     }
 
-    public void settleInvites() {
+    public void createUser() {
+        if (Constants.DEBUG_MODE) {
+            System.out.println("Calling createUser()");
+        }
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        FirebaseDatabase.getInstance().getReference()
+                .child(uid)
+                .child(Constants.emailField)
+                .setValue(email);
+        FirebaseDatabase.getInstance().getReference()
+                .child(uid)
+                .child(Constants.usernameField)
+                .setValue(displayName);
+    }
+
+    public void settleInvites() {
+        if (Constants.DEBUG_MODE) {
+            System.out.println("Calling settleInvites()");
+        }
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         getInviteStatus(new Result<List<Team>>() {
             @Override
             public void success(List<Team> arg) {
+                if (Constants.DEBUG_MODE) {
+                    System.out.println("getInviteStatus size: " + arg.size());
+                }
                 for (Team team : arg) {
                     String teamID = team.getTeamID();
-                    addMemberToTeam(teamID, uid);
+                    addMemberToTeam(teamID, email, uid);
+                    removeMemberFromInvitedUser(teamID, email);
                 }
             }
 
@@ -114,12 +141,13 @@ public class Database {
      * Called when the initial calendar setup is completed
      */
     public void onCalendarSetupComplete() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         // Updates database to indicate that the user has completed setup
-        Map<String, Object> postValues = new HashMap<>();
-        postValues.put("firstLogin", Constants.COMPLETE);
-        mUserReference.updateChildren(postValues);
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userDB)
+                .child(uid)
+                .child(Constants.firstLoginField)
+                .setValue(Constants.COMPLETE);
     }
 
     /**
@@ -188,19 +216,71 @@ public class Database {
      * @param teamID
      * @param uid
      */
-    public void addMemberToTeam(String teamID, String uid) {
+    public void addMemberToTeam(String teamID, String email, String uid) {
         long time = new Date().getTime();
+        /* teams -> ...uid...: ...time... */
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.teamDB)
                 .child(teamID)
                 .child(Constants.teamMembers)
                 .child(uid)
-                .setValue(time);
+                .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
+        /* user_teams -> ...uid...: ...time..., user_teams -> email: ...email... */
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userTeams)
                 .child(uid)
+                .child(Constants.userTeamsChild)
                 .child(teamID)
-                .setValue(time);
+                .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userTeams)
+                .child(uid)
+                .child(Constants.emailField)
+                .setValue(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
+    }
+
+    /**
+     * This method removes a user account from the invited users
+     *
+     * @param teamID
+     * @param email
+     */
+    private void removeMemberFromInvitedUser(String teamID, String email) {
+        String encodedEmail = Helpers.encodeEmailForFirebase(email);
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(teamID)
+                .child(Constants.teamInvites)
+                .child(encodedEmail)
+                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
     }
 
     /**
@@ -211,6 +291,7 @@ public class Database {
      */
     public void setTeamNameAndAddEmailsToInvitationList(final ArrayList<String> emails, final Result<String> result) {
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         final String teamName = Prefs.getString(Constants.teamName, null);
         if (teamName == null) {
             // teamName cannot be null
@@ -229,19 +310,27 @@ public class Database {
                         mTeamEmailsReference.child(Constants.teamName)
                                 .setValue(teamName);
                         // Add authenticated user to their own team
-                        addMemberToTeam(teamID, uid);
+                        addMemberToTeam(teamID, email, uid);
                         // Check if we have any invited users
                         if (emails.size() > 0) {
                             long time = new Date().getTime();
                             for (String email : emails) {
                                 // This will generate a random ID as key to the new child
                                 // and will push the email to the list of invites
-                                mTeamEmailsReference.child(Constants.teamInvites).child(email).setValue(time);
+                                String encodedEmail = Helpers.encodeEmailForFirebase(email);
+                                mTeamEmailsReference.child(Constants.teamInvites).child(encodedEmail).setValue(time);
                                 FirebaseDatabase.getInstance().getReference()
                                         .child(Constants.userInvites)
-                                        .child(email)
+                                        .child(encodedEmail)
                                         .child(teamID)
-                                        .setValue(time);
+                                        .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+
+                                        }
+                                    }
+                                });
                             }
                         }
                         // Our team has been created successfully
@@ -455,7 +544,8 @@ public class Database {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userTeams)
-                .child(uid);
+                .child(uid)
+                .child(Constants.userTeamsChild);
         mTeamsUserBelongsTo
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -506,6 +596,10 @@ public class Database {
      */
     public void getInviteStatus(final Result<List<Team>> listOfTeamIDs) {
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        email = Helpers.encodeEmailForFirebase(email);
+        if (Constants.DEBUG_MODE) {
+            System.out.println("Encoding email to: " + email);
+        }
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userInvites)
                 .child(email);
@@ -625,7 +719,142 @@ public class Database {
 
                 }
             });
+        } else {
+            eventCallback.onFail("No team selected");
         }
+    }
 
+    /**
+     * This method is responsible for getting a list containing the emails of the invited users for the selected team.
+     *
+     * @param emails
+     */
+    public void getInvitedUsers(final Result<List<String>> emails) {
+        String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+        if (selectedTeam != null) {
+            DatabaseReference mInvitedUsersReference = FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.teamDB)
+                    .child(selectedTeam)
+                    .child(Constants.teamInvites);
+            ValueEventListener mInvitesUsersValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                        List<String> emailList = new ArrayList<>();
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            String userEmail = Helpers.decodeEmailFromFirebase(dt.getKey());
+                            emailList.add(userEmail);
+                        }
+                        emails.success(emailList);
+                    } else {
+                        emails.success(new ArrayList<String>());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    emails.fail(new ArrayList<String>());
+                }
+            };
+            mInvitedUsersReference.addListenerForSingleValueEvent(mInvitesUsersValueEventListener);
+            mInvitedUsersReference.removeEventListener(mInvitesUsersValueEventListener);
+        } else {
+            emails.fail(new ArrayList<String>());
+        }
+    }
+
+    /**
+     * This method is responsible for getting a list containing the emails of the team members for the selected team.
+     *
+     * @param emails
+     */
+    public void getTeamMembers(final Result<List<String>> emails) {
+        String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+        if (selectedTeam != null) {
+            DatabaseReference mMembersReference = FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.teamDB)
+                    .child(selectedTeam)
+                    .child(Constants.teamMembers);
+            ValueEventListener mInvitesUsersValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    final long childrenCount = dataSnapshot.getChildrenCount();
+                    if (dataSnapshot.exists() && childrenCount > 0) {
+                        final List<String> emailList = new ArrayList<>();
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            // Get email from UID
+                            String userUID = dt.getKey();
+                            DatabaseReference mEmailReference = FirebaseDatabase.getInstance().getReference()
+                                    .child(Constants.userTeams)
+                                    .child(userUID)
+                                    .child(Constants.emailField);
+                            ValueEventListener mEmailValueEventListener = new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String userEmail = (String) dataSnapshot.getValue();
+                                    userEmail = Helpers.decodeEmailFromFirebase(userEmail);
+                                    emailList.add(userEmail);
+                                    if (Constants.DEBUG_MODE)
+                                        System.out.println("emailList size: " + emailList.size() + ", childrenCount: " + childrenCount);
+                                    if (childrenCount == emailList.size())
+                                        emails.success(emailList);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    emails.fail(new ArrayList<String>());
+                                }
+                            };
+                            mEmailReference.addListenerForSingleValueEvent(mEmailValueEventListener);
+                            mEmailReference.removeEventListener(mEmailValueEventListener);
+                        }
+                    } else {
+                        emails.success(new ArrayList<String>());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    emails.fail(new ArrayList<String>());
+                }
+            };
+            mMembersReference.addListenerForSingleValueEvent(mInvitesUsersValueEventListener);
+            mMembersReference.removeEventListener(mInvitesUsersValueEventListener);
+        } else {
+            emails.fail(new ArrayList<String>());
+        }
+    }
+
+    public void invite(String userEmail) {
+        String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
+        if (selectedTeam != null) {
+            String encodedEmail = Helpers.encodeEmailForFirebase(userEmail);
+            long time = new Date().getTime();
+            FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.teamDB)
+                    .child(selectedTeam)
+                    .child(Constants.teamInvites)
+                    .child(encodedEmail)
+                    .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+
+                    }
+                }
+            });
+            FirebaseDatabase.getInstance().getReference()
+                    .child(Constants.userInvites)
+                    .child(encodedEmail)
+                    .child(selectedTeam)
+                    .setValue(time).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+
+                    }
+                }
+            });
+        }
     }
 }

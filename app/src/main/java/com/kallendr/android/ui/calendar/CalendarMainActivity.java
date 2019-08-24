@@ -27,7 +27,7 @@ import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.helpers.interfaces.FirstLoginCallback;
 import com.kallendr.android.helpers.interfaces.Result;
-import com.kallendr.android.services.EventUploadService;
+import com.kallendr.android.services.InitialEventUploadService;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
@@ -147,16 +147,18 @@ public class CalendarMainActivity extends AppCompatActivity {
             @Override
             public void fail(List<Team> arg) {
                 // Display error to user
+                if (Constants.DEBUG_MODE)
+                    System.out.println("Failed to get team status!");
             }
         });
     }
 
     /**
      * This method is called whenever a user belongs to more than one teams
+     *
      * @param teamList
      */
-    private void chooseTeam(List<Team> teamList)
-    {
+    private void chooseTeam(List<Team> teamList) {
         final String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
         if (selectedTeam == null) {
             setContentView(R.layout.team_chooser);
@@ -197,6 +199,7 @@ public class CalendarMainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 List<LocalEvent> events = LocalEventGetter.readCalendarEvent(CalendarMainActivity.this);
+                // TODO: show error reading calendar here, not permission denied error!
                 if (events == null) {
                     readPermissionDenied();
                 } else {
@@ -232,9 +235,9 @@ public class CalendarMainActivity extends AppCompatActivity {
         setup_description.setText("You can link more calendars later in the settings page");
         events_layout.setVisibility(View.VISIBLE);
 
-        // Start EventUploadService
+        // Start InitialEventUploadService
         Database.getInstance().localEventsList = eventList;
-        Intent eventUploadServiceIntent = new Intent(CalendarMainActivity.this, EventUploadService.class);
+        Intent eventUploadServiceIntent = new Intent(CalendarMainActivity.this, InitialEventUploadService.class);
         startService(eventUploadServiceIntent);
     }
 
@@ -257,8 +260,7 @@ public class CalendarMainActivity extends AppCompatActivity {
                     Database.getInstance().firstLogin(new FirstLoginCallback() {
                         @Override
                         public void onFirstLogin(boolean firstLogin) {
-                            if (firstLogin)
-                            {
+                            if (firstLogin) {
                                 readLocalCalendar();
                             } else {
                                 showMainCalendar(false);

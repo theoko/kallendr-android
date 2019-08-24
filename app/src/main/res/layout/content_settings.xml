@@ -1,84 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/mainSettingsLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainSettingsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.settings.SettingsActivity"
-    tools:showIn="@layout/app_bar_settings"
-    android:orientation="vertical">
+    tools:showIn="@layout/app_bar_settings">
 
     <TextView
         android:id="@+id/pageTitle"
-        android:alpha="0.7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorBackground"
         android:layout_marginStart="24sp"
-        android:textSize="50sp"
-        android:text="Settings" />
+        android:alpha="0.7"
+        android:text="Settings"
+        android:textColor="@color/colorBackground"
+        android:textSize="50sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
         android:layout_marginStart="10sp"
+        android:layout_marginTop="10sp"
         android:layout_marginEnd="10sp"
-        android:padding="10sp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10sp">
 
         <Button
             android:id="@+id/btn_outlook_link"
-            android:layout_marginTop="10dp"
-            android:textSize="17sp"
-            android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="70sp"
+            android:layout_marginTop="10dp"
             android:background="#0069bd"
             android:drawableLeft="@mipmap/ic_outlook_btn"
-            android:text="Link Outlook Calendar" />
+            android:text="Link Outlook Calendar"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
 
         <Button
             android:id="@+id/btn_google_link"
-            android:layout_marginTop="10dp"
-            android:textSize="17sp"
-            android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="70sp"
+            android:layout_marginTop="10dp"
             android:background="#1e88e2"
             android:drawableLeft="@mipmap/ic_google_btn"
-            android:text="Link Google Calendar" />
+            android:text="Link Google Calendar"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
         android:layout_marginStart="10sp"
+        android:layout_marginTop="10sp"
         android:layout_marginEnd="10sp"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15sp"
+            android:text="Set meeting duration (in minutes)"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/meeting_duration_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20sp" />
+
+        <EditText
+            android:id="@+id/customMeetingDurationInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:hint="Custom meeting duration"
+            android:inputType="number"
+            android:padding="20sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15sp"
+            android:text="Set meeting breaks (in minutes)"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/meeting_breaks_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20sp" />
+
+        <EditText
+            android:id="@+id/customMeetingBreaksInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:hint="Custom meeting breaks"
+            android:inputType="number"
+            android:padding="20sp"
+            android:visibility="gone" />
 
         <Switch
             android:id="@+id/notifications_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Allow notifications"
-            android:textSize="20sp"
             android:padding="15sp"
-            android:showText="false" />
+            android:showText="false"
+            android:text="Allow notifications"
+            android:textSize="20sp" />
 
         <Switch
             android:id="@+id/calendar_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Allow calendar access"
-            android:textSize="20sp"
             android:padding="15sp"
-            android:showText="false" />
+            android:showText="false"
+            android:text="Allow calendar access"
+            android:textSize="20sp" />
 
     </LinearLayout>
 

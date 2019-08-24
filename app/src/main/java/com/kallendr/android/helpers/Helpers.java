@@ -8,11 +8,14 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Helpers {
 
     /**
      * Checks if the permission to read the calendar is granted and if not it tries to obtain it
+     *
      * @param context
      */
     public static void checkPermissionsAndRequestIfNeeded(Activity context) {
@@ -40,10 +43,10 @@ public class Helpers {
 
     /**
      * This method requests the permission to access calendar
+     *
      * @param context
      */
-    public static void requestReadCalendarPermission(Activity context)
-    {
+    public static void requestReadCalendarPermission(Activity context) {
         ActivityCompat.requestPermissions(context,
                 new String[]{Manifest.permission.READ_CALENDAR},
                 Constants.PERMISSIONS_REQUEST_READ_CALENDAR);
@@ -51,15 +54,16 @@ public class Helpers {
 
     /**
      * This method generates an identifier for a team
+     *
      * @return unique team identifier
      */
-    public static String generateUniqueTeamIdentifier(String uid, String teamName)
-    {
+    public static String generateUniqueTeamIdentifier(String uid, String teamName) {
         return uid + "_" + teamName;
     }
 
     /**
      * This method will generate the start and end date in millis given the current date.
+     *
      * @param currDate
      * @return
      */
@@ -76,6 +80,40 @@ public class Helpers {
         Date endDate = cal.getTime();
 
         return new long[]{startDate.getTime(), endDate.getTime()};
+    }
+
+    /**
+     * This method replaces '.' with acceptable characters
+     *
+     * @param email
+     * @return
+     */
+    public static String encodeEmailForFirebase(String email) {
+        return email.replaceAll("\\.", ",");
+    }
+
+    /**
+     * This method replaces '.' with acceptable characters
+     *
+     * @param email
+     * @return decoded email
+     */
+    public static String decodeEmailFromFirebase(String email) {
+        return email.replaceAll(",", ".");
+    }
+
+    /**
+     * Method is used for checking valid email id format.
+     * Taken from https://stackoverflow.com/questions/6119722/how-to-check-edittexts-text-is-email-address-or-not
+     *
+     * @param email
+     * @return boolean true for valid false for invalid
+     */
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 }

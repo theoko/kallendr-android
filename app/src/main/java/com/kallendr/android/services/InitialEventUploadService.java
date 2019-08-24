@@ -12,7 +12,7 @@ import com.kallendr.android.helpers.Constants;
 
 import java.util.List;
 
-public class EventUploadService extends Service {
+public class InitialEventUploadService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -22,20 +22,24 @@ public class EventUploadService extends Service {
     @Override
     public void onCreate() {
         if (Constants.DEBUG_MODE)
-            Toast.makeText(this, "Service EventUploadService created!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Service InitialEventUploadService created!", Toast.LENGTH_LONG).show();
 
     }
 
     @Override
     public void onDestroy() {
         if (Constants.DEBUG_MODE)
-            Toast.makeText(this, "Service EventUploadService stopped", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Service InitialEventUploadService stopped", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onStart(Intent intent, int startId) {
-        if (Constants.DEBUG_MODE)
-            Toast.makeText(this, "Service EventUploadService started", Toast.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {if (Constants.DEBUG_MODE)
+        Toast.makeText(this, "Service InitialEventUploadService started", Toast.LENGTH_LONG).show();
         List<LocalEvent> localEventsList = Database.getInstance().localEventsList;
         if (localEventsList != null) {
             if (Constants.DEBUG_MODE)
@@ -43,5 +47,12 @@ public class EventUploadService extends Service {
             /* Upload all local events to Firebase */
             Database.getInstance().uploadEvents(localEventsList);
         }
+
+        /**
+         * If this service's process is killed while it is started (after returning from onStartCommand(Intent, int, int)),
+         * then it will be scheduled for a restart and the last delivered Intent re-delivered to it again
+         * via onStartCommand(Intent, int, int).
+         */
+        return START_REDELIVER_INTENT;
     }
 }

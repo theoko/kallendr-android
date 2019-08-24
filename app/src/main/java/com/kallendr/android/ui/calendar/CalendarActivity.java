@@ -128,6 +128,9 @@ public class CalendarActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(List<LocalEvent> eventList) {
                         // Update UI
+                        if (no_events_msg_layout.getVisibility() == View.VISIBLE) {
+                            no_events_msg_layout.setVisibility(View.GONE);
+                        }
                         listViewItems.clear();
                         for (LocalEvent localEvent : eventList) {
                             Event event = new Event();

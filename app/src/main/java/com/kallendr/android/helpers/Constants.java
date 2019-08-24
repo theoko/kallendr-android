@@ -10,14 +10,19 @@ public class Constants {
     /**
      * Database
      */
+    public static String users = "users";
     public static String userDB = "user_preferences";
     public static String userTeams = "user_teams";
+    public static String userTeamsChild = "belongs_to";
     public static String userInvites = "user_invites";
     public static String eventsDB = "events";
     public static String teamDB = "teams";
     public static String teamInvites = "invites";
+    public static String emailField = "email";
+    public static String usernameField = "username";
 
 
+    public static String firstLoginField = "firstLogin";
     public static String COMPLETE = "completed";
     public static String INCOMPLETE = "incomplete";
 
@@ -36,9 +41,10 @@ public class Constants {
     public static String teamMembers = "members";
 
     /**
-     * Permission codes
+     * Codes
      */
     public static final int PERMISSIONS_REQUEST_READ_CALENDAR = 1;
+    public static final int RC_SIGN_IN = 1000;
 
     /**
      * Preferences

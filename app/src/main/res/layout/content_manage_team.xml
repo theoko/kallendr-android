@@ -11,13 +11,62 @@
     tools:showIn="@layout/app_bar_manage_team"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/inviteMemberLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/invitedUserEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10sp"
+            android:layout_marginEnd="24dp"
+            android:alpha="0.6"
+            android:textColor="@android:color/black"
+            android:background="@android:color/transparent"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnAddTeamMember"
+        android:layout_width="match_parent"
+        android:layout_height="70sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/button_shadow_accent"
+        android:text="Add member"
+        android:textColor="@android:color/white"
+        android:textSize="17sp"
+        android:onClick="btn_addMember" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="30sp"
         android:padding="12sp"
-        android:text="Team Members" />
+        android:text="Team members" />
 
-    
+    <ListView
+        android:id="@+id/teamMembersListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:padding="12sp"
+        android:text="Invited users" />
+
+    <ListView
+        android:id="@+id/invitedUsersListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

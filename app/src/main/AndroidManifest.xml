@@ -21,7 +21,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.calendar.CalendarMainActivity"
-            android:label="@string/title_activity_calendar_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.calendar.CalendarActivity"
@@ -32,15 +31,14 @@
         <activity android:name=".ui.home.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.login.LoginActivity" />
         <activity android:name=".ui.calendar.PermissionRequestActivity" />
-
         <service android:name=".services.EmailService" />
-        <service android:name=".services.EventUploadService" />
+        <service android:name=".services.InitialEventUploadService" />
+        <service android:name=".services.PulledEventUploadService" />
     </application>
 
 </manifest>
