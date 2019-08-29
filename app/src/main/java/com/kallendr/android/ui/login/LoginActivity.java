@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(getClass().getName(), "signInResult:failed code=" + e.getStatusCode());
-            updateUiWithUser(null);
+//            updateUiWithUser(null);
         }
     }
 

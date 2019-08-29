@@ -662,7 +662,7 @@ public class Database {
                                 System.out.println("getTeamStatus KEY: " + teamID);
 
                             // Get info for this team
-                            Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
+                            Database.getInstance(account_type).getTeamInfo(teamID, new Result<Team>() {
                                 @Override
                                 public void success(Team arg) {
                                     if (arg == null) {
@@ -726,7 +726,7 @@ public class Database {
                             if (Constants.DEBUG_MODE)
                                 System.out.println("KEY: " + teamID);
 
-                            Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
+                            Database.getInstance(account_type).getTeamInfo(teamID, new Result<Team>() {
                                 @Override
                                 public void success(Team arg) {
                                     resultList.add(arg);
@@ -793,7 +793,7 @@ public class Database {
                             String userID = dt.getKey();
                             if (Constants.DEBUG_MODE)
                                 System.out.println("Getting events for: " + userID);
-                            Database.getInstance().getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
+                            Database.getInstance(account_type).getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
                                 @Override
                                 public void onSuccess(List<LocalEvent> eventList) {
                                     // Events for this user

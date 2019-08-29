@@ -24,6 +24,7 @@ import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.helpers.interfaces.EventCallback;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -121,7 +122,8 @@ public class CalendarActivity extends AppCompatActivity {
         no_events_msg_layout.setVisibility(View.GONE);
         events_loader_layout.setVisibility(View.VISIBLE);
         final long[] times = Helpers.generateStartAndEndMillis(currDate);
-        Database.getInstance().getTeamEvents(
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Database.getInstance(accountType).getTeamEvents(
                 times[0],
                 times[1],
                 new EventCallback() {

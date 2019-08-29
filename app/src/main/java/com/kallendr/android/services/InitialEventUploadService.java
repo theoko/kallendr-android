@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.List;
 
@@ -40,12 +41,13 @@ public class InitialEventUploadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {if (Constants.DEBUG_MODE)
         Toast.makeText(this, "Service InitialEventUploadService started", Toast.LENGTH_LONG).show();
-        List<LocalEvent> localEventsList = Database.getInstance().localEventsList;
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        List<LocalEvent> localEventsList = Database.getInstance(accountType).localEventsList;
         if (localEventsList != null) {
             if (Constants.DEBUG_MODE)
                 System.out.println("Local events: " + localEventsList.size());
             /* Upload all local events to Firebase */
-            Database.getInstance().uploadEvents(this, localEventsList);
+            Database.getInstance(accountType).uploadEvents(this, localEventsList);
         }
 
         /**

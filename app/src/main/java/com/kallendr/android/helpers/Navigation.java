@@ -95,7 +95,8 @@ public class Navigation {
         if (Constants.DEBUG_MODE)
             System.out.println("Navigation teamID: " + teamID);
         if (teamID != null) {
-            Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
+            Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+            Database.getInstance(accountType).getTeamNameByID(teamID, new Result<String>() {
                 @Override
                 public void success(String arg) {
                     nameTxt.setText(arg);

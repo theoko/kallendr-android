@@ -9,6 +9,7 @@ import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
 import com.kallendr.android.helpers.interfaces.Result;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 
@@ -54,7 +55,8 @@ public class TeamInvite {
                 if (Constants.DEBUG_MODE)
                     System.out.println("Emailing: " + userEmail);
             }
-            Database.getInstance().setTeamNameAndAddEmailsToInvitationList(this.context, emails[0], new Result<String>() {
+            Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+            Database.getInstance(accountType).setTeamNameAndAddEmailsToInvitationList(this.context, emails[0], new Result<String>() {
                 @Override
                 public void success(String arg) {
                     taskSuccessful = true;

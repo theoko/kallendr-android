@@ -8,6 +8,7 @@ import com.kallendr.android.data.Database;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.LocalEventGetter;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.List;
 
@@ -25,7 +26,8 @@ public class PulledEventUploadService extends Service {
             if (Constants.DEBUG_MODE)
                 System.out.println("Pulled events: " + events.size());
             /* Upload pulled events to Firebase */
-            Database.getInstance().uploadEvents(this, events);
+            Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+            Database.getInstance(accountType).uploadEvents(this, events);
         }
 
         /**
