@@ -45,7 +45,7 @@ public class InitialEventUploadService extends Service {
             if (Constants.DEBUG_MODE)
                 System.out.println("Local events: " + localEventsList.size());
             /* Upload all local events to Firebase */
-            Database.getInstance().uploadEvents(localEventsList);
+            Database.getInstance().uploadEvents(this, localEventsList);
         }
 
         /**

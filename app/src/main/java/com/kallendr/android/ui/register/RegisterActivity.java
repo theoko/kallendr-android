@@ -264,7 +264,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     Prefs.putOrderedStringSet(Constants.emailSet, invitedUserEmails);
 
                                     // Invite members
-                                    inviteList = new TeamInvite(emails, progressBar);
+                                    inviteList = new TeamInvite(getApplicationContext(), emails, progressBar);
                                     inviteList.sendEmails(new OnTaskCompleted() {
                                         @Override
                                         public void onTaskCompleted(boolean taskSuccessful, String taskMessage) {
