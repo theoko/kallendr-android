@@ -60,4 +60,13 @@ public class Constants {
     public static String notificationPermission = "notificationPermission";
     public static String emailSet = "emailSet";
     public static String selectedTeam = "sTeam";
+    public static String accountType = "accountType";
+
+    /**
+     * Accounts
+     */
+    public static enum ACCOUNT_TYPE {
+        EMAIL_PASSWD_ACCOUNT,
+        GOOGLE_ACCOUNT
+    }
 }

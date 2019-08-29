@@ -150,7 +150,7 @@ public class SettingsActivity extends AppCompatActivity {
         /**
          * Get preferences from the server
          */
-        Database.getInstance().getPreferences(new PrefMapCallback() {
+        Database.getInstance().getPreferences(getApplicationContext(), new PrefMapCallback() {
             @Override
             public void onSuccess(Map<String, Boolean> prefMap) {
                 if (prefMap.get(Constants.allowNotifications) != null) {
@@ -178,7 +178,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Map<String, Boolean> prefsMap = new HashMap<>();
                 prefsMap.put(Constants.allowNotifications, isChecked);
-                Database.getInstance().setPreferences(prefsMap);
+                Database.getInstance().setPreferences(getApplicationContext(), prefsMap);
             }
         });
         calendar_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -186,7 +186,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Map<String, Boolean> prefsMap = new HashMap<>();
                 prefsMap.put(Constants.allowCalendarAccess, isChecked);
-                Database.getInstance().setPreferences(prefsMap);
+                Database.getInstance().setPreferences(getApplicationContext(), prefsMap);
             }
         });
         // Set text for currently authenticated user

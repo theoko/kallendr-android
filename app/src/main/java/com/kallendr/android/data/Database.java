@@ -1,7 +1,10 @@
 package com.kallendr.android.data;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +33,7 @@ import java.util.Map;
 public class Database {
     private static Database INSTANCE = null;
     private FirebaseDatabase firebaseDatabase;
+    private Constants.ACCOUNT_TYPE account_type;
 
     /**
      * Temp data holders
@@ -37,6 +41,11 @@ public class Database {
     public List<LocalEvent> localEventsList;
 
     private Database() {
+        this.account_type = Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT;
+    }
+
+    private Database(Constants.ACCOUNT_TYPE account_type) {
+        this.account_type = account_type;
     }
 
     public static Database getInstance() {
@@ -46,21 +55,36 @@ public class Database {
         return INSTANCE;
     }
 
+    public static Database getInstance(Constants.ACCOUNT_TYPE account_type) {
+        if (INSTANCE == null) {
+            INSTANCE = new Database(account_type);
+        }
+        return INSTANCE;
+    }
+
     /**
      * Checks if the user has logged in before
      *
      * @param firstLoginCallback
      */
-    public void firstLogin(final FirstLoginCallback firstLoginCallback) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void firstLogin(final Context context, final FirstLoginCallback firstLoginCallback) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+        } else {
+            return;
+        }
         final DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         ValueEventListener mUserValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Check if user is invited to a team.
                 // In case they are, add them to that team
-                createUser();
-                settleInvites();
+                createUser(context);
+                settleInvites(context);
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     DatabaseReference firstLogin = mUserReference.child("firstLogin");
                     ValueEventListener firstLoginValueEventListener = new ValueEventListener() {
@@ -94,13 +118,25 @@ public class Database {
         mUserReference.removeEventListener(mUserValueEventListener);
     }
 
-    public void createUser() {
+    public void createUser(Context context) {
         if (Constants.DEBUG_MODE) {
             System.out.println("Calling createUser()");
         }
-        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        final String uid;
+        String email;
+        String displayName;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+            email = account.getEmail();
+            displayName = account.getDisplayName();
+        } else {
+            return;
+        }
         FirebaseDatabase.getInstance().getReference()
                 .child(uid)
                 .child(Constants.emailField)
@@ -111,13 +147,23 @@ public class Database {
                 .setValue(displayName);
     }
 
-    public void settleInvites() {
+    public void settleInvites(Context context) {
         if (Constants.DEBUG_MODE) {
             System.out.println("Calling settleInvites()");
         }
-        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        getInviteStatus(new Result<List<Team>>() {
+        final String uid;
+        final String email;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+            email = account.getEmail();
+        } else {
+            return;
+        }
+        getInviteStatus(context, new Result<List<Team>>() {
             @Override
             public void success(List<Team> arg) {
                 if (Constants.DEBUG_MODE) {
@@ -140,9 +186,17 @@ public class Database {
     /**
      * Called when the initial calendar setup is completed
      */
-    public void onCalendarSetupComplete() {
+    public void onCalendarSetupComplete(Context context) {
         // Updates database to indicate that the user has completed setup
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+        } else {
+            return;
+        }
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userDB)
                 .child(uid)
@@ -155,8 +209,16 @@ public class Database {
      *
      * @param prefMap
      */
-    public void setPreferences(Map<String, Boolean> prefMap) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void setPreferences(Context context, Map<String, Boolean> prefMap) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+        } else {
+            return;
+        }
         DatabaseReference mPrefReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         if (prefMap.get(Constants.allowNotifications) != null) {
             mPrefReference.child(Constants.allowNotifications).setValue(prefMap.get(Constants.allowNotifications));
@@ -171,8 +233,16 @@ public class Database {
      *
      * @param prefMapCallback
      */
-    public void getPreferences(final PrefMapCallback prefMapCallback) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void getPreferences(Context context, final PrefMapCallback prefMapCallback) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+        } else {
+            return;
+        }
         final DatabaseReference mPrefReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
         ValueEventListener mPrefValueEventListener = new ValueEventListener() {
             @Override
@@ -289,9 +359,19 @@ public class Database {
      *
      * @param emails
      */
-    public void setTeamNameAndAddEmailsToInvitationList(final ArrayList<String> emails, final Result<String> result) {
-        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+    public void setTeamNameAndAddEmailsToInvitationList(Context context, final ArrayList<String> emails, final Result<String> result) {
+        final String uid;
+        final String email;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+            email = account.getEmail();
+        } else {
+            return;
+        }
         final String teamName = Prefs.getString(Constants.teamName, null);
         if (teamName == null) {
             // teamName cannot be null
@@ -354,8 +434,16 @@ public class Database {
      *
      * @param localEventsList
      */
-    public void uploadEvents(final List<LocalEvent> localEventsList) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void uploadEvents(Context context, final List<LocalEvent> localEventsList) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+        } else {
+            return;
+        }
         final DatabaseReference mUploadEventsReference = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.eventsDB)
                 .child(uid);
@@ -386,8 +474,16 @@ public class Database {
      * @param endTimeInMillis
      * @param eventCallback
      */
-    public void getEvents(final long startTimeInMillis, final long endTimeInMillis, final EventCallback eventCallback) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void getEvents(Context context, final long startTimeInMillis, final long endTimeInMillis, final EventCallback eventCallback) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+        } else {
+            return;
+        }
         DatabaseReference mEventsReference = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.eventsDB)
                 .child(uid);
@@ -540,8 +636,16 @@ public class Database {
      *
      * @param listOfTeamIDs
      */
-    public void getTeamStatus(final Result<List<Team>> listOfTeamIDs) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void getTeamStatus(Context context, final Result<List<Team>> listOfTeamIDs) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getIdToken();
+        } else {
+            return;
+        }
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userTeams)
                 .child(uid)
@@ -594,8 +698,16 @@ public class Database {
      *
      * @param listOfTeamIDs
      */
-    public void getInviteStatus(final Result<List<Team>> listOfTeamIDs) {
-        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+    public void getInviteStatus(Context context, final Result<List<Team>> listOfTeamIDs) {
+        String email;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            email = account.getEmail();
+        } else {
+            return;
+        }
         email = Helpers.encodeEmailForFirebase(email);
         if (Constants.DEBUG_MODE) {
             System.out.println("Encoding email to: " + email);

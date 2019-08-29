@@ -1,5 +1,6 @@
 package com.kallendr.android.ui.register;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -13,10 +14,12 @@ import java.util.ArrayList;
 
 public class TeamInvite {
 
+    private Context context;
     ArrayList<String> emails;
     static ProgressBar progressBar;
 
-    public TeamInvite(ArrayList<String> emails, ProgressBar pBar) {
+    public TeamInvite(Context context, ArrayList<String> emails, ProgressBar pBar) {
+        this.context = context;
         this.emails = emails;
         progressBar = pBar;
     }
@@ -25,7 +28,7 @@ public class TeamInvite {
      * Send emails to people invited to the team
      * */
     public void sendEmails(OnTaskCompleted onTaskCompleted) {
-        new SendEmailsTask(onTaskCompleted).execute(emails);
+        new SendEmailsTask(context, onTaskCompleted).execute(emails);
     }
 
     public static void doneSendingEmails() {
@@ -34,11 +37,13 @@ public class TeamInvite {
 
     public static class SendEmailsTask extends AsyncTask<ArrayList<String>, Void, Void> {
 
+        private Context context;
         private OnTaskCompleted listener;
         private boolean taskSuccessful;
         private String taskMessage;
 
-        public SendEmailsTask(OnTaskCompleted listener) {
+        public SendEmailsTask(Context context, OnTaskCompleted listener) {
+            this.context = context;
             this.listener = listener;
         }
 
@@ -49,7 +54,7 @@ public class TeamInvite {
                 if (Constants.DEBUG_MODE)
                     System.out.println("Emailing: " + userEmail);
             }
-            Database.getInstance().setTeamNameAndAddEmailsToInvitationList(emails[0], new Result<String>() {
+            Database.getInstance().setTeamNameAndAddEmailsToInvitationList(this.context, emails[0], new Result<String>() {
                 @Override
                 public void success(String arg) {
                     taskSuccessful = true;

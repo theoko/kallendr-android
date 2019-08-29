@@ -68,7 +68,7 @@ public class CalendarMainActivity extends AppCompatActivity {
     }
 
     private void checkIfFirstLogin() {
-        Database.getInstance().firstLogin(new FirstLoginCallback() {
+        Database.getInstance().firstLogin(getApplicationContext(), new FirstLoginCallback() {
             @Override
             public void onFirstLogin(boolean firstLogin) {
                 Helpers.checkPermissionsAndRequestIfNeeded(CalendarMainActivity.this);
@@ -126,11 +126,11 @@ public class CalendarMainActivity extends AppCompatActivity {
         if (firstLogin) {
             if (Constants.DEBUG_MODE)
                 System.out.println("Calling onCalendarSetupComplete()");
-            Database.getInstance().onCalendarSetupComplete();
+            Database.getInstance().onCalendarSetupComplete(getApplicationContext());
         }
         // We should check if the user belongs to many teams.
         // In case they do, let them choose which team to pull events from.
-        Database.getInstance().getTeamStatus(new Result<List<Team>>() {
+        Database.getInstance().getTeamStatus(getApplicationContext(), new Result<List<Team>>() {
             @Override
             public void success(List<Team> arg) {
                 if (arg.size() > 1) {
@@ -257,7 +257,7 @@ public class CalendarMainActivity extends AppCompatActivity {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                     // Check for first login
-                    Database.getInstance().firstLogin(new FirstLoginCallback() {
+                    Database.getInstance().firstLogin(getApplicationContext(), new FirstLoginCallback() {
                         @Override
                         public void onFirstLogin(boolean firstLogin) {
                             if (firstLogin) {

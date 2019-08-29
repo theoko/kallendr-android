@@ -25,7 +25,7 @@ public class PulledEventUploadService extends Service {
             if (Constants.DEBUG_MODE)
                 System.out.println("Pulled events: " + events.size());
             /* Upload pulled events to Firebase */
-            Database.getInstance().uploadEvents(events);
+            Database.getInstance().uploadEvents(this, events);
         }
 
         /**

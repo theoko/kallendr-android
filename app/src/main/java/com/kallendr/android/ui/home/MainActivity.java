@@ -15,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
+import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
 import com.kallendr.android.ui.calendar.MyCalendar;
 import com.kallendr.android.ui.login.LoginActivity;
@@ -49,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (user != null || account != null) {
+            if (user != null) {
+                Prefs.putString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name());
+            }
+            if (account != null) {
+                Prefs.putString(Constants.accountType, Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT.name());
+            }
             Intent intent = new Intent(MainActivity.this, CalendarMainActivity.class);
             startActivity(intent);
             finish();
