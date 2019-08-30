@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -13,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.auth.FirebaseAuth;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.EventAdapter;
@@ -33,6 +37,8 @@ import com.pixplicity.easyprefs.library.Prefs;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
 
 public class CalendarMainActivity extends AppCompatActivity {
 
@@ -69,6 +75,15 @@ public class CalendarMainActivity extends AppCompatActivity {
 
     private void checkIfFirstLogin() {
         Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        if (DEBUG_MODE) {
+            Log.d(getClass().getName(), "Auth type: " + accountType);
+            if (accountType == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+                Log.d(getClass().getName(), "UID: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+            } else if (accountType == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+                Log.d(getClass().getName(), "UID: " + account.getIdToken());
+            }
+        }
         Database.getInstance(accountType).firstLogin(getApplicationContext(), new FirstLoginCallback() {
             @Override
             public void onFirstLogin(boolean firstLogin) {
@@ -125,7 +140,7 @@ public class CalendarMainActivity extends AppCompatActivity {
 
     private void showMainCalendar(final boolean firstLogin) {
         if (firstLogin) {
-            if (Constants.DEBUG_MODE)
+            if (DEBUG_MODE)
                 System.out.println("Calling onCalendarSetupComplete()");
             Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
             Database.getInstance(accountType).onCalendarSetupComplete(getApplicationContext());
@@ -150,7 +165,7 @@ public class CalendarMainActivity extends AppCompatActivity {
             @Override
             public void fail(List<Team> arg) {
                 // Display error to user
-                if (Constants.DEBUG_MODE)
+                if (DEBUG_MODE)
                     System.out.println("Failed to get team status!");
             }
         });
@@ -175,7 +190,7 @@ public class CalendarMainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Team selectedTeam = (Team) teamChooseList.getItemAtPosition(position);
-                    if (Constants.DEBUG_MODE)
+                    if (DEBUG_MODE)
                         System.out.println("selected team: " + selectedTeam.getTeamName());
                     // Set selected team
                     Prefs.putString(Constants.selectedTeam, selectedTeam.getTeamID());
@@ -191,7 +206,7 @@ public class CalendarMainActivity extends AppCompatActivity {
      * Finally, this method will switch to the calendar activity
      */
     private void showCalendar() {
-        if (Constants.DEBUG_MODE)
+        if (DEBUG_MODE)
             System.out.println("Setting view to calendar");
         startActivity(new Intent(CalendarMainActivity.this, CalendarActivity.class));
         finish();

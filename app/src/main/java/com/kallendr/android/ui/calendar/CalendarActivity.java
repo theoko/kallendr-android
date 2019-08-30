@@ -82,7 +82,7 @@ public class CalendarActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
-        Navigation.populateNav(fullNameTextView, emailTextView);
+        Navigation.populateNav(getApplicationContext(), fullNameTextView, emailTextView);
 
         /*
          * Display events

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +46,10 @@ public class Database {
     }
 
     private Database(Constants.ACCOUNT_TYPE account_type) {
+        new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
         this.account_type = account_type;
     }
 
@@ -73,11 +78,14 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
-        final DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
+        final DatabaseReference mUserReference = FirebaseDatabase.getInstance()
+                .getReference()
+                .child(Constants.userDB)
+                .child(uid);
         ValueEventListener mUserValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -131,17 +139,19 @@ public class Database {
             displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
             email = account.getEmail();
             displayName = account.getDisplayName();
         } else {
             return;
         }
         FirebaseDatabase.getInstance().getReference()
+                .child(Constants.users)
                 .child(uid)
                 .child(Constants.emailField)
                 .setValue(email);
         FirebaseDatabase.getInstance().getReference()
+                .child(Constants.users)
                 .child(uid)
                 .child(Constants.usernameField)
                 .setValue(displayName);
@@ -158,7 +168,7 @@ public class Database {
             email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
             email = account.getEmail();
         } else {
             return;
@@ -193,7 +203,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -215,7 +225,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -239,7 +249,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -367,7 +377,7 @@ public class Database {
             email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
             email = account.getEmail();
         } else {
             return;
@@ -440,7 +450,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -480,7 +490,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -642,7 +652,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }

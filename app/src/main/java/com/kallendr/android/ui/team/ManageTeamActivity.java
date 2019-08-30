@@ -79,7 +79,7 @@ public class ManageTeamActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
-        Navigation.populateNav(fullNameTextView, emailTextView);
+        Navigation.populateNav(getApplicationContext(), fullNameTextView, emailTextView);
 
         inviteMemberLayout = findViewById(R.id.inviteMemberLayout);
         invitedUserEmailAddress = findViewById(R.id.invitedUserEmailAddress);
