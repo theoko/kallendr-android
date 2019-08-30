@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.LoginDataSource;
+import com.kallendr.android.helpers.interfaces.OnTaskCompleted;
 import com.kallendr.android.helpers.interfaces.Result;
 import com.kallendr.android.ui.calendar.CalendarActivity;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
@@ -29,7 +30,7 @@ import com.pixplicity.easyprefs.library.Prefs;
  */
 
 public class Navigation {
-    public static void selectedItem(Context context, DrawerLayout drawer, MenuItem menuItem) {
+    public static void selectedItem(final Context context, DrawerLayout drawer, MenuItem menuItem) {
         int id = menuItem.getItemId();
 
         drawer.closeDrawer(GravityCompat.START);
@@ -56,10 +57,14 @@ public class Navigation {
             context.startActivity(calendarMainIntent);
         } else if (id == R.id.nav_logout) {
             LoginDataSource loginDataSource = new LoginDataSource();
-            loginDataSource.logout();
-            Intent logoutIntent = new Intent(context, MainActivity.class);
-            logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            context.startActivity(logoutIntent);
+            loginDataSource.logout(context, new OnTaskCompleted() {
+                @Override
+                public void onTaskCompleted(boolean taskSuccessful, String taskMessage) {
+                    Intent logoutIntent = new Intent(context, MainActivity.class);
+                    logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    context.startActivity(logoutIntent);
+                }
+            });
         }
     }
 
