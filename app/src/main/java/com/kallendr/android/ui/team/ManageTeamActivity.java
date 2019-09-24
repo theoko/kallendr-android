@@ -79,7 +79,7 @@ public class ManageTeamActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
-        Navigation.populateNav(fullNameTextView, emailTextView);
+        Navigation.populateNav(getApplicationContext(), fullNameTextView, emailTextView);
 
         inviteMemberLayout = findViewById(R.id.inviteMemberLayout);
         invitedUserEmailAddress = findViewById(R.id.invitedUserEmailAddress);
@@ -116,7 +116,8 @@ public class ManageTeamActivity extends AppCompatActivity {
     }
 
     private void displayTeamMembers() {
-        Database.getInstance().getTeamMembers(new Result<List<String>>() {
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Database.getInstance(accountType).getTeamMembers(new Result<List<String>>() {
             @Override
             public void success(List<String> arg) {
                 if (arg.size() > 0) {
@@ -136,7 +137,8 @@ public class ManageTeamActivity extends AppCompatActivity {
     }
 
     private void displayInvitedUsers() {
-        Database.getInstance().getInvitedUsers(new Result<List<String>>() {
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Database.getInstance(accountType).getInvitedUsers(new Result<List<String>>() {
             @Override
             public void success(List<String> arg) {
                 if (arg.size() > 0) {
@@ -162,7 +164,8 @@ public class ManageTeamActivity extends AppCompatActivity {
             String userEmail = invitedUserEmailAddress.getText().toString();
             boolean emailValid = Helpers.isEmailValid(userEmail);
             if (emailValid) {
-                Database.getInstance().invite(userEmail);
+                Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+                Database.getInstance(accountType).invite(userEmail);
                 Toast.makeText(ManageTeamActivity.this, "User invited!", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(ManageTeamActivity.this, "Please enter a valid email address", Toast.LENGTH_LONG).show();
@@ -171,7 +174,8 @@ public class ManageTeamActivity extends AppCompatActivity {
             // Update button text
             final String teamID = Prefs.getString(Constants.selectedTeam, null);
             if (teamID != null) {
-                Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
+                Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+                Database.getInstance(accountType).getTeamNameByID(teamID, new Result<String>() {
                     @Override
                     public void success(String teamName) {
                         btnAddTeamMember.setText("Invite to " + teamName);

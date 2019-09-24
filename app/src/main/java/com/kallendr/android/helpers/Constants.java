@@ -65,7 +65,7 @@ public class Constants {
     /**
      * Accounts
      */
-    public static enum ACCOUNT_TYPE {
+    public enum ACCOUNT_TYPE {
         EMAIL_PASSWD_ACCOUNT,
         GOOGLE_ACCOUNT
     }

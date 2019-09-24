@@ -182,11 +182,12 @@ public class LoginActivity extends AppCompatActivity {
                         "Logged in user details: " + account.getEmail()
                 );
             }
-//            updateUiWithUser(new LoggedInUserView(account.getEmail()));
+//            updateUiWithUser(new LoggedInUserView(account.getDisplayName()));
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(getClass().getName(), "signInResult:failed code=" + e.getStatusCode());
+//            updateUiWithUser(null);
         }
     }
 

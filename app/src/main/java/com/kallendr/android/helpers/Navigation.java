@@ -9,6 +9,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
@@ -87,15 +89,21 @@ public class Navigation {
         }
     }
 
-    public static void populateNav(final TextView nameTxt, TextView userTxt) {
+    public static void populateNav(Context context, final TextView nameTxt, TextView userTxt) {
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        String username = null;
+        if (accountType == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        } else if (accountType == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            username = account.getEmail();
+        }
         // Get user info from Firebase
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String teamID = Prefs.getString(Constants.selectedTeam, null);
-        String username = currentUser.getEmail();
         if (Constants.DEBUG_MODE)
             System.out.println("Navigation teamID: " + teamID);
         if (teamID != null) {
-            Database.getInstance().getTeamNameByID(teamID, new Result<String>() {
+            Database.getInstance(accountType).getTeamNameByID(teamID, new Result<String>() {
                 @Override
                 public void success(String arg) {
                     nameTxt.setText(arg);

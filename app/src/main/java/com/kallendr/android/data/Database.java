@@ -2,9 +2,11 @@ package com.kallendr.android.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
+
 public class Database {
     private static Database INSTANCE = null;
     private FirebaseDatabase firebaseDatabase;
@@ -45,6 +49,10 @@ public class Database {
     }
 
     private Database(Constants.ACCOUNT_TYPE account_type) {
+        new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
         this.account_type = account_type;
     }
 
@@ -73,11 +81,14 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
-        final DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child(Constants.userDB).child(uid);
+        final DatabaseReference mUserReference = FirebaseDatabase.getInstance()
+                .getReference()
+                .child(Constants.userDB)
+                .child(uid);
         ValueEventListener mUserValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -119,7 +130,7 @@ public class Database {
     }
 
     public void createUser(Context context) {
-        if (Constants.DEBUG_MODE) {
+        if (DEBUG_MODE) {
             System.out.println("Calling createUser()");
         }
         final String uid;
@@ -131,24 +142,26 @@ public class Database {
             displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
             email = account.getEmail();
             displayName = account.getDisplayName();
         } else {
             return;
         }
         FirebaseDatabase.getInstance().getReference()
+                .child(Constants.users)
                 .child(uid)
                 .child(Constants.emailField)
                 .setValue(email);
         FirebaseDatabase.getInstance().getReference()
+                .child(Constants.users)
                 .child(uid)
                 .child(Constants.usernameField)
                 .setValue(displayName);
     }
 
     public void settleInvites(Context context) {
-        if (Constants.DEBUG_MODE) {
+        if (DEBUG_MODE) {
             System.out.println("Calling settleInvites()");
         }
         final String uid;
@@ -158,7 +171,7 @@ public class Database {
             email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
             email = account.getEmail();
         } else {
             return;
@@ -166,7 +179,7 @@ public class Database {
         getInviteStatus(context, new Result<List<Team>>() {
             @Override
             public void success(List<Team> arg) {
-                if (Constants.DEBUG_MODE) {
+                if (DEBUG_MODE) {
                     System.out.println("getInviteStatus size: " + arg.size());
                 }
                 for (Team team : arg) {
@@ -193,7 +206,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -215,7 +228,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -239,7 +252,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -367,7 +380,7 @@ public class Database {
             email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
             email = account.getEmail();
         } else {
             return;
@@ -440,7 +453,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -480,7 +493,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -642,7 +655,7 @@ public class Database {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            uid = account.getIdToken();
+            uid = account.getId();
         } else {
             return;
         }
@@ -658,18 +671,18 @@ public class Database {
                         final long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String teamID = dt.getKey();
-                            if (Constants.DEBUG_MODE)
+                            if (DEBUG_MODE)
                                 System.out.println("getTeamStatus KEY: " + teamID);
 
                             // Get info for this team
-                            Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
+                            Database.getInstance(account_type).getTeamInfo(teamID, new Result<Team>() {
                                 @Override
                                 public void success(Team arg) {
                                     if (arg == null) {
                                         listOfTeamIDs.fail(null);
                                     }
                                     resultList.add(arg);
-                                    if (Constants.DEBUG_MODE)
+                                    if (DEBUG_MODE)
                                         System.out.println("resultList size: " + resultList.size() + ", childrenCount: " + childrenCount);
                                     // Return whenever we get all the teams
                                     if (resultList.size() == childrenCount) {
@@ -679,7 +692,7 @@ public class Database {
 
                                 @Override
                                 public void fail(Team arg) {
-                                    if (Constants.DEBUG_MODE)
+                                    if (DEBUG_MODE)
                                         System.out.println("Failed to get team!!!");
                                 }
                             });
@@ -709,7 +722,7 @@ public class Database {
             return;
         }
         email = Helpers.encodeEmailForFirebase(email);
-        if (Constants.DEBUG_MODE) {
+        if (DEBUG_MODE) {
             System.out.println("Encoding email to: " + email);
         }
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
@@ -723,15 +736,15 @@ public class Database {
                         final long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String teamID = dt.getKey();
-                            if (Constants.DEBUG_MODE)
+                            if (DEBUG_MODE)
                                 System.out.println("KEY: " + teamID);
 
-                            Database.getInstance().getTeamInfo(teamID, new Result<Team>() {
+                            Database.getInstance(account_type).getTeamInfo(teamID, new Result<Team>() {
                                 @Override
                                 public void success(Team arg) {
                                     resultList.add(arg);
                                     if (resultList.size() == childrenCount) {
-                                        if (Constants.DEBUG_MODE)
+                                        if (DEBUG_MODE)
                                             System.out.println("listOfTeamIDs.success()");
                                         listOfTeamIDs.success(resultList);
                                     }
@@ -772,8 +785,8 @@ public class Database {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     // A team should always have at least one user
-                    if (dataSnapshot.getChildrenCount() > 0) {
-                        if (Constants.DEBUG_MODE) {
+                    if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                        if (DEBUG_MODE) {
                             // Print selected date
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTimeInMillis(startTimeInMillis);
@@ -791,21 +804,25 @@ public class Database {
                         final List<LocalEvent> eventsWithinRangeList = new ArrayList<>();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
                             String userID = dt.getKey();
-                            if (Constants.DEBUG_MODE)
+                            if (DEBUG_MODE)
                                 System.out.println("Getting events for: " + userID);
-                            Database.getInstance().getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
+                            Database.getInstance(account_type).getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
                                 @Override
                                 public void onSuccess(List<LocalEvent> eventList) {
+                                    if (eventList.size() == 0)
+                                    {
+                                        eventCallback.onFail("No events found");
+                                    }
                                     // Events for this user
                                     int remaining = eventList.size();
-                                    if (Constants.DEBUG_MODE)
+                                    if (DEBUG_MODE)
                                         System.out.println("Got " + remaining + " events total!");
                                     for (LocalEvent event : eventList) {
                                         long startDate = event.getStartDate();
                                         long endDate = event.getEndDate();
                                         // Check if event is within range
                                         if (startDate >= startTimeInMillis && startDate <= endTimeInMillis) {
-                                            if (Constants.DEBUG_MODE)
+                                            if (DEBUG_MODE)
                                                 System.out.println("Adding event: " + event.getName());
                                             eventsWithinRangeList.add(event);
                                         }
@@ -819,16 +836,21 @@ public class Database {
 
                                 @Override
                                 public void onFail(String message) {
-
+                                    eventCallback.onFail("No events found");
                                 }
                             });
                         }
+                    } else {
+                        if (DEBUG_MODE) {
+                            Log.d(getClass().getName(), "No events found (snapshot does not exist)");
+                        }
+                        eventCallback.onFail("No events found");
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    eventCallback.onFail("Failed to retrieve events");
                 }
             });
         } else {
@@ -906,7 +928,7 @@ public class Database {
                                     String userEmail = (String) dataSnapshot.getValue();
                                     userEmail = Helpers.decodeEmailFromFirebase(userEmail);
                                     emailList.add(userEmail);
-                                    if (Constants.DEBUG_MODE)
+                                    if (DEBUG_MODE)
                                         System.out.println("emailList size: " + emailList.size() + ", childrenCount: " + childrenCount);
                                     if (childrenCount == emailList.size())
                                         emails.success(emailList);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
@@ -24,6 +26,8 @@ import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.Calendar;
 import java.util.Objects;
+
+import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,9 +50,24 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         // Check if user has already signed in
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (DEBUG_MODE) {
+            if (user != null) {
+                Log.d(getClass().getName(), "Account: " + user.getUid());
+            }
+            if (account != null) {
+                Log.d(getClass().getName(), "Account: " + account.getId());
+            }
+        }
         if (user != null || account != null) {
             if (user != null) {
                 Prefs.putString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name());

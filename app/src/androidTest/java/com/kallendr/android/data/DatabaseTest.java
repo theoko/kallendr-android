@@ -20,6 +20,6 @@ public class DatabaseTest {
     public void addMemberToTeam() {
         String teamID = "tVrmOqsNU6YysUO4UiOWNGlxZJz2_TestTeam1";
         String uid = "tVrmOqsNU6YysUO4UiOWNGlxZJz2";
-        Database.getInstance().addMemberToTeam(teamID, uid);
+//        Database.getInstance().addMemberToTeam(teamID, uid);
     }
 }

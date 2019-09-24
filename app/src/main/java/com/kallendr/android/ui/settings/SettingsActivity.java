@@ -25,6 +25,7 @@ import com.kallendr.android.data.Database;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.interfaces.PrefMapCallback;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -150,7 +151,8 @@ public class SettingsActivity extends AppCompatActivity {
         /**
          * Get preferences from the server
          */
-        Database.getInstance().getPreferences(getApplicationContext(), new PrefMapCallback() {
+        final Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Database.getInstance(accountType).getPreferences(getApplicationContext(), new PrefMapCallback() {
             @Override
             public void onSuccess(Map<String, Boolean> prefMap) {
                 if (prefMap.get(Constants.allowNotifications) != null) {
@@ -178,7 +180,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Map<String, Boolean> prefsMap = new HashMap<>();
                 prefsMap.put(Constants.allowNotifications, isChecked);
-                Database.getInstance().setPreferences(getApplicationContext(), prefsMap);
+                Database.getInstance(accountType).setPreferences(getApplicationContext(), prefsMap);
             }
         });
         calendar_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -186,14 +188,14 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Map<String, Boolean> prefsMap = new HashMap<>();
                 prefsMap.put(Constants.allowCalendarAccess, isChecked);
-                Database.getInstance().setPreferences(getApplicationContext(), prefsMap);
+                Database.getInstance(accountType).setPreferences(getApplicationContext(), prefsMap);
             }
         });
         // Set text for currently authenticated user
         View headerView = navigationView.getHeaderView(0);
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
-        Navigation.populateNav(fullNameTextView, emailTextView);
+        Navigation.populateNav(getApplicationContext(), fullNameTextView, emailTextView);
     }
 
     @Override
