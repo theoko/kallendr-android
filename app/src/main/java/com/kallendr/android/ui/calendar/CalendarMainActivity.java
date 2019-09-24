@@ -74,7 +74,7 @@ public class CalendarMainActivity extends AppCompatActivity {
     }
 
     private void checkIfFirstLogin() {
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         if (DEBUG_MODE) {
             Log.d(getClass().getName(), "Auth type: " + accountType);
             if (accountType == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
@@ -221,7 +221,10 @@ public class CalendarMainActivity extends AppCompatActivity {
                 if (events == null) {
                     readPermissionDenied();
                 } else {
-                    displayCollectedEventsMsg(events);
+                    if (events.size() > 0)
+                        displayCollectedEventsMsg(events);
+                    else
+                        displayOtherCalendarOptions();
                 }
             }
         }).run();
@@ -276,7 +279,7 @@ public class CalendarMainActivity extends AppCompatActivity {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                     // Check for first login
-                    Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+                    Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
                     Database.getInstance(accountType).firstLogin(getApplicationContext(), new FirstLoginCallback() {
                         @Override
                         public void onFirstLogin(boolean firstLogin) {

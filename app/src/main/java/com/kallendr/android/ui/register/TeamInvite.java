@@ -55,7 +55,7 @@ public class TeamInvite {
                 if (Constants.DEBUG_MODE)
                     System.out.println("Emailing: " + userEmail);
             }
-            Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+            Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
             Database.getInstance(accountType).setTeamNameAndAddEmailsToInvitationList(this.context, emails[0], new Result<String>() {
                 @Override
                 public void success(String arg) {
