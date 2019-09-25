@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -43,6 +44,7 @@ public class CalendarActivity extends AppCompatActivity {
     private LinearLayout events_loader_layout;
     private LinearLayout no_events_msg_layout;
     private TextView txtViewForDay;
+    private Button btnScheduleMeeting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class CalendarActivity extends AppCompatActivity {
         events_loader_layout = findViewById(R.id.events_loader_layout);
         no_events_msg_layout = findViewById(R.id.no_events_msg_layout);
         txtViewForDay = findViewById(R.id.txtViewForDay);
+        btnScheduleMeeting = findViewById(R.id.btnScheduleMeeting);
         listViewItems = new ArrayList<>();
         eventAdapterForDay = new EventAdapter(
                 CalendarActivity.this,
@@ -83,6 +86,16 @@ public class CalendarActivity extends AppCompatActivity {
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
         Navigation.populateNav(getApplicationContext(), fullNameTextView, emailTextView);
+
+        /*
+         * Move to meeting setup screen
+         */
+        btnScheduleMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         /*
          * Display events

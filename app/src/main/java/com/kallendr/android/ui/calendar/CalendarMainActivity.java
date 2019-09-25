@@ -147,7 +147,7 @@ public class CalendarMainActivity extends AppCompatActivity {
         }
         // We should check if the user belongs to many teams.
         // In case they do, let them choose which team to pull events from.
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         Database.getInstance(accountType).getTeamStatus(getApplicationContext(), new Result<List<Team>>() {
             @Override
             public void success(List<Team> arg) {
