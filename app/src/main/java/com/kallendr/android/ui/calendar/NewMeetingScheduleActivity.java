@@ -14,6 +14,7 @@ import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.model.AvailableGroupMember;
 import com.kallendr.android.data.observers.AvailableGroupMemberObserver;
+import com.kallendr.android.helpers.Helpers;
 import com.kallendr.android.helpers.interfaces.Result;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -66,9 +67,14 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
     }
 
     private void getDate() {
-        dateSelected = new DateTime();
+        dateSelected = new DateTime().plusMinutes(meetingBreaks);
         meetingStart = dateSelected;
-        meetingEnd = dateSelected.plusMinutes(meetingDuration);
+        meetingEnd = dateSelected.plusMinutes(meetingBreaks + meetingDuration);
+
+        // Update UI
+        readableDateHeader.setText(
+                Helpers.readableDate(meetingStart)
+        );
     }
 
     private void getTeamMembers() {
