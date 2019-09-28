@@ -6,16 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
-import com.kallendr.android.data.model.GroupMember;
+import com.kallendr.android.data.model.AvailableGroupMember;
 
 import java.util.ArrayList;
 
 public class AvailabilityListAdapter implements ListAdapter {
 
     Context context;
-    ArrayList<GroupMember> membersList;
+    ArrayList<AvailableGroupMember> membersList;
 
-    public AvailabilityListAdapter(Context context, ArrayList<GroupMember> membersList) {
+    public AvailabilityListAdapter(Context context, ArrayList<AvailableGroupMember> membersList) {
         this.context = context;
         this.membersList = membersList;
     }

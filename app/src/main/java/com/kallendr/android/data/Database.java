@@ -2,6 +2,7 @@ package com.kallendr.android.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.solver.widgets.Helper;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -994,10 +995,45 @@ public class Database {
 
     public void userAvailable(String email, long startTime, long endTime, Result<Boolean> isAvailable) {
         // Get user UID
+        DatabaseReference mUserDetailsRef = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userDetails)
+                .child(Helpers.encodeEmailForFirebase(email));
+        mUserDetailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                String userUID = (String) map.get(Constants.uidField);
 
-        // Get user events
-//        DatabaseReference mUserEventsRef = FirebaseDatabase.getInstance().getReference()
-//                .child(Constants.eventsDB)
-//                .child();
+                if (userUID == null) {
+                    return;
+                }
+
+                // Get user events
+                FirebaseDatabase.getInstance().getReference()
+                        .child(Constants.eventsDB)
+                        .child(userUID)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                                    if (DEBUG_MODE) {
+                                        Log.d(getClass().getName(), dt.getValue().toString());
+                                    }
+//                                    long startTime = (long) dt.child("startTime").getValue();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

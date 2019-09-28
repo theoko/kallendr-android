@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
+import com.kallendr.android.data.model.AvailableGroupMember;
 import com.kallendr.android.helpers.interfaces.Result;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.List;
 
@@ -42,6 +44,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
 
         // Get availability for team members
         getTeamMembers();
+        getAvailability();
     }
 
     private void getTeamMembers() {
@@ -63,6 +66,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
     }
 
     private void getAvailability() {
-
+//        Prefs.getString()
+        AvailableGroupMember groupMember = new AvailableGroupMember("konsttheodore@gmail.com", 1, 1);
     }
 }
