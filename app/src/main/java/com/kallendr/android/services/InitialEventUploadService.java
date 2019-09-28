@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.model.LocalEvent;
@@ -23,14 +23,13 @@ public class InitialEventUploadService extends Service {
     @Override
     public void onCreate() {
         if (Constants.DEBUG_MODE)
-            Toast.makeText(this, "Service InitialEventUploadService created!", Toast.LENGTH_LONG).show();
-
+            Log.d(getClass().getName(), "Service InitialEventUploadService created!");
     }
 
     @Override
     public void onDestroy() {
         if (Constants.DEBUG_MODE)
-            Toast.makeText(this, "Service InitialEventUploadService stopped", Toast.LENGTH_LONG).show();
+            Log.d(getClass().getName(), "Service InitialEventUploadService stopped");
     }
 
     @Override
@@ -40,8 +39,8 @@ public class InitialEventUploadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {if (Constants.DEBUG_MODE)
-        Toast.makeText(this, "Service InitialEventUploadService started", Toast.LENGTH_LONG).show();
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Log.d(getClass().getName(), "Service InitialEventUploadService started");
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         List<LocalEvent> localEventsList = Database.getInstance(accountType).localEventsList;
         if (localEventsList != null) {
             if (Constants.DEBUG_MODE)

@@ -1,5 +1,6 @@
 package com.kallendr.android.ui.calendar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -7,8 +8,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -43,6 +46,7 @@ public class CalendarActivity extends AppCompatActivity {
     private LinearLayout events_loader_layout;
     private LinearLayout no_events_msg_layout;
     private TextView txtViewForDay;
+    private Button btnScheduleMeeting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,7 @@ public class CalendarActivity extends AppCompatActivity {
         events_loader_layout = findViewById(R.id.events_loader_layout);
         no_events_msg_layout = findViewById(R.id.no_events_msg_layout);
         txtViewForDay = findViewById(R.id.txtViewForDay);
+        btnScheduleMeeting = findViewById(R.id.btnScheduleMeeting);
         listViewItems = new ArrayList<>();
         eventAdapterForDay = new EventAdapter(
                 CalendarActivity.this,
@@ -83,6 +88,19 @@ public class CalendarActivity extends AppCompatActivity {
         TextView fullNameTextView = headerView.findViewById(R.id.userFullName);
         TextView emailTextView = headerView.findViewById(R.id.userEmail);
         Navigation.populateNav(getApplicationContext(), fullNameTextView, emailTextView);
+
+        /*
+         * Move to meeting setup screen
+         */
+        btnScheduleMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newMeetingIntent = new Intent(CalendarActivity.this, NewMeetingScheduleActivity.class);
+                // TODO: switch to startActivityForResult
+//                newMeetingIntent.putExtra()
+                startActivity(newMeetingIntent);
+            }
+        });
 
         /*
          * Display events
@@ -122,13 +140,14 @@ public class CalendarActivity extends AppCompatActivity {
         no_events_msg_layout.setVisibility(View.GONE);
         events_loader_layout.setVisibility(View.VISIBLE);
         final long[] times = Helpers.generateStartAndEndMillis(currDate);
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         Database.getInstance(accountType).getTeamEvents(
                 times[0],
                 times[1],
                 new EventCallback() {
                     @Override
                     public void onSuccess(List<LocalEvent> eventList) {
+                        Log.d(getClass().getName(), "onSuccess() called!");
                         // Update UI
                         if (no_events_msg_layout.getVisibility() == View.VISIBLE) {
                             no_events_msg_layout.setVisibility(View.GONE);
@@ -149,12 +168,15 @@ public class CalendarActivity extends AppCompatActivity {
                         txtViewForDay.setText(no_events + " " + UIHelpers.getReadableDateForMillis(times[0]));
                         if (eventList.isEmpty()) {
                             no_events_msg_layout.setVisibility(View.VISIBLE);
+                        } else {
+                            no_events_msg_layout.setVisibility(View.GONE);
                         }
                     }
 
                     @Override
                     public void onFail(String message) {
                         // Show message to user
+                        Log.d(getClass().getName(), "onFail() called!");
                         String no_events = getString(R.string.no_events);
                         txtViewForDay.setText(no_events + " " + UIHelpers.getReadableDateForMillis(times[0]));
                         events_loader_layout.setVisibility(View.GONE);

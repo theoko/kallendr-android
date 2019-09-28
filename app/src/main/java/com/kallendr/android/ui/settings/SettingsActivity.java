@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -36,6 +37,8 @@ import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private LinearLayout meetingDurationLayout;
+    private LinearLayout meetingBreaksLayout;
     private Switch notifications_switch;
     private Switch calendar_switch;
     private AppCompatSpinner meeting_duration_spinner;
@@ -44,6 +47,10 @@ public class SettingsActivity extends AppCompatActivity {
     private List<String> meetingBreaksOptions;
     private ArrayAdapter<String> meetingDurationAdapter;
     private ArrayAdapter<String> meetingBreaksAdapter;
+
+    // Custom times layout
+    private LinearLayout customMeetingDurationInputLayout;
+    private LinearLayout customMeetingBreaksInputLayout;
 
     // Custom times input
     private EditText customMeetingDurationInput;
@@ -75,10 +82,15 @@ public class SettingsActivity extends AppCompatActivity {
         /**
          * Preference switches
          */
+        meetingDurationLayout = findViewById(R.id.meetingDurationLayout);
+        meetingBreaksLayout = findViewById(R.id.meetingBreaksLayout);
         notifications_switch = findViewById(R.id.notifications_switch);
         calendar_switch = findViewById(R.id.calendar_switch);
         meeting_duration_spinner = findViewById(R.id.meeting_duration_spinner);
         meeting_breaks_spinner = findViewById(R.id.meeting_breaks_spinner);
+
+        customMeetingDurationInputLayout = findViewById(R.id.customMeetingDurationInputLayout);
+        customMeetingBreaksInputLayout = findViewById(R.id.customMeetingBreaksInputLayout);
 
         customMeetingDurationInput = findViewById(R.id.customMeetingDurationInput);
         customMeetingBreaksInput = findViewById(R.id.customMeetingBreaksInput);
@@ -205,8 +217,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void showCustomInputForMeetingDuration() {
+        customMeetingDurationInputLayout.setVisibility(View.VISIBLE);
         customMeetingDurationInput.setVisibility(View.VISIBLE);
         meeting_duration_spinner.setVisibility(View.GONE);
+        meetingDurationLayout.setVisibility(View.GONE);
         // Request focus
         customMeetingDurationInput.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -214,8 +228,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void showCustomInputForMeetingBreaks() {
+        customMeetingBreaksInputLayout.setVisibility(View.VISIBLE);
         customMeetingBreaksInput.setVisibility(View.VISIBLE);
         meeting_breaks_spinner.setVisibility(View.GONE);
+        meetingBreaksLayout.setVisibility(View.GONE);
         // Request focus
         customMeetingBreaksInput.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

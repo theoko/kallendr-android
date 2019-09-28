@@ -9,10 +9,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.LoginDataSource;
@@ -29,6 +30,7 @@ import com.pixplicity.easyprefs.library.Prefs;
  */
 
 public class Navigation {
+
     public static void selectedItem(Context context, DrawerLayout drawer, MenuItem menuItem) {
         int id = menuItem.getItemId();
 
@@ -56,10 +58,7 @@ public class Navigation {
             context.startActivity(calendarMainIntent);
         } else if (id == R.id.nav_logout) {
             LoginDataSource loginDataSource = new LoginDataSource();
-            loginDataSource.logout();
-            Intent logoutIntent = new Intent(context, MainActivity.class);
-            logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            context.startActivity(logoutIntent);
+            loginDataSource.logout(context);
         }
     }
 

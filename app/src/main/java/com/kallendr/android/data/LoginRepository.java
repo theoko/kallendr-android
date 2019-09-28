@@ -36,7 +36,7 @@ public class LoginRepository {
 
     public void logout() {
         user = null;
-        dataSource.logout();
+//        dataSource.logout();
     }
 
     private void setLoggedInUser(LoggedInUser user) {
