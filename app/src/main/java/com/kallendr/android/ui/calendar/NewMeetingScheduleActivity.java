@@ -13,14 +13,25 @@ import android.widget.TextView;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
 import com.kallendr.android.data.model.AvailableGroupMember;
+import com.kallendr.android.data.observers.AvailableGroupMemberObserver;
 import com.kallendr.android.helpers.interfaces.Result;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import org.joda.time.DateTime;
+
+import java.beans.PropertyChangeListener;
+import java.util.Date;
 import java.util.List;
 
 import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
 
 public class NewMeetingScheduleActivity extends AppCompatActivity {
+
+    private int meetingDuration;
+    private int meetingBreaks;
+    private DateTime dateSelected;
+    private DateTime meetingStart;
+    private DateTime meetingEnd;
 
     private ProgressBar availabilityProgressBar;
     private TextView readableDateHeader;
@@ -43,8 +54,21 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
         super.onResume();
 
         // Get availability for team members
+        getSettings();
+        getDate();
         getTeamMembers();
-        getAvailability();
+    }
+
+    private void getSettings() {
+        // Dummy values (for now)
+        meetingDuration = 30;
+        meetingBreaks = 10;
+    }
+
+    private void getDate() {
+        dateSelected = new DateTime();
+        meetingStart = dateSelected;
+        meetingEnd = dateSelected.plusMinutes(meetingDuration);
     }
 
     private void getTeamMembers() {
@@ -54,6 +78,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
                 if (DEBUG_MODE) {
                     Log.d(getClass().getName(), arg.toString());
                 }
+                getAvailability(arg);
             }
 
             @Override
@@ -65,8 +90,29 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
         });
     }
 
-    private void getAvailability() {
-//        Prefs.getString()
-        AvailableGroupMember groupMember = new AvailableGroupMember("konsttheodore@gmail.com", 1, 1);
+    private void getAvailability(List<String> emails) {
+        for (String email : emails) {
+            AvailableGroupMember groupMember = new AvailableGroupMember(
+                    email,
+                    meetingStart.getMillis(),
+                    meetingEnd.getMillis()
+            );
+            AvailableGroupMemberObserver availableGroupMemberObserver = new AvailableGroupMemberObserver(
+                    groupMember,
+                    new Result<Boolean>() {
+                        @Override
+                        public void success(Boolean arg) {
+                            if (DEBUG_MODE) {
+                                Log.d(getClass().getName(), "Available: " + arg);
+                            }
+                        }
+
+                        @Override
+                        public void fail(Boolean arg) {
+
+                        }
+                    }
+            );
+        }
     }
 }

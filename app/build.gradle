@@ -36,6 +36,9 @@ dependencies {
     // Shared Preferences
     implementation 'com.pixplicity.easyprefs:library:1.9.0'
 
+    // Joda-Time
+    implementation 'joda-time:joda-time:2.10.4'
+
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     testImplementation 'junit:junit:4.13-beta-3'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

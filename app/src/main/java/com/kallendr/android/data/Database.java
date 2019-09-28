@@ -993,7 +993,7 @@ public class Database {
         }
     }
 
-    public void userAvailable(String email, long startTime, long endTime, Result<Boolean> isAvailable) {
+    public void userAvailable(String email, final long startTime, final long endTime, final Result<Boolean> isAvailable) {
         // Get user UID
         DatabaseReference mUserDetailsRef = FirebaseDatabase.getInstance().getReference()
                 .child(Constants.userDetails)
@@ -1009,25 +1009,52 @@ public class Database {
                 }
 
                 // Get user events
-                FirebaseDatabase.getInstance().getReference()
+                DatabaseReference mUserAvailableRef = FirebaseDatabase.getInstance().getReference()
                         .child(Constants.eventsDB)
-                        .child(userUID)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot dt : dataSnapshot.getChildren()) {
-                                    if (DEBUG_MODE) {
-                                        Log.d(getClass().getName(), dt.getValue().toString());
-                                    }
-//                                    long startTime = (long) dt.child("startTime").getValue();
-                                }
+                        .child(userUID);
+                ValueEventListener mUserAvailableListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Date startDate = new Date(startTime);
+                        Date endDate = new Date(endTime);
+                        boolean successCalled = false;
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            Map<String, Object> map = (Map<String, Object>) dt.getValue();
+                            Date start = new Date((long) map.get(Constants.startDate_field));
+                            Date end = new Date((long) map.get(Constants.endDate_field));
+                            if (start.after(startDate) && end.before(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
                             }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            if (start.after(startDate) && start.before(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
                             }
-                        });
+                            if (end.after(startDate) && end.before(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                            if (start.equals(startDate) || end.equals(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                            if (start.equals(endDate) || end.equals(startDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                        }
+                        if (!successCalled) {
+                            isAvailable.success(Boolean.TRUE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                };
+                mUserAvailableRef.addListenerForSingleValueEvent(mUserAvailableListener);
+                mUserAvailableRef.removeEventListener(mUserAvailableListener);
             }
 
             @Override
