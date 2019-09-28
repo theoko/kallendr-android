@@ -54,6 +54,7 @@ public class CalendarMainActivity extends AppCompatActivity {
     private Button btn_google_link;
     private Button btn_phone_calendar;
     private Button btn_continue_with_local_calendar;
+    private Button btn_link_calendar_later;
 
     private ListView initialLocalEventsList;
     private EventAdapter initialEventAdapter;
@@ -109,6 +110,7 @@ public class CalendarMainActivity extends AppCompatActivity {
         btn_google_link = findViewById(R.id.btn_google_link);
         btn_phone_calendar = findViewById(R.id.btn_phone_calendar);
         btn_continue_with_local_calendar = findViewById(R.id.btn_continue_with_local_calendar);
+        btn_link_calendar_later = findViewById(R.id.btn_link_calendar_later);
         initialLocalEventsList = findViewById(R.id.eventList);
         initialLocalEventItems = new ArrayList<>();
 
@@ -131,6 +133,12 @@ public class CalendarMainActivity extends AppCompatActivity {
             }
         });
         btn_continue_with_local_calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMainCalendar(true);
+            }
+        });
+        btn_link_calendar_later.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showMainCalendar(true);
@@ -266,6 +274,8 @@ public class CalendarMainActivity extends AppCompatActivity {
     // TODO: Fix this
     private void displayOtherCalendarOptions() {
         setup_header.setText("We did not find any events on your phone calendar");
+        btn_phone_calendar.setVisibility(View.GONE);
+        btn_link_calendar_later.setVisibility(View.VISIBLE);
     }
 
     @Override
