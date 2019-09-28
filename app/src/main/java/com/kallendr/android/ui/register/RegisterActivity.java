@@ -262,6 +262,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     Prefs.putString(Constants.userEmail, userEmail);
                                     Prefs.putString(Constants.teamName, userTeamName);
                                     Prefs.putOrderedStringSet(Constants.emailSet, invitedUserEmails);
+                                    Prefs.putString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name());
 
                                     // Invite members
                                     inviteList = new TeamInvite(getApplicationContext(), emails, progressBar);

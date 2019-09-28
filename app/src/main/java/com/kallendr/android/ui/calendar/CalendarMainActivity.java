@@ -257,7 +257,7 @@ public class CalendarMainActivity extends AppCompatActivity {
         events_layout.setVisibility(View.VISIBLE);
 
         // Start InitialEventUploadService
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         Database.getInstance(accountType).localEventsList = eventList;
         Intent eventUploadServiceIntent = new Intent(CalendarMainActivity.this, InitialEventUploadService.class);
         startService(eventUploadServiceIntent);
@@ -302,6 +302,7 @@ public class CalendarMainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // TODO: check if setup is complete first. Otherwise, this will cause the app to crash.
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         Navigation.backPressed(CalendarMainActivity.this, drawer);
     }

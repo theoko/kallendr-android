@@ -15,11 +15,13 @@ public class Constants {
     public static String userTeams = "user_teams";
     public static String userTeamsChild = "belongs_to";
     public static String userInvites = "user_invites";
+    public static String userDetails = "user_details";
     public static String eventsDB = "events";
     public static String teamDB = "teams";
     public static String teamInvites = "invites";
     public static String emailField = "email";
     public static String usernameField = "username";
+    public static String uidField = "UID";
 
 
     public static String firstLoginField = "firstLogin";

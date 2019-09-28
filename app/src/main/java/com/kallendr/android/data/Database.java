@@ -36,7 +36,6 @@ import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
 
 public class Database {
     private static Database INSTANCE = null;
-    private FirebaseDatabase firebaseDatabase;
     private Constants.ACCOUNT_TYPE account_type;
 
     /**
@@ -158,6 +157,11 @@ public class Database {
                 .child(uid)
                 .child(Constants.usernameField)
                 .setValue(displayName);
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userDetails)
+                .child(Helpers.encodeEmailForFirebase(email))
+                .child(Constants.uidField)
+                .setValue(uid);
     }
 
     public void settleInvites(Context context) {
@@ -809,10 +813,6 @@ public class Database {
                             Database.getInstance(account_type).getEventsForUID(userID, startTimeInMillis, endTimeInMillis, new EventCallback() {
                                 @Override
                                 public void onSuccess(List<LocalEvent> eventList) {
-                                    if (eventList.size() == 0)
-                                    {
-                                        eventCallback.onFail("No events found");
-                                    }
                                     // Events for this user
                                     int remaining = eventList.size();
                                     if (DEBUG_MODE)
@@ -836,7 +836,7 @@ public class Database {
 
                                 @Override
                                 public void onFail(String message) {
-                                    eventCallback.onFail("No events found");
+
                                 }
                             });
                         }
@@ -990,5 +990,14 @@ public class Database {
                 }
             });
         }
+    }
+
+    public void userAvailable(String email, long startTime, long endTime, Result<Boolean> isAvailable) {
+        // Get user UID
+
+        // Get user events
+//        DatabaseReference mUserEventsRef = FirebaseDatabase.getInstance().getReference()
+//                .child(Constants.eventsDB)
+//                .child();
     }
 }

@@ -177,7 +177,7 @@
                     android:layout_height="70sp"
                     android:layout_marginTop="10dp"
                     android:background="#0069bd"
-                    android:drawableLeft="@mipmap/ic_outlook_btn"
+                    android:drawableStart="@mipmap/ic_outlook_logo"
                     android:text="Link Outlook Calendar"
                     android:textColor="@android:color/white"
                     android:textSize="17sp" />
@@ -188,7 +188,7 @@
                     android:layout_height="70sp"
                     android:layout_marginTop="10dp"
                     android:background="#1e88e2"
-                    android:drawableLeft="@mipmap/ic_google_btn"
+                    android:drawableStart="@mipmap/ic_google_btn"
                     android:text="Link Google Calendar"
                     android:textColor="@android:color/white"
                     android:textSize="17sp" />

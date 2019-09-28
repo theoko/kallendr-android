@@ -40,13 +40,16 @@
         android:layout_marginTop="200sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:padding="20sp"
         android:visibility="gone"
-        android:gravity="center">
+        android:gravity="center"
+        android:weightSum="1">
 
         <Button
-            android:layout_width="200sp"
+            android:layout_width="0dp"
             android:layout_height="70sp"
+            android:layout_weight="0.5"
             android:textSize="18sp"
             android:width="@dimen/activity_horizontal_margin"
             android:background="@color/colorBackground"
@@ -56,8 +59,9 @@
         />
 
         <Button
-            android:layout_width="200sp"
+            android:layout_width="0dp"
             android:layout_height="70sp"
+            android:layout_weight="0.5"
             android:textSize="18sp"
             android:width="@dimen/activity_horizontal_margin"
             android:background="@drawable/button_shadow_accent"

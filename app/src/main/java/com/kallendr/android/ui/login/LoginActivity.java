@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -63,6 +64,16 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password);
         loginButton = findViewById(R.id.login);
         loadingProgressBar = findViewById(R.id.loading);
+
+        /*usernameEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.textView).setVisibility(View.GONE);
+                findViewById(R.id.view2).setVisibility(View.GONE);
+                findViewById(R.id.view).setVisibility(View.GONE);
+                findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            }
+        });*/
 
         signInButton.setSize(SignInButton.SIZE_WIDE);
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
