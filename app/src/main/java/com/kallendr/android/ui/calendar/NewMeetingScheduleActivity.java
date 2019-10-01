@@ -21,6 +21,7 @@ import com.pixplicity.easyprefs.library.Prefs;
 import org.joda.time.DateTime;
 
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -97,6 +98,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
     }
 
     private void getAvailability(List<String> emails) {
+        List<String> availableMembers = new ArrayList<>();
         for (String email : emails) {
             AvailableGroupMember groupMember = new AvailableGroupMember(
                     email,

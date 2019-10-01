@@ -2,7 +2,6 @@ package com.kallendr.android.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.constraint.solver.widgets.Helper;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -472,7 +471,7 @@ public class Database {
                     for (LocalEvent localEvent : localEventsList) {
                         // This will generate a unique ID as a key for the event and set its value
                         // automatically by reading the fields of the LocalEvent class
-                        mUploadEventsReference.push().setValue(localEvent);
+                        mUploadEventsReference.child(String.valueOf(localEvent.getStartDate())).setValue(localEvent);
                     }
                 }
             }
@@ -837,7 +836,7 @@ public class Database {
 
                                 @Override
                                 public void onFail(String message) {
-
+                                    eventCallback.onFail("No events found");
                                 }
                             });
                         }
@@ -960,6 +959,11 @@ public class Database {
         }
     }
 
+    /**
+     * This method is used to invite a user to the selected team
+     *
+     * @param userEmail
+     */
     public void invite(String userEmail) {
         String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
         if (selectedTeam != null) {
@@ -993,6 +997,14 @@ public class Database {
         }
     }
 
+    /**
+     * This method checks if a user is available during the period between startTime and endTime
+     *
+     * @param email
+     * @param startTime
+     * @param endTime
+     * @param isAvailable
+     */
     public void userAvailable(String email, final long startTime, final long endTime, final Result<Boolean> isAvailable) {
         // Get user UID
         DatabaseReference mUserDetailsRef = FirebaseDatabase.getInstance().getReference()
@@ -1062,5 +1074,56 @@ public class Database {
 
             }
         });
+    }
+
+    /**
+     * This method retrieves info for the event that starts on startTime and ends on endTime
+     *
+     * @param context
+     * @param startTime
+     * @param endTime
+     * @param localEventResult
+     */
+    public void getEventInfo(Context context, long startTime, long endTime, final Result<LocalEvent> localEventResult) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getId();
+        } else {
+            return;
+        }
+        DatabaseReference mEventInfoRef = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.eventsDB)
+                .child(uid)
+                .child(String.valueOf(startTime));
+        ValueEventListener mEventInfoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    long startDate = (long) map.get(Constants.startDate_field);
+                    long endDate = (long) map.get(Constants.endDate_field);
+                    String eventName = (String) map.get(Constants.name_field);
+                    String eventDescription = (String) map.get(Constants.description_field);
+                    LocalEvent localEvent = new LocalEvent();
+                    localEvent.setStartDate(startDate);
+                    localEvent.setEndDate(endDate);
+                    localEvent.setName(eventName);
+                    localEvent.setDescription(eventDescription);
+                    localEventResult.success(localEvent);
+                } else {
+                    localEventResult.fail(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                localEventResult.fail(null);
+            }
+        };
+        mEventInfoRef.addListenerForSingleValueEvent(mEventInfoListener);
+        mEventInfoRef.removeEventListener(mEventInfoListener);
     }
 }
