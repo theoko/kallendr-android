@@ -62,8 +62,13 @@
         android:id="@+id/availabilityLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        android:padding="5sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loadingAvailabilityLayout">
+
         <ListView
             android:id="@+id/availableMembersList"
             android:layout_width="match_parent"
