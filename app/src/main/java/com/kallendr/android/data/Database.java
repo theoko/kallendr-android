@@ -661,6 +661,8 @@ public class Database {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
             uid = account.getId();
         } else {
+            if (DEBUG_MODE)
+                Log.e(getClass().getName(), "getTeamStatus(): did not return any result because the account type is not determined");
             return;
         }
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
@@ -671,6 +673,8 @@ public class Database {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (DEBUG_MODE)
+                            Log.d(getClass().getName(), "getTeamStatus(): onDataChange: " + dataSnapshot.toString());
                         final List<Team> resultList = new ArrayList<>();
                         final long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
@@ -705,6 +709,8 @@ public class Database {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
+                        if (DEBUG_MODE)
+                            Log.e(getClass().getName(), "getTeamStatus(): failed to get the team due to db error!");
                         listOfTeamIDs.fail(new ArrayList<Team>());
                     }
                 });
