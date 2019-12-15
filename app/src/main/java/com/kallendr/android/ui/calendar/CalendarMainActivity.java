@@ -85,13 +85,19 @@ public class CalendarMainActivity extends AppCompatActivity {
                 Log.d(getClass().getName(), "UID: " + account.getIdToken());
             }
         }
+        if  (DEBUG_MODE)
+            Log.d(getClass().getName(), "calling firstLogin() at 89");
         Database.getInstance(accountType).firstLogin(getApplicationContext(), new FirstLoginCallback() {
             @Override
             public void onFirstLogin(boolean firstLogin) {
                 Helpers.checkPermissionsAndRequestIfNeeded(CalendarMainActivity.this);
                 if (firstLogin) {
+                    if  (DEBUG_MODE)
+                        Log.d(getClass().getName(), "firstLogin(): true, calling showLinkCalendar()");
                     showLinkCalendar();
                 } else {
+                    if  (DEBUG_MODE)
+                        Log.d(getClass().getName(), "firstLogin(): false, calling showMainCalendar(false)");
                     showMainCalendar(false);
                 }
             }
@@ -146,25 +152,37 @@ public class CalendarMainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method is called after the user has completed the calendar setup.
+     * It finds if a user belongs to a team and lets them choose from which team to pull events from.
+     * If the user belongs to one team only, it selects that team by default.
+     *
+     * @param firstLogin
+     */
     private void showMainCalendar(final boolean firstLogin) {
         if (firstLogin) {
             if (DEBUG_MODE)
                 System.out.println("Calling onCalendarSetupComplete()");
-            Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+            Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
             Database.getInstance(accountType).onCalendarSetupComplete(getApplicationContext());
         }
         // We should check if the user belongs to many teams.
-        // In case they do, let them choose which team to pull events from.
+        // In case they do, let them choose which team they would like to pull events from.
         Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
+        /* THIS CALLBACK NEVER GETS BACK */
         Database.getInstance(accountType).getTeamStatus(getApplicationContext(), new Result<List<Team>>() {
             @Override
-            public void success(List<Team> arg) {
-                if (arg.size() > 1) {
+            public void success(List<Team> teamList) {
+                if (teamList.size() > 1) {
+                    if (DEBUG_MODE)
+                        Log.d(getClass().getName(), "showMainCalendar(): team size() > 1");
                     // The user should choose the team they wish to sign in to
-                    chooseTeam(arg);
+                    chooseTeam(teamList);
                 } else {
+                    if (DEBUG_MODE)
+                        Log.d(getClass().getName(), "set selected team...");
                     // Set selected team
-                    String teamID = arg.get(0).getTeamID();
+                    String teamID = teamList.get(0).getTeamID();
                     Prefs.putString(Constants.selectedTeam, teamID);
                     showCalendar();
                 }
@@ -174,7 +192,7 @@ public class CalendarMainActivity extends AppCompatActivity {
             public void fail(List<Team> arg) {
                 // Display error to user
                 if (DEBUG_MODE)
-                    System.out.println("Failed to get team status!");
+                    Log.e(getClass().getName(), "Failed to get team status!");
             }
         });
     }
@@ -290,6 +308,8 @@ public class CalendarMainActivity extends AppCompatActivity {
                     // contacts-related task you need to do.
                     // Check for first login
                     Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
+                    if  (DEBUG_MODE)
+                        Log.d(getClass().getName(), "calling firstLogin() at 296");
                     Database.getInstance(accountType).firstLogin(getApplicationContext(), new FirstLoginCallback() {
                         @Override
                         public void onFirstLogin(boolean firstLogin) {
