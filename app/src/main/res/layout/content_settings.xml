@@ -17,7 +17,7 @@
         android:layout_marginStart="24sp"
         android:alpha="0.7"
         android:text="Settings"
-        android:textColor="@color/colorBackground"
+        android:textColor="@color/colorPrimary"
         android:textSize="50sp" />
 
     <ScrollView

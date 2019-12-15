@@ -471,7 +471,7 @@ public class Database {
                     for (LocalEvent localEvent : localEventsList) {
                         // This will generate a unique ID as a key for the event and set its value
                         // automatically by reading the fields of the LocalEvent class
-                        mUploadEventsReference.push().setValue(localEvent);
+                        mUploadEventsReference.child(String.valueOf(localEvent.getStartDate())).setValue(localEvent);
                     }
                 }
             }
@@ -661,6 +661,8 @@ public class Database {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
             uid = account.getId();
         } else {
+            if (DEBUG_MODE)
+                Log.e(getClass().getName(), "getTeamStatus(): did not return any result because the account type is not determined");
             return;
         }
         DatabaseReference mTeamsUserBelongsTo = FirebaseDatabase.getInstance().getReference()
@@ -671,6 +673,8 @@ public class Database {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (DEBUG_MODE)
+                            Log.d(getClass().getName(), "getTeamStatus(): onDataChange: " + dataSnapshot.toString());
                         final List<Team> resultList = new ArrayList<>();
                         final long childrenCount = dataSnapshot.getChildrenCount();
                         for (DataSnapshot dt : dataSnapshot.getChildren()) {
@@ -705,6 +709,8 @@ public class Database {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
+                        if (DEBUG_MODE)
+                            Log.e(getClass().getName(), "getTeamStatus(): failed to get the team due to db error!");
                         listOfTeamIDs.fail(new ArrayList<Team>());
                     }
                 });
@@ -836,7 +842,7 @@ public class Database {
 
                                 @Override
                                 public void onFail(String message) {
-
+                                    eventCallback.onFail("No events found");
                                 }
                             });
                         }
@@ -959,6 +965,11 @@ public class Database {
         }
     }
 
+    /**
+     * This method is used to invite a user to the selected team
+     *
+     * @param userEmail
+     */
     public void invite(String userEmail) {
         String selectedTeam = Prefs.getString(Constants.selectedTeam, null);
         if (selectedTeam != null) {
@@ -992,12 +1003,133 @@ public class Database {
         }
     }
 
-    public void userAvailable(String email, long startTime, long endTime, Result<Boolean> isAvailable) {
+    /**
+     * This method checks if a user is available during the period between startTime and endTime
+     *
+     * @param email
+     * @param startTime
+     * @param endTime
+     * @param isAvailable
+     */
+    public void userAvailable(String email, final long startTime, final long endTime, final Result<Boolean> isAvailable) {
         // Get user UID
+        DatabaseReference mUserDetailsRef = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.userDetails)
+                .child(Helpers.encodeEmailForFirebase(email));
+        mUserDetailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                String userUID = (String) map.get(Constants.uidField);
 
-        // Get user events
-//        DatabaseReference mUserEventsRef = FirebaseDatabase.getInstance().getReference()
-//                .child(Constants.eventsDB)
-//                .child();
+                if (userUID == null) {
+                    return;
+                }
+
+                // Get user events
+                DatabaseReference mUserAvailableRef = FirebaseDatabase.getInstance().getReference()
+                        .child(Constants.eventsDB)
+                        .child(userUID);
+                ValueEventListener mUserAvailableListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Date startDate = new Date(startTime);
+                        Date endDate = new Date(endTime);
+                        boolean successCalled = false;
+                        for (DataSnapshot dt : dataSnapshot.getChildren()) {
+                            Map<String, Object> map = (Map<String, Object>) dt.getValue();
+                            Date start = new Date((long) map.get(Constants.startDate_field));
+                            Date end = new Date((long) map.get(Constants.endDate_field));
+                            if (start.after(startDate) && end.before(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                            if (start.after(startDate) && start.before(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                            if (end.after(startDate) && end.before(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                            if (start.equals(startDate) || end.equals(endDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                            if (start.equals(endDate) || end.equals(startDate)) {
+                                isAvailable.success(Boolean.FALSE);
+                                successCalled = true;
+                            }
+                        }
+                        if (!successCalled) {
+                            isAvailable.success(Boolean.TRUE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                };
+                mUserAvailableRef.addListenerForSingleValueEvent(mUserAvailableListener);
+                mUserAvailableRef.removeEventListener(mUserAvailableListener);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * This method retrieves info for the event that starts on startTime and ends on endTime
+     *
+     * @param context
+     * @param startTime
+     * @param endTime
+     * @param localEventResult
+     */
+    public void getEventInfo(Context context, long startTime, long endTime, final Result<LocalEvent> localEventResult) {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getId();
+        } else {
+            return;
+        }
+        DatabaseReference mEventInfoRef = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.eventsDB)
+                .child(uid)
+                .child(String.valueOf(startTime));
+        ValueEventListener mEventInfoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    long startDate = (long) map.get(Constants.startDate_field);
+                    long endDate = (long) map.get(Constants.endDate_field);
+                    String eventName = (String) map.get(Constants.name_field);
+                    String eventDescription = (String) map.get(Constants.description_field);
+                    LocalEvent localEvent = new LocalEvent();
+                    localEvent.setStartDate(startDate);
+                    localEvent.setEndDate(endDate);
+                    localEvent.setName(eventName);
+                    localEvent.setDescription(eventDescription);
+                    localEventResult.success(localEvent);
+                } else {
+                    localEventResult.fail(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                localEventResult.fail(null);
+            }
+        };
+        mEventInfoRef.addListenerForSingleValueEvent(mEventInfoListener);
+        mEventInfoRef.removeEventListener(mEventInfoListener);
     }
 }

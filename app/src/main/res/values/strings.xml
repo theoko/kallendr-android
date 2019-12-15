@@ -9,7 +9,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="create_team">Create team</string>
+    <string name="create_team">Create a team</string>
     <string name="join_team">Join a team</string>
     <string name="email">Email</string>
     <string name="team_name">Team name</string>
@@ -17,7 +17,7 @@
     <string name="member_1_email">Member 1 Email</string>
     <string name="member_2_email">Member 2 Email</string>
     <string name="member_3_email">Member 3 Email</string>
-    <string name="add_member">Add member</string>
+    <string name="add_member">Add</string>
     <string name="done">Done</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>

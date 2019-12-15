@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Welcome to Kallendr!"
-            android:textColor="@color/colorBackground"
+            android:textColor="@color/colorPrimary"
             android:textSize="35sp" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start by linking your favorite calendar"
-            android:textColor="@color/colorBackground"
+            android:textColor="@color/colorPrimary"
             android:textSize="20sp" />
 
     </LinearLayout>
@@ -71,8 +71,19 @@
             android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="70sp"
-            android:background="@color/colorBackground"
+            android:background="@color/colorPrimary"
             android:text="Continue with phone calendar" />
+
+        <Button
+            android:id="@+id/btn_link_calendar_later"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:textSize="17sp"
+            android:layout_height="70sp"
+            android:visibility="gone"
+            android:background="@android:color/white"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="Link calendar later" />
 
     </LinearLayout>
 

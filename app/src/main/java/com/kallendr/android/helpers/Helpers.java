@@ -5,9 +5,14 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
+import org.joda.time.DateTime;
+
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -114,6 +119,45 @@ public class Helpers {
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    public static String readableDate(DateTime date) {
+        String readableDate = "";
+        switch (date.getDayOfWeek()) {
+            case 1:
+                readableDate += "Monday";
+                break;
+            case 2:
+                readableDate += "Tuesday";
+                break;
+            case 3:
+                readableDate += "Wednesday";
+                break;
+            case 4:
+                readableDate += "Thursday";
+                break;
+            case 5:
+                readableDate += "Friday";
+                break;
+            case 6:
+                readableDate += "Saturday";
+                break;
+            case 7:
+                readableDate += "Sunday";
+                break;
+            default:
+        }
+
+        readableDate += ", ";
+        String monthString = new DateFormatSymbols().getMonths()[date.getMonthOfYear()-1];
+        readableDate += monthString;
+        readableDate += " " + date.getDayOfMonth();
+        readableDate += ", " + date.getYear();
+
+        readableDate += " at " + date.getHourOfDay() + ":" + String.format(Locale.getDefault(),"%02d", date.getMinuteOfHour());
+        Log.d("Helpers", String.format(Locale.getDefault(),"%02d", (date.getMinuteOfHour() + 10)));
+
+        return readableDate;
     }
 
 }

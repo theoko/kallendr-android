@@ -42,7 +42,6 @@ public class RegisterActivity extends AppCompatActivity {
     LinearLayout registrationForm;
     LinearLayout inviteMembersForm;
 
-    TextView pageTitle;
     EditText emailAddress, teamName, userPassword, userPasswordConfirmation;
 
     Button btnAddMember;
@@ -61,9 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
-        // Page title
-        pageTitle = findViewById(R.id.pageTitle);
 
         // Registration fields
         emailAddress = findViewById(R.id.emailAddress);
@@ -149,7 +145,6 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Set invite members form visibility to gone
-                pageTitle.setText("Registration");
                 UIHelpers.runFadeOutAnimationOn(RegisterActivity.this, inviteMembersForm);
                 inviteMembersForm.setVisibility(View.GONE);
 
@@ -171,7 +166,6 @@ public class RegisterActivity extends AppCompatActivity {
         btnInviteTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pageTitle.setText("Invite members");
                 UIHelpers.runFadeInAnimationOn(RegisterActivity.this, inviteMembersForm);
                 inviteMembersForm.setVisibility(View.VISIBLE);
 

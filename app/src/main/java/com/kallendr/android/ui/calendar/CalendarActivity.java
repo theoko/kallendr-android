@@ -1,11 +1,13 @@
 package com.kallendr.android.ui.calendar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,9 +26,12 @@ import com.kallendr.android.data.model.Event;
 import com.kallendr.android.data.model.LocalEvent;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Helpers;
+import com.kallendr.android.helpers.LocalEventGetter;
 import com.kallendr.android.helpers.Navigation;
 import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.helpers.interfaces.EventCallback;
+import com.kallendr.android.helpers.interfaces.Result;
+import com.kallendr.android.services.InitialEventUploadService;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
@@ -131,6 +136,65 @@ public class CalendarActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        detectEventsOnLocalCalendar();
+    }
+
+    List<LocalEvent> localEvents;
+    List<LocalEvent> toUpload;
+    int[] completedChecks = {0};
+    private void detectEventsOnLocalCalendar() {
+        localEvents = LocalEventGetter.readCalendarEvent(getApplicationContext());
+        toUpload = new ArrayList<>();
+        if (localEvents.size() > 0) {
+            // Check which events are new
+            for (final LocalEvent localEvent : localEvents) {
+                Database.getInstance().getEventInfo(
+                        CalendarActivity.this,
+                        localEvent.getStartDate(),
+                        localEvent.getEndDate(),
+                        new Result<LocalEvent>() {
+                            @Override
+                            public void success(LocalEvent arg) {
+                                // Event already exists in Firebase DB
+                                completedChecks[0]++;
+                                askToSyncEvents();
+                            }
+
+                            @Override
+                            public void fail(LocalEvent arg) {
+                                toUpload.add(localEvent);
+                                completedChecks[0]++;
+                                askToSyncEvents();
+                            }
+                        }
+                );
+            }
+        }
+    }
+
+    private void askToSyncEvents() {
+        if (completedChecks[0] == localEvents.size() && toUpload.size() > 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(CalendarActivity.this);
+            // Set title
+            builder.setTitle("We found " + toUpload.size() + " new events!");
+            // Add the buttons
+            builder.setPositiveButton("Upload", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                    Database.getInstance().localEventsList = toUpload;
+                    Intent eventUploadServiceIntent = new Intent(CalendarActivity.this, InitialEventUploadService.class);
+                    startService(eventUploadServiceIntent);
+                }
+            });
+            builder.setNegativeButton("Don't upload", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+            // Create the AlertDialog
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     private void populateDayWithEvents(Date currDate) {
