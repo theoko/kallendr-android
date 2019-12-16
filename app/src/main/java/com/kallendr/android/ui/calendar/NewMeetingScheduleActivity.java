@@ -39,7 +39,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
     private LinearLayout availabilityLinearLayout;
     private LinearLayout loadingAvailabilityLayout;
     private ListView availableMembersList;
-    private Button btnAvailabilityScheduleMeeting;
+    private Button btnScheduleMeeting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +51,20 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
         availabilityLinearLayout = findViewById(R.id.availabilityLinearLayout);
         loadingAvailabilityLayout = findViewById(R.id.loadingAvailabilityLayout);
         availableMembersList = findViewById(R.id.availableMembersList);
-        btnAvailabilityScheduleMeeting = findViewById(R.id.btnAvailabilityScheduleMeeting);
+        btnScheduleMeeting = findViewById(R.id.btnAvailabilityScheduleMeeting);
 
-        btnAvailabilityScheduleMeeting.setEnabled(false);
+        btnScheduleMeeting.setEnabled(false);
+
+        btnScheduleMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Schedule a team meeting
+                // Generate meeting ID
+                // teams/teamID/meetings/meetingID: start_at, end_at
+                // if a user is not available, ask for confirmation and provide re-scheduling option
+
+            }
+        });
     }
 
     @Override
@@ -162,6 +173,6 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
         loadingAvailabilityLayout.setVisibility(View.GONE);
 
         // Enable schedule meeting button
-        btnAvailabilityScheduleMeeting.setEnabled(true);
+        btnScheduleMeeting.setEnabled(true);
     }
 }
