@@ -145,29 +145,31 @@ public class CalendarActivity extends AppCompatActivity {
     private void detectEventsOnLocalCalendar() {
         localEvents = LocalEventGetter.readCalendarEvent(getApplicationContext());
         toUpload = new ArrayList<>();
-        if (localEvents.size() > 0) {
-            // Check which events are new
-            for (final LocalEvent localEvent : localEvents) {
-                Database.getInstance().getEventInfo(
-                        CalendarActivity.this,
-                        localEvent.getStartDate(),
-                        localEvent.getEndDate(),
-                        new Result<LocalEvent>() {
-                            @Override
-                            public void success(LocalEvent arg) {
-                                // Event already exists in Firebase DB
-                                completedChecks[0]++;
-                                askToSyncEvents();
-                            }
+        if (localEvents != null) {
+            if (localEvents.size() > 0) {
+                // Check which events are new
+                for (final LocalEvent localEvent : localEvents) {
+                    Database.getInstance().getEventInfo(
+                            CalendarActivity.this,
+                            localEvent.getStartDate(),
+                            localEvent.getEndDate(),
+                            new Result<LocalEvent>() {
+                                @Override
+                                public void success(LocalEvent arg) {
+                                    // Event already exists in Firebase DB
+                                    completedChecks[0]++;
+                                    askToSyncEvents();
+                                }
 
-                            @Override
-                            public void fail(LocalEvent arg) {
-                                toUpload.add(localEvent);
-                                completedChecks[0]++;
-                                askToSyncEvents();
+                                @Override
+                                public void fail(LocalEvent arg) {
+                                    toUpload.add(localEvent);
+                                    completedChecks[0]++;
+                                    askToSyncEvents();
+                                }
                             }
-                        }
-                );
+                    );
+                }
             }
         }
     }

@@ -116,7 +116,7 @@ public class ManageTeamActivity extends AppCompatActivity {
     }
 
     private void displayTeamMembers() {
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         Database.getInstance(accountType).getTeamMembers(new Result<List<String>>() {
             @Override
             public void success(List<String> arg) {
@@ -137,7 +137,7 @@ public class ManageTeamActivity extends AppCompatActivity {
     }
 
     private void displayInvitedUsers() {
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         Database.getInstance(accountType).getInvitedUsers(new Result<List<String>>() {
             @Override
             public void success(List<String> arg) {
@@ -164,7 +164,7 @@ public class ManageTeamActivity extends AppCompatActivity {
             String userEmail = invitedUserEmailAddress.getText().toString();
             boolean emailValid = Helpers.isEmailValid(userEmail);
             if (emailValid) {
-                Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+                Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
                 Database.getInstance(accountType).invite(userEmail);
                 Toast.makeText(ManageTeamActivity.this, "User invited!", Toast.LENGTH_LONG).show();
             } else {
@@ -174,7 +174,7 @@ public class ManageTeamActivity extends AppCompatActivity {
             // Update button text
             final String teamID = Prefs.getString(Constants.selectedTeam, null);
             if (teamID != null) {
-                Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+                Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
                 Database.getInstance(accountType).getTeamNameByID(teamID, new Result<String>() {
                     @Override
                     public void success(String teamName) {

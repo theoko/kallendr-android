@@ -163,7 +163,7 @@ public class SettingsActivity extends AppCompatActivity {
         /**
          * Get preferences from the server
          */
-        final Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        final Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         Database.getInstance(accountType).getPreferences(getApplicationContext(), new PrefMapCallback() {
             @Override
             public void onSuccess(Map<String, Boolean> prefMap) {
