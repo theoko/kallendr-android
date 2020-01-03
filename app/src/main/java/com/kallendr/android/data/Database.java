@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.kallendr.android.data.model.LocalEvent;
+import com.kallendr.android.data.model.MeetingBreak;
 import com.kallendr.android.data.model.Team;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.Helpers;
@@ -33,6 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
+import static com.kallendr.android.helpers.Constants.meeting_breaks;
+import static com.kallendr.android.helpers.Constants.meeting_description;
+import static com.kallendr.android.helpers.Constants.meeting_duration;
+import static com.kallendr.android.helpers.Constants.meeting_participants;
+import static com.kallendr.android.helpers.Constants.meeting_start_time;
 
 public class Database {
     private static Database INSTANCE = null;
@@ -1131,5 +1137,50 @@ public class Database {
         };
         mEventInfoRef.addListenerForSingleValueEvent(mEventInfoListener);
         mEventInfoRef.removeEventListener(mEventInfoListener);
+    }
+
+    /**
+     * This method creates a new team meeting event that starts on meetingStartTime.
+     * The team meeting object contains the duration of the meeting, the meeting participants, the meeting breaks
+     * and the meeting description.
+     *
+     * @param context
+     * @param teamID
+     * @param meetingStartTime
+     * @param participants
+     * @param duration
+     * @param meetingBreaks
+     * @param description
+     */
+    public void scheduleTeamMeeting(Context context,
+                                    String teamID,
+                                    long meetingStartTime,
+                                    String[] participants,
+                                    int duration,
+                                    MeetingBreak[] meetingBreaks,
+                                    String description)
+    {
+        String uid;
+        if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else if (this.account_type == Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+            uid = account.getId();
+        } else {
+            return;
+        }
+        // Create a new meeting under teamID with participants, duration, breaks and description
+        DatabaseReference mTeamMeetingRef = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.teamDB)
+                .child(teamID)
+                .child(Constants.teamMeetings)
+                .child(String.valueOf(meetingStartTime));
+        Map<String, Object> newMeeting = new HashMap<>();
+        newMeeting.put(meeting_start_time, meetingStartTime);
+        newMeeting.put(meeting_duration, duration);
+        newMeeting.put(meeting_participants, participants); // convert to map
+        newMeeting.put(meeting_breaks, meetingBreaks); // convert to map
+        newMeeting.put(meeting_description, description);
+        mTeamMeetingRef.setValue(newMeeting);
     }
 }
