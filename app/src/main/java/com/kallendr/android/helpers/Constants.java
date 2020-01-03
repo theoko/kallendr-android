@@ -37,10 +37,20 @@ public class Constants {
     public static String endDate_field = "endDate";
 
     /**
-     * Team model
+     * Team meeting model
+     */
+    public static String meeting_start_time = "startTime";
+    public static String meeting_duration = "duration";
+    public static String meeting_participants = "participants";
+    public static String meeting_breaks = "breaks";
+    public static String meeting_description = "description";
+
+    /**
+     * Team model (team name, team members, team meetings)
      */
     public static String teamName = "teamName";
     public static String teamMembers = "members";
+    public static String teamMeetings = "teamMeetings";
 
     /**
      * Codes

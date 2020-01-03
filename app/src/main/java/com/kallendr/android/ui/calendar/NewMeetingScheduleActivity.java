@@ -1,7 +1,9 @@
 package com.kallendr.android.ui.calendar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,19 +19,25 @@ import com.kallendr.android.data.adapters.AvailabilityListAdapter;
 import com.kallendr.android.data.model.AvailableGroupMember;
 import com.kallendr.android.data.observers.AvailableGroupMemberObserver;
 import com.kallendr.android.helpers.Helpers;
+import com.kallendr.android.helpers.ObjectSerializer;
 import com.kallendr.android.helpers.interfaces.Result;
 
 import org.joda.time.DateTime;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.kallendr.android.helpers.Constants.DEBUG_MODE;
+import static com.kallendr.android.helpers.Constants.meeting_breaks;
+import static com.kallendr.android.helpers.Constants.meeting_duration;
+import static com.kallendr.android.helpers.Constants.meeting_participants;
+import static com.kallendr.android.helpers.Constants.meeting_start_time;
 
 public class NewMeetingScheduleActivity extends AppCompatActivity {
 
     private int meetingDuration;
-    private int meetingBreaks;
+    private int meetingBreaksDuration;
     private DateTime dateSelected;
     private DateTime meetingStart;
     private DateTime meetingEnd;
@@ -39,7 +47,11 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
     private LinearLayout availabilityLinearLayout;
     private LinearLayout loadingAvailabilityLayout;
     private ListView availableMembersList;
-    private Button btnAvailabilityScheduleMeeting;
+    private Button btnScheduleMeeting;
+
+    // Meeting info
+    private ArrayList<AvailableGroupMember> availableGroupMembersList;
+    private int totalTeamMembers = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +63,56 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
         availabilityLinearLayout = findViewById(R.id.availabilityLinearLayout);
         loadingAvailabilityLayout = findViewById(R.id.loadingAvailabilityLayout);
         availableMembersList = findViewById(R.id.availableMembersList);
-        btnAvailabilityScheduleMeeting = findViewById(R.id.btnAvailabilityScheduleMeeting);
+        btnScheduleMeeting = findViewById(R.id.btnAvailabilityScheduleMeeting);
 
-        btnAvailabilityScheduleMeeting.setEnabled(false);
+        btnScheduleMeeting.setEnabled(false);
+
+        btnScheduleMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Schedule a team meeting
+                // Generate meeting ID
+                // teams/teamID/meetings/meetingID: start_at, end_at
+                if (availableGroupMembersList.size() < totalTeamMembers) {
+                    // if a user is not available, ask for confirmation and provide re-scheduling option
+                    new AlertDialog.Builder(getApplicationContext())
+                            .setTitle("Schedule meeting?")
+                            .setMessage("Not all group members are available. Are you sure you want to schedule a meeting?")
+
+                            // Specifying a listener allows you to take an action before dismissing the dialog.
+                            // The dialog is automatically dismissed when a dialog button is clicked.
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Continue with delete operation
+                                    scheduleMeeting();
+                                }
+                            })
+
+                            // A null listener allows the button to dismiss the dialog and take no further action.
+                            .setNegativeButton(android.R.string.no, null)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                } else {
+                    scheduleMeeting();
+                }
+            }
+        });
+    }
+
+    private void scheduleMeeting() {
+        // Schedule meeting and return to home screen
+        Intent newMeetingConfigurationIntent = new Intent(getApplicationContext(), NewMeetingConfigurationActivity.class);
+//            String availableGroupMembersListSerialized = ObjectSerializer.serialize(availableGroupMembersList);
+        ArrayList<String> memberEmails = new ArrayList<>();
+        for (AvailableGroupMember member : availableGroupMembersList) {
+            String email = member.getEmail();
+            memberEmails.add(email);
+        }
+        newMeetingConfigurationIntent.putExtra(meeting_start_time, meetingStart);
+        newMeetingConfigurationIntent.putExtra(meeting_duration, meetingDuration);
+        newMeetingConfigurationIntent.putExtra(meeting_participants, memberEmails);
+        newMeetingConfigurationIntent.putExtra(meeting_breaks, meetingBreaksDuration);
+        startActivity(newMeetingConfigurationIntent);
     }
 
     @Override
@@ -69,13 +128,13 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
     private void getSettings() {
         // Dummy values (for now)
         meetingDuration = 30;
-        meetingBreaks = 10;
+        meetingBreaksDuration = 10;
     }
 
     private void getDate() {
-        dateSelected = new DateTime().plusMinutes(meetingBreaks);
+        dateSelected = new DateTime().plusMinutes(meetingBreaksDuration);
         meetingStart = dateSelected;
-        meetingEnd = dateSelected.plusMinutes(meetingBreaks + meetingDuration);
+        meetingEnd = dateSelected.plusMinutes(meetingBreaksDuration + meetingDuration);
 
         // Update UI
         readableDateHeader.setText(
@@ -90,6 +149,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
                 if (DEBUG_MODE) {
                     Log.d(getClass().getName(), arg.toString());
                 }
+                totalTeamMembers = arg.size();
                 getAvailability(arg);
             }
 
@@ -128,15 +188,19 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
                                 members.add(groupMember);
                             }*/
                             members.add(groupMember);
-                            if (finalI == emails.size() - 1)
+                            if (finalI == emails.size() - 1) {
                                 updateListUI(members);
+                                availableGroupMembersList = members;
+                            }
                         }
 
                         @Override
                         public void fail(Boolean arg) {
                             members.add(groupMember);
-                            if (finalI == emails.size() - 1)
+                            if (finalI == emails.size() - 1) {
                                 updateListUI(members);
+                                availableGroupMembersList = members;
+                            }
                         }
                     }
             );
@@ -162,6 +226,6 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
         loadingAvailabilityLayout.setVisibility(View.GONE);
 
         // Enable schedule meeting button
-        btnAvailabilityScheduleMeeting.setEnabled(true);
+        btnScheduleMeeting.setEnabled(true);
     }
 }
