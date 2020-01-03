@@ -34,11 +34,16 @@ public class MeetingParticipantsAdapter extends RecyclerView.Adapter<MeetingPart
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         // Load profile image with Picasso
-        Picasso.get()
-               .load("https://www.gravatar.com/avatar/" + Helpers.md5(memberEmails.get(i)))
-               .fit()
-               .into(myViewHolder.profileImageView);
-        myViewHolder.emailTextView.setText(memberEmails.get(i));
+        String usernameMD5 = Helpers.md5(memberEmails.get(i));
+        String username = memberEmails.get(i);
+        if (!usernameMD5.equals("")) {
+            Picasso.get()
+                    .load("https://www.gravatar.com/avatar/" + usernameMD5)
+                    .fit()
+                    .noFade()
+                    .into(myViewHolder.profileImageView);
+        }
+        myViewHolder.emailTextView.setText(username.substring(0, username.indexOf("@")));
     }
 
     @Override
