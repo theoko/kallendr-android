@@ -9,10 +9,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kallendr.android.R;
 import com.kallendr.android.data.Database;
@@ -20,7 +18,6 @@ import com.kallendr.android.data.LoginDataSource;
 import com.kallendr.android.helpers.interfaces.Result;
 import com.kallendr.android.ui.calendar.CalendarActivity;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
-import com.kallendr.android.ui.home.MainActivity;
 import com.kallendr.android.ui.settings.SettingsActivity;
 import com.kallendr.android.ui.team.ManageTeamActivity;
 import com.pixplicity.easyprefs.library.Prefs;
