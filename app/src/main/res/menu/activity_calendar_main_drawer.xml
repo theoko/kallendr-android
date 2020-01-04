@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_menu_home"
             android:title="@string/menu_home" />
         <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_calendar_foreground"
+            android:title="Calendar" />
+        <item
             android:id="@+id/nav_manage_team"
             android:icon="@drawable/ic_menu_manage_team"
             android:title="Manage Team" />

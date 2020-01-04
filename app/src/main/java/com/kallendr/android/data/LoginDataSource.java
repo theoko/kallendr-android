@@ -30,7 +30,7 @@ public class LoginDataSource {
                         if(!task.isSuccessful()) {
                             Toast.makeText(context, "Please check the credentials and try again.", Toast.LENGTH_LONG).show();
                         } else {
-                            // Launch MyCalendar activity
+                            // Launch CalendarMainActivity activity
                             Intent intent = new Intent(context, CalendarMainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);

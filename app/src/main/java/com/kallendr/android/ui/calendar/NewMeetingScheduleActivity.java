@@ -108,7 +108,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
             String email = member.getEmail();
             memberEmails.add(email);
         }
-        newMeetingConfigurationIntent.putExtra(meeting_start_time, meetingStart);
+        newMeetingConfigurationIntent.putExtra(meeting_start_time, meetingStart.getMillis());
         newMeetingConfigurationIntent.putExtra(meeting_duration, meetingDuration);
         newMeetingConfigurationIntent.putExtra(meeting_participants, memberEmails);
         newMeetingConfigurationIntent.putExtra(meeting_breaks, meetingBreaksDuration);

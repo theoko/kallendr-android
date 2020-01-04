@@ -40,6 +40,8 @@ public class Navigation {
             calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(calendarMainIntent);
+        } else if (id == R.id.nav_calendar) {
+
         } else if (id == R.id.nav_settings) {
             Intent settingsIntent = new Intent(context, SettingsActivity.class);
             settingsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -89,7 +91,7 @@ public class Navigation {
     }
 
     public static void populateNav(Context context, final TextView nameTxt, TextView userTxt) {
-        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, null));
+        Constants.ACCOUNT_TYPE accountType = Constants.ACCOUNT_TYPE.valueOf(Prefs.getString(Constants.accountType, Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT.name()));
         String username = null;
         if (accountType == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
             username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
