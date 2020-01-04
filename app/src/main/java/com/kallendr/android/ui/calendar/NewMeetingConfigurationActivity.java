@@ -2,12 +2,16 @@ package com.kallendr.android.ui.calendar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -73,6 +77,16 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
             Log.e(getClass().getName(), "Meeting duration: " + intent.getIntExtra(meeting_duration, 0));
             Log.e(getClass().getName(), "Meeting breaks: " + intent.getIntExtra(meeting_breaks, 0));
         }
+        meetingDurationEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(NewMeetingConfigurationActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.custom_minute_slider, null);
+                dialogBuilder.setView(dialogView);
+                dialogBuilder.show();
+            }
+        });
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
