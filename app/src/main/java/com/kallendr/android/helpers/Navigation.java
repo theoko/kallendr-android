@@ -40,6 +40,8 @@ public class Navigation {
             calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(calendarMainIntent);
+        } else if (id == R.id.nav_calendar) {
+
         } else if (id == R.id.nav_settings) {
             Intent settingsIntent = new Intent(context, SettingsActivity.class);
             settingsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

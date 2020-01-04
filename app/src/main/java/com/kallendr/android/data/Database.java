@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -1155,10 +1156,11 @@ public class Database {
     public void scheduleTeamMeeting(Context context,
                                     String teamID,
                                     long meetingStartTime,
-                                    String[] participants,
+                                    ArrayList<String> participants,
                                     int duration,
-                                    MeetingBreak[] meetingBreaks,
-                                    String description)
+                                    ArrayList<MeetingBreak> meetingBreaks,
+                                    String description,
+                                    final Result<Task<Void>> onCompleteListener)
     {
         String uid;
         if (this.account_type == Constants.ACCOUNT_TYPE.EMAIL_PASSWD_ACCOUNT) {
@@ -1181,6 +1183,15 @@ public class Database {
         newMeeting.put(meeting_participants, participants); // convert to map
         newMeeting.put(meeting_breaks, meetingBreaks); // convert to map
         newMeeting.put(meeting_description, description);
-        mTeamMeetingRef.setValue(newMeeting);
+        mTeamMeetingRef.setValue(newMeeting).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    onCompleteListener.success(task);
+                } else {
+                    onCompleteListener.fail(task);
+                }
+            }
+        });
     }
 }

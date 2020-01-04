@@ -19,10 +19,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.kallendr.android.R;
+import com.kallendr.android.data.Database;
 import com.kallendr.android.data.adapters.MeetingParticipantsAdapter;
+import com.kallendr.android.data.model.MeetingBreak;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.helpers.UIHelpers;
+import com.kallendr.android.helpers.interfaces.Result;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -191,7 +196,34 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
 
     private void step1() {
         // Validate meeting duration and description and schedule meeting
+        String meetingDescription = meetingDescriptionEditText.getText().toString();
+        String teamID = Prefs.getString(Constants.selectedTeam, null);
+        if (teamID != null) {
+            Database.getInstance().scheduleTeamMeeting(
+                    getApplicationContext(),
+                    teamID,
+                    meetingStart,
+                    meetingParticipants,
+                    meetingDuration,
+                    new ArrayList<MeetingBreak>(),
+                    meetingDescription,
+                    new Result<Task<Void>>() {
+                        @Override
+                        public void success(Task<Void> arg) {
+                            // Meeting is scheduled
+                            Intent homeScreenIntent = new Intent(NewMeetingConfigurationActivity.this, CalendarMainActivity.class);
+                            startActivity(homeScreenIntent);
+                            finish();
+                        }
 
+                        @Override
+                        public void fail(Task<Void> arg) {
+                            // Failed to schedule meeting
+                            Toast.makeText(getApplicationContext(), "Failed to schedule meeting!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+        }
     }
 
     @Override
