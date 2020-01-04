@@ -15,6 +15,8 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kallendr.android.R;
@@ -77,14 +79,64 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
             Log.e(getClass().getName(), "Meeting duration: " + intent.getIntExtra(meeting_duration, 0));
             Log.e(getClass().getName(), "Meeting breaks: " + intent.getIntExtra(meeting_breaks, 0));
         }
+        final int[] selectedHours = {0};
+        final int[] selectedMinutes = {0};
         meetingDurationEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(NewMeetingConfigurationActivity.this);
-                LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.custom_minute_slider, null);
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(NewMeetingConfigurationActivity.this);
+                final LayoutInflater inflater = getLayoutInflater();
+                final View dialogView = inflater.inflate(R.layout.custom_minute_slider, null);
+                final TextView hoursTextView = dialogView.findViewById(R.id.hoursTextView);
+                final TextView minutesTextView = dialogView.findViewById(R.id.minutesTextView);
+                SeekBar timeSlider = dialogView.findViewById(R.id.timeSlider);
+                final Button btnMinuteSliderDone = dialogView.findViewById(R.id.btnMinuteSliderDone);
+                int hours = meetingDuration / 60;
+                int minutes = meetingDuration % 60;
+                hoursTextView.setText(hours + " hours");
+                minutesTextView.setText(minutes + " minutes");
+                selectedHours[0] = selectedHours[0] == 0 ? hours : selectedHours[0];
+                selectedMinutes[0] = selectedMinutes[0] == 0 ? minutes : selectedMinutes[0];
+                int currProgress = ((selectedHours[0] * 60) + selectedMinutes[0]) / 5;
+                timeSlider.setProgress(currProgress);
+                hoursTextView.setText(selectedHours[0] + " hours");
+                minutesTextView.setText(selectedMinutes[0] + " minutes");
+                if (DEBUG_MODE) {
+                    Log.e(getClass().getName(), "Progress: " + currProgress);
+                }
+                timeSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        int hours = (progress * 5) / 60;
+                        int minutes = (progress * 5) % 60;
+                        hoursTextView.setText(hours + " hours");
+                        minutesTextView.setText(minutes + " minutes");
+                        selectedHours[0] = hours;
+                        selectedMinutes[0] = minutes;
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
                 dialogBuilder.setView(dialogView);
-                dialogBuilder.show();
+                final AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
+                btnMinuteSliderDone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        int hours = selectedHours[0];
+                        int minutes = selectedMinutes[0];
+                        meetingDurationEditText.setText(hours + " hours and " + minutes + " minutes");
+                    }
+                });
             }
         });
         continueButton.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +178,7 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
             // Show meeting duration field
             findViewById(R.id.meetingDurationTextView).setVisibility(View.VISIBLE);
             meetingDurationEditText.setVisibility(View.VISIBLE);
-            meetingDurationEditText.setText(String.valueOf(meetingDuration));
+            meetingDurationEditText.setText(meetingDuration + " minutes");
             // Show meeting description field
             findViewById(R.id.meetingDescriptionTextView).setVisibility(View.VISIBLE);
             meetingDescriptionEditText.setVisibility(View.VISIBLE);
