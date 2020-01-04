@@ -46,7 +46,6 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
     // Meeting details
     private String meetingTitle;
 
-
     // Step
     private int step = 0;
 
@@ -113,7 +112,7 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
             // Show meeting duration field
             findViewById(R.id.meetingDurationTextView).setVisibility(View.VISIBLE);
             meetingDurationEditText.setVisibility(View.VISIBLE);
-            //meetingDurationEditText.setText(meetingDuration);
+            meetingDurationEditText.setText(String.valueOf(meetingDuration));
             // Show meeting description field
             findViewById(R.id.meetingDescriptionTextView).setVisibility(View.VISIBLE);
             meetingDescriptionEditText.setVisibility(View.VISIBLE);
