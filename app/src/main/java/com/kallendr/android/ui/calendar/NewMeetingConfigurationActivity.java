@@ -81,15 +81,11 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
                     case 0:
                         if (step0()) {
                             step++;
+                            continueButton.setText("Schedule");
                         }
                         break;
                     case 1:
-                        if (step1()) {
-                            step++;
-                        }
-                        break;
-                    case 2:
-                        step2();
+                        step1();
                         break;
                     default:
                 }
@@ -128,11 +124,8 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
         }
     }
 
-    private boolean step1() {
-        return true;
-    }
-
-    private void step2() {
+    private void step1() {
+        // Validate meeting duration and description and schedule meeting
 
     }
 
