@@ -20,6 +20,7 @@ import com.kallendr.android.data.LoginDataSource;
 import com.kallendr.android.helpers.interfaces.Result;
 import com.kallendr.android.ui.calendar.CalendarActivity;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
+import com.kallendr.android.ui.calendar.TeamCalendarActivity;
 import com.kallendr.android.ui.home.MainActivity;
 import com.kallendr.android.ui.settings.SettingsActivity;
 import com.kallendr.android.ui.team.ManageTeamActivity;
@@ -36,12 +37,15 @@ public class Navigation {
 
         drawer.closeDrawer(GravityCompat.START);
         if (id == R.id.nav_home) {
-            Intent calendarMainIntent = new Intent(context, CalendarActivity.class);
-            calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            calendarMainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startActivity(calendarMainIntent);
+            Intent calendarIntent = new Intent(context, TeamCalendarActivity.class);
+            calendarIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            calendarIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(calendarIntent);
         } else if (id == R.id.nav_calendar) {
-
+            Intent calendarIntent = new Intent(context, CalendarActivity.class);
+            calendarIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            calendarIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(calendarIntent);
         } else if (id == R.id.nav_settings) {
             Intent settingsIntent = new Intent(context, SettingsActivity.class);
             settingsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

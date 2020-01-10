@@ -27,6 +27,7 @@ import com.kallendr.android.helpers.TextValidator;
 import com.kallendr.android.helpers.UIHelpers;
 import com.kallendr.android.services.EmailService;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
+import com.kallendr.android.ui.calendar.TeamCalendarActivity;
 import com.kallendr.android.ui.home.MainActivity;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -286,7 +287,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void finishedRegistration() {
-        Intent intent = new Intent(mContext, CalendarMainActivity.class);
+        Intent intent = new Intent(mContext, TeamCalendarActivity.class);
         startActivity(intent);
         finish();
     }

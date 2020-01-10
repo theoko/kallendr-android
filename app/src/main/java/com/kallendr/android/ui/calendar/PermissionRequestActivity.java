@@ -37,7 +37,7 @@ public class PermissionRequestActivity extends AppCompatActivity {
 
     private void returnToCalendarMainActivity() {
         // Return to previous activity
-        Intent intent = new Intent(PermissionRequestActivity.this, CalendarMainActivity.class);
+        Intent intent = new Intent(PermissionRequestActivity.this, TeamCalendarActivity.class);
         startActivity(intent);
         finish();
     }

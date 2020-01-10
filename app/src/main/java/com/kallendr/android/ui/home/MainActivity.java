@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kallendr.android.R;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
+import com.kallendr.android.ui.calendar.TeamCalendarActivity;
 import com.kallendr.android.ui.login.LoginActivity;
 import com.kallendr.android.ui.register.RegisterActivity;
 import com.pixplicity.easyprefs.library.Prefs;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             if (account != null) {
                 Prefs.putString(Constants.accountType, Constants.ACCOUNT_TYPE.GOOGLE_ACCOUNT.name());
             }
-            Intent intent = new Intent(MainActivity.this, CalendarMainActivity.class);
+            Intent intent = new Intent(MainActivity.this, TeamCalendarActivity.class);
             startActivity(intent);
             finish();
         }

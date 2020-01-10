@@ -155,7 +155,7 @@ public class NewMeetingScheduleActivity extends AppCompatActivity {
 
             @Override
             public void fail(List<String> arg) {
-                Intent calendarMainIntent = new Intent(NewMeetingScheduleActivity.this, CalendarMainActivity.class);
+                Intent calendarMainIntent = new Intent(NewMeetingScheduleActivity.this, TeamCalendarActivity.class);
                 startActivity(calendarMainIntent);
                 finish();
             }

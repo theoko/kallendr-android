@@ -211,7 +211,7 @@ public class NewMeetingConfigurationActivity extends AppCompatActivity {
                         @Override
                         public void success(Task<Void> arg) {
                             // Meeting is scheduled
-                            Intent homeScreenIntent = new Intent(NewMeetingConfigurationActivity.this, CalendarMainActivity.class);
+                            Intent homeScreenIntent = new Intent(NewMeetingConfigurationActivity.this, TeamCalendarActivity.class);
                             startActivity(homeScreenIntent);
                             finish();
                         }

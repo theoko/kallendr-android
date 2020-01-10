@@ -13,6 +13,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kallendr.android.helpers.Constants;
 import com.kallendr.android.ui.calendar.CalendarMainActivity;
+import com.kallendr.android.ui.calendar.TeamCalendarActivity;
 import com.kallendr.android.ui.home.MainActivity;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -31,7 +32,7 @@ public class LoginDataSource {
                             Toast.makeText(context, "Please check the credentials and try again.", Toast.LENGTH_LONG).show();
                         } else {
                             // Launch CalendarMainActivity activity
-                            Intent intent = new Intent(context, CalendarMainActivity.class);
+                            Intent intent = new Intent(context, TeamCalendarActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }
